@@ -1,0 +1,658 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#09090d">
+<meta name="description" content="MEMEVerso.exe: una aventura extraña point-and-click, con misterios y lugares imposibles.">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<title>MEMEVerso.exe — no preguntes</title>
+<style>
+:root{--acid:#d6ff00;--pink:#ff3d9a;--blue:#5cf6ff;--ink:#09090d;--paper:#f4f1e8}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--ink);color:var(--paper);font-family:Arial,Helvetica,sans-serif;overflow-x:hidden}
+body{background-image:radial-gradient(circle at 20% 20%,#25183c 0,transparent 30%),radial-gradient(circle at 85% 70%,#092c31 0,transparent 32%);transition:filter .3s}
+.noise{position:fixed;inset:0;pointer-events:none;opacity:.07;z-index:8;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E")}
+header{display:flex;justify-content:space-between;align-items:center;padding:18px 5vw;border-bottom:1px solid #ffffff22;position:relative;z-index:2}
+.logo{font-weight:1000;letter-spacing:-.08em;font-size:clamp(1.4rem,3vw,2.4rem);color:var(--acid);text-shadow:4px 3px 0 var(--pink);transform:rotate(-2deg)}
+.status{font:700 11px monospace;color:var(--blue);letter-spacing:.12em}.status:before{content:"● ";color:var(--pink);animation:blink 1s infinite}@keyframes blink{50%{opacity:.1}}
+main{max-width:1120px;margin:auto;padding:28px 5vw 70px}.eyebrow{font:700 11px monospace;color:var(--pink);letter-spacing:.25em;margin:20px 0 12px}
+h1{font-size:clamp(3rem,10vw,8.5rem);line-height:.8;letter-spacing:-.09em;margin:0 0 24px;font-weight:1000;max-width:900px}h1 span{color:transparent;-webkit-text-stroke:2px var(--acid)}
+.intro{font:500 clamp(1rem,2vw,1.2rem)/1.5 monospace;max-width:600px;color:#d0cbd8}.intro b{color:var(--acid)}
+.layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(230px,.7fr);gap:18px;margin-top:35px}
+.panel{border:1px solid #ffffff33;background:#111118d9;box-shadow:8px 8px 0 #000;position:relative}
+.panel-head{display:flex;justify-content:space-between;gap:10px;align-items:center;border-bottom:1px solid #ffffff24;padding:12px 15px;font:700 10px monospace;letter-spacing:.12em;color:#aaa}
+.screen{min-height:360px;padding:clamp(20px,4vw,42px);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;position:relative;overflow:hidden}
+#entity{font-size:clamp(5rem,15vw,10rem);line-height:1;margin-bottom:22px;filter:drop-shadow(0 0 18px #ff3d9a55);animation:float 3s ease-in-out infinite;user-select:none}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-12px) rotate(4deg)}}
+#message{font-size:clamp(1.15rem,3vw,2rem);font-weight:900;max-width:580px;line-height:1.1;letter-spacing:-.04em}
+#submessage{font:12px/1.5 monospace;color:#aaa;margin-top:14px;max-width:440px}
+.controls{padding:15px;border-top:1px solid #ffffff24;display:flex;gap:10px;flex-wrap:wrap}
+button{font:900 12px monospace;letter-spacing:.04em;border:0;padding:14px 16px;cursor:pointer;transition:transform .1s,filter .1s;min-height:44px}
+button:hover{transform:translate(-2px,-2px);filter:brightness(1.15)}button:active{transform:translate(2px,2px)}
+.primary{background:var(--acid);color:#111;box-shadow:4px 4px 0 var(--pink);flex:1}.secondary{background:#282832;color:white;border:1px solid #555}.danger{background:var(--pink);color:#160611}
+.side{display:flex;flex-direction:column;gap:18px}.stats{padding:18px}.statline{display:flex;justify-content:space-between;border-bottom:1px dashed #ffffff22;padding:12px 0;font:12px monospace}.statline strong{color:var(--acid)}.tiny{font:11px/1.5 monospace;color:#8d8998}
+.log{height:175px;overflow:hidden;padding:15px;font:11px/1.7 monospace;color:#9c98a8}.log p{margin:0}.log p:first-child{color:var(--blue)}
+.inventory{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}.chip{border:1px solid #ffffff2c;padding:7px 8px;font:10px monospace;color:#aaa}.chip.new{border-color:var(--acid);color:var(--acid)}
+.footer{margin-top:28px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font:10px monospace;color:#716c7a}
+#flash{position:fixed;inset:0;background:white;pointer-events:none;opacity:0;z-index:7}#flash.pop{animation:flash .3s}@keyframes flash{30%{opacity:.8}}
+.glitch{animation:glitch .25s steps(2)}@keyframes glitch{0%{transform:translate(0)}25%{transform:translate(8px,-4px) skew(3deg)}50%{transform:translate(-5px,3px)}75%{transform:translate(3px,1px) skew(-2deg)}}
+#secret{display:none;position:fixed;z-index:9;inset:10%;background:var(--acid);color:#111;padding:30px;font:900 clamp(1.5rem,6vw,5rem);text-align:center;align-content:center;transform:rotate(1deg);box-shadow:0 0 0 100vmax #000d}
+#secret.show{display:grid}
+@media(max-width:760px){.layout{grid-template-columns:1fr}.screen{min-height:300px}.side{display:grid;grid-template-columns:1fr 1fr}.side .panel:last-child{grid-column:1/-1}header{padding:15px 5vw}}
+@media(max-width:450px){.side{display:flex}.controls button{flex:1}.screen{padding:22px 15px}}
+
+.audio-toggle{background:#191922;color:var(--blue);border:1px solid #5cf6ff55;font:700 10px monospace;padding:8px 10px}
+#omen{position:fixed;left:50%;top:14%;transform:translateX(-50%);z-index:6;max-width:90vw;background:#f4f1e8;color:#111;padding:14px 20px;font:900 12px monospace;box-shadow:6px 6px 0 var(--pink);display:none;text-align:center}
+#omen.on{display:block;animation:omen .18s steps(2)}@keyframes omen{from{transform:translateX(-50%) skew(8deg);filter:invert(1)}to{transform:translateX(-50%)}}
+#terminal{position:fixed;inset:auto 4vw 4vh 4vw;z-index:5;background:#030504;color:#aaff00;border:1px solid #aaff00;padding:14px;font:11px/1.6 monospace;display:none;box-shadow:0 0 30px #aaff0033}
+#terminal.open{display:block}#terminal button{float:right;background:#aaff00;color:#000;padding:5px 8px}
+#cursor{display:inline-block;width:8px;height:12px;background:#aaff00;animation:blink .8s infinite}
+
+
+.hotspot{filter:drop-shadow(0 0 5px #000);transition:transform .12s,filter .12s;cursor:pointer}
+.hotspot:hover{transform:scale(1.18) rotate(-4deg);filter:drop-shadow(0 0 12px #d6ff00)}
+.hotspot.found{filter:drop-shadow(0 0 8px #d6ff00)}
+.hotspot:focus-visible{outline:2px solid var(--acid)}
+
+
+.zone-card{min-height:100px;text-align:left;background:#171720;color:#eee;border:1px solid #ffffff2b;padding:12px;display:flex;flex-direction:column;gap:8px;box-shadow:none}
+.zone-card .zicon{font-size:28px}.zone-card .zname{font:900 11px monospace}.zone-card .zdesc{font:10px/1.4 monospace;color:#9692a0}
+.zone-card.locked{opacity:.42;filter:grayscale(1)}.zone-card.available{border-color:#d6ff00}.zone-card.current{background:#d6ff00;color:#111;border-color:#d6ff00}.zone-card.current .zdesc{color:#353535}
+
+
+/* Adaptación escritorio, tablet y móvil */
+html{min-height:100%;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{min-height:100dvh;padding-bottom:env(safe-area-inset-bottom)}
+button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+header{gap:12px;flex-wrap:wrap}
+header>div:last-child{flex-wrap:wrap;justify-content:flex-end}
+#room{min-height:clamp(260px,42vw,440px)!important}
+#room .hotspot{min-width:44px;min-height:44px;display:grid;place-items:center}
+.controls{gap:9px}
+.controls button{min-height:46px}
+#zoneCards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+#settingsModal{display:none;position:fixed;inset:0;z-index:30;background:#000c;align-items:center;justify-content:center;padding:18px}
+#settingsModal.open{display:flex}
+.settings-card{width:min(100%,480px);max-height:min(90dvh,720px);overflow:auto;background:#111118;border:1px solid #d6ff00;box-shadow:8px 8px 0 #ff3d9a;padding:20px}
+.settings-title{display:flex;align-items:center;justify-content:space-between;gap:12px;font:900 18px monospace;color:var(--acid);margin-bottom:20px}
+.setting-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid #ffffff20;font:12px monospace}
+.setting-row input[type=range]{width:min(52%,220px);accent-color:var(--acid)}
+.setting-row input[type=checkbox]{width:22px;height:22px;accent-color:var(--acid)}
+.setting-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.setting-actions button{flex:1}
+.install-note{font:11px/1.6 monospace;color:#aaa;margin-top:15px}
+@media(max-width:760px){
+ main{padding:20px 4vw 40px}
+ .layout{grid-template-columns:minmax(0,1fr);gap:14px}
+ .screen{min-height:270px}
+ .side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+ .side .panel:last-child{grid-column:1/-1}
+ .panel-head{font-size:9px;letter-spacing:.06em}
+ #room{min-height:300px!important}
+ #zoneCards{grid-template-columns:repeat(2,minmax(0,1fr))}
+ header{padding:12px 4vw}
+ .logo{font-size:clamp(1.35rem,7vw,2rem)}
+ .status{font-size:9px}
+}
+@media(max-width:480px){
+ header{align-items:flex-start}
+ header>div:last-child{width:100%;justify-content:space-between}
+ .audio-toggle{flex:1}
+ main{padding-left:12px;padding-right:12px}
+ h1{font-size:clamp(3.1rem,17vw,5rem)}
+ .intro{font-size:.93rem}
+ #room{min-height:280px!important}
+ #room .hotspot{font-size:clamp(27px,9vw,38px)!important}
+ .controls{padding:10px}
+ .controls button{padding:11px 10px;font-size:10px}
+ .side{display:flex}
+ .statline{font-size:11px}
+ #zoneCards{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+ .zone-card{padding:9px;min-width:0}
+ .zone-card .zicon{font-size:24px}
+ .zone-card .zname{font-size:10px}
+ .zone-card .zdesc{font-size:9px}
+ #settingsModal{padding:10px}
+ .settings-card{padding:16px}
+}
+@media(hover:none){button:hover{transform:none;filter:none}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+
+
+/* AYUDANTE: capa de caos voluntariamente molesta, pero siempre descartable */
+#helperDock{position:fixed;right:14px;bottom:14px;z-index:20;width:min(320px,calc(100vw - 28px));background:#111118;border:1px solid var(--acid);box-shadow:6px 6px 0 var(--pink);padding:12px;font:12px/1.45 monospace;transform:rotate(.5deg)}
+#helperDock .helper-head{display:flex;justify-content:space-between;align-items:center;color:var(--acid);font-weight:900;margin-bottom:7px}
+#helperDock .helper-face{font-size:28px;float:left;margin:0 10px 6px 0}
+#helperDock .helper-buttons{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+#helperDock button,#chaosAd button,#helperToast button,#videoJumpscare button{font:900 10px monospace;padding:8px;border:1px solid var(--acid);background:#202018;color:var(--acid);cursor:pointer}
+#helperDock button:hover,#chaosAd button:hover{background:var(--acid);color:#09090d}
+#helperDock.minimized{width:auto;max-width:calc(100vw - 28px);padding:8px}
+#helperDock.minimized #helperBody{display:none}
+#helperToast{position:fixed;z-index:29;top:18%;left:50%;transform:translateX(-50%);width:min(450px,90vw);padding:16px;background:#130d1b;border:2px dashed var(--pink);box-shadow:0 0 35px #ff3d9a66;font:700 12px/1.5 monospace;display:none}
+#helperToast.show{display:block;animation:toastPop .25s steps(3)}
+@keyframes toastPop{0%{transform:translate(-50%,-30px) rotate(-3deg)}100%{transform:translate(-50%,0) rotate(0)}}
+#chaosAd{position:fixed;z-index:28;top:15%;right:4%;width:min(300px,88vw);background:#f4f1e8;color:#101015;border:4px solid #ff3d9a;box-shadow:8px 8px 0 #d6ff00;padding:15px;font:900 12px/1.5 monospace;display:none;transform:rotate(2deg)}
+#chaosAd.show{display:block;animation:adJiggle .13s 3}
+@keyframes adJiggle{0%,100%{transform:rotate(2deg)}50%{transform:rotate(-2deg) translateX(3px)}}
+#chaosAd .ad-label{font-size:9px;background:#ff3d9a;color:white;padding:3px 5px;display:inline-block;margin-bottom:8px}
+#chaosAd .ad-title{font-size:22px;line-height:1.05;margin:8px 0}
+#chaosAd .ad-actions{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
+#floatingGremlin{position:fixed;z-index:19;left:10%;top:30%;font-size:clamp(34px,7vw,72px);filter:drop-shadow(0 0 8px #ff3d9a);cursor:pointer;display:none;user-select:none;animation:gremlinFloat 2s ease-in-out infinite alternate}
+@keyframes gremlinFloat{from{transform:translateY(0) rotate(-8deg)}to{transform:translateY(-24px) rotate(9deg)}}
+#videoJumpscare{display:none;position:fixed;inset:0;z-index:60;background:#000e;align-items:center;justify-content:center;padding:14px}
+#videoJumpscare.show{display:flex}
+#videoJumpscare .video-card{width:min(900px,100%);background:#09090d;border:2px solid var(--pink);box-shadow:0 0 60px #ff3d9a66;padding:12px}
+#videoJumpscare .video-head{display:flex;justify-content:space-between;align-items:center;gap:10px;color:var(--acid);font:900 12px monospace;margin-bottom:10px}
+#videoJumpscare video{display:block;width:100%;max-height:68dvh;background:#000;object-fit:contain}
+#videoJumpscare .video-foot{font:10px monospace;color:#aaa;padding-top:9px}
+#fileCabinet{margin-top:14px}
+#fileCabinet .file-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px}
+.file-download{background:#111118;color:var(--blue);border:1px dashed #5cf6ff;padding:10px;text-align:left;min-width:0;font:10px/1.35 monospace;overflow-wrap:anywhere;cursor:pointer}
+.file-download:hover{background:#182b30}
+#helperDock .helper-meter{height:4px;background:#292832;margin-top:9px;overflow:hidden}
+#helperMeterFill{height:100%;width:14%;background:linear-gradient(90deg,var(--blue),var(--pink),var(--acid));transition:width .3s}
+@media(max-width:600px){
+ #helperDock{right:8px;bottom:8px;width:min(285px,calc(100vw - 16px));padding:9px}
+ #helperDock .helper-face{font-size:23px}
+ #chaosAd{top:12%;right:3%;width:min(270px,94vw)}
+ #fileCabinet .file-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #videoJumpscare{padding:7px}
+ #videoJumpscare video{max-height:58dvh}
+}
+
+</style>
+</head>
+<body>
+<div class="noise"></div><div id="flash"></div><div id="omen"></div><div id="terminal"><button id="closeTerminal">CERRAR</button><div id="termText">MEMEVERSO BIOS v0.0.0.0<br>buscando sentido...<br>sentido no encontrado.<br><span id="cursor"></span></div></div>
+<header><div class="logo">MEMEVerso</div><div style="display:flex;align-items:center;gap:10px"><button class="audio-toggle" id="soundBtn" aria-label="Activar o desactivar sonido">♫ AUDIO: ON</button>
+<button class="audio-toggle" id="settingsBtn" aria-haspopup="dialog" aria-controls="settingsModal">⚙ AJUSTES</button>
+<button class="audio-toggle" id="fullscreenBtn" aria-label="Activar pantalla completa">⛶ PANTALLA</button>
+<div class="status" id="status">SERVIDOR: SOSPECHOSO</div></div></header>
+<div id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+ <div class="settings-card">
+  <div class="settings-title"><span id="settingsTitle">⚙ AJUSTES DEL SISTEMA</span><button class="secondary" id="closeSettings" aria-label="Cerrar ajustes">✕</button></div>
+  <div class="setting-row"><label for="volumeRange">VOLUMEN DE EFECTOS</label><input id="volumeRange" type="range" min="0" max="100" value="65"></div>
+  <div class="setting-row"><label for="muteCheck">SILENCIAR TODO</label><input id="muteCheck" type="checkbox"></div>
+  <div class="setting-row"><span>PANTALLA COMPLETA</span><button class="secondary" id="settingsFullscreen">ACTIVAR</button></div>
+  <div class="setting-actions"><button class="primary" id="saveSettings">LISTO</button></div>
+ </div>
+</div>
+<main>
+  <div class="eyebrow">PROTOCOLO 00 // NO EXISTE UN TUTORIAL</div>
+  <h1>¿QUÉ <span>ESTÁ</span><br> PASANDO.</h1>
+  <p class="intro">Bienvenido al <b>MEMEVerso</b>. Explora la habitación, pulsa objetos y combina pistas. Si encuentras una llave, no preguntes qué abre. <br><span style="color:#716c7a">[ CONSEJO OFICIAL: el cursor sabe más que tú ]</span></p>
+
+  <section class="panel" id="roomPanel" style="margin-top:28px">
+    <div class="panel-head"><span id="roomName">UBICACIÓN: SALA DE ESPERA PARA COSAS QUE NO EXISTEN</span><span id="roomStatus">5 OBJETOS SOSPECHOSOS</span></div>
+    <div id="room" style="position:relative;min-height:260px;overflow:hidden;background:linear-gradient(180deg,#161523,#09090d);border-bottom:1px solid #ffffff24">
+      <div style="position:absolute;left:0;right:0;bottom:0;height:24%;background:repeating-linear-gradient(90deg,#171620 0 70px,#1d1b28 70px 72px);border-top:2px solid #343044"></div>
+      <button class="hotspot" data-object="poster" title="Examinar póster" style="position:absolute;left:8%;top:16%;font-size:35px;background:transparent;color:inherit;padding:5px">🖼️</button>
+      <button class="hotspot" data-object="cabinet" title="Examinar archivador" style="position:absolute;left:35%;bottom:22%;font-size:46px;background:transparent;color:inherit;padding:5px">🗄️</button>
+      <button class="hotspot" data-object="plant" title="Examinar planta" style="position:absolute;right:18%;bottom:22%;font-size:44px;background:transparent;color:inherit;padding:5px">🪴</button>
+      <button class="hotspot" data-object="vent" title="Examinar rejilla" style="position:absolute;right:8%;top:13%;font-size:34px;background:transparent;color:inherit;padding:5px">▦</button>
+      <button class="hotspot" data-object="floor" title="Examinar mancha" style="position:absolute;left:58%;bottom:7%;font-size:22px;background:transparent;color:#ff3d9a;padding:5px">◉</button>
+      <div id="sceneCaption" style="position:absolute;left:12px;bottom:8px;color:#8d8998;font:10px monospace;pointer-events:none">PULSA LOS OBJETOS. NO TODOS QUIEREN SER ENCONTRADOS.</div>
+    </div>
+    <div class="controls" style="align-items:center"><button class="secondary" id="inventoryBtn">REVISAR BOLSILLOS</button><button class="secondary" id="mapBtn">¿HAY OTRA SALA?</button><button class="secondary" id="zoneBtn">MAPA DE LUGARES</button><span class="tiny" id="sceneHint" style="flex:1;min-width:150px">Pista: el póster está torcido por una razón.</span></div>
+  </section>
+  <section class="panel" id="puzzlePanel" style="margin-top:14px">
+    <div class="panel-head"><span>OBJETO EN PRIMER PLANO</span><span id="inspectState">NADA SELECCIONADO</span></div>
+    <div style="padding:18px;display:flex;gap:14px;align-items:flex-start"><div id="inspectIcon" style="font-size:42px;min-width:52px;text-align:center">❔</div><div style="flex:1"><div id="inspectTitle" style="font-weight:900;margin-bottom:6px">Examina algo</div><div id="inspectText" class="tiny">Hay cosas que puedes recoger, otras que necesitan un objeto y una que solo funciona si la insultas educadamente.</div><div id="inspectActions" class="controls" style="padding:12px 0 0;border:0"></div></div></div>
+  </section>
+
+
+  <section class="panel" id="zonePanel" style="margin-top:14px;display:none">
+    <div class="panel-head"><span>MAPA INCOMPLETO // EL EDIFICIO NO CABE EN SÍ MISMO</span><span id="zoneCount">1/6 LUGARES</span></div>
+    <div id="zoneCards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;padding:14px"></div>
+    <div class="tiny" style="padding:0 14px 14px">Algunas ubicaciones solo aparecen cuando el lugar decide que ya estás preparado. El mapa no está de acuerdo consigo mismo.</div>
+  </section>
+
+  <section class="panel" id="fileCabinet">
+    <div class="panel-head"><span>ARCHIVO DE DOCUMENTOS NO SOLICITADOS</span><span id="fileCount">9 FICHEROS</span></div>
+    <div class="file-grid" id="fileGrid"></div>
+    <div class="controls"><button class="secondary" id="generateTxtBtn">GENERAR TXT ALEATORIO</button><button class="secondary" id="downloadAllBtn">DESCARGAR PAQUETE DE TEXTO</button></div>
+  </section>
+
+  <div class="layout">
+    <section class="panel">
+      <div class="panel-head"><span>ENTIDAD ACTIVA // <span id="entityId">???</span></span><span id="mood">ESTÁ MIRANDO</span></div>
+      <div class="screen" id="screen">
+        <div id="entity">🗿</div>
+        <div id="message">El señor piedra ha detectado tu aura de martes.</div>
+        <div id="submessage">Es jueves en algún lugar. Eso lo empeora.</div>
+      </div>
+      <div class="controls">
+        <button class="primary" id="doBtn">HACER ALGO (?)</button>
+        <button class="secondary" id="talkBtn">DECIR ALGO</button>
+        <button class="secondary" id="runBtn">HUÍR</button>
+      </div>
+    </section>
+    <aside class="side">
+      <section class="panel stats">
+        <div class="panel-head" style="padding:0 0 8px">ESTADÍSTICAS FALSAS</div>
+        <div class="statline"><span>CAOS ACUMULADO</span><strong id="chaos">000</strong></div>
+        <div class="statline"><span>QUESO CUÁNTICO</span><strong id="cheese">0 g</strong></div>
+        <div class="statline"><span>DEUDA CON EL VACÍO</span><strong id="debt">-3,50 €</strong></div>
+        <div class="statline"><span>RESPETO DEL GANSO</span><strong id="goose">???</strong></div>
+        <p class="tiny">Los números son orientativos y legalmente imaginarios.</p>
+        <div class="inventory" id="inventory"><span class="chip">bolsillo húmedo</span></div>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><span>REGISTRO DE INCIDENTES</span><span>LIVE-ish</span></div>
+        <div class="log" id="log"><p>&gt; conexión establecida con la nada</p><p>&gt; la nada te ha bloqueado</p><p>&gt; intentando no pensar...</p></div>
+      </section>
+    </aside>
+  </div>
+  <div class="footer"><span>MEMEVerso build 0.0.∞ // propiedad de nadie</span><span id="clock">HORA LOCAL: --:--:--</span><span>ALT + M = ¿?</span></div>
+</main>
+<div id="helperDock" aria-live="polite">
+ <div class="helper-head"><span>◈ AYUDANTE v0.∞ // 1.200+ FRASES</span><button id="helperMin" title="Minimizar ayudante">—</button></div>
+ <div id="helperBody">
+  <div class="helper-face" id="helperFace">🤖</div>
+  <div id="helperSpeech">¡Hola! Soy AYUDANTE. Te guiaré por la página y, a cambio, fingiré que todo esto es normal.</div>
+  <div class="helper-meter"><div id="helperMeterFill"></div></div>
+  <div class="helper-buttons">
+   <button id="helperHint">DAME UNA PISTA</button><button id="helperPrank">MOLESTAR</button><button id="helperNote">NOTA TXT</button><button id="helperVideo">¿QUÉ ES ESO?</button><button id="helperForbidden">NO PULSAR</button>
+  </div>
+ </div>
+</div>
+<div id="helperToast" role="status"><div id="toastText"></div><div style="text-align:right;margin-top:10px"><button id="toastClose">DEJAR DE EXISTIR</button></div></div>
+<div id="chaosAd" role="dialog" aria-label="Anuncio completamente innecesario"><span class="ad-label">ANUNCIO // NO VERIFICADO</span><button id="adClose" style="float:right;color:#101015;background:transparent;border-color:#101015">✕</button><div class="ad-title" id="adTitle">¡COMPRA UN MARTES!</div><div id="adText">El martes de segunda mano tiene un 3% más de martes.</div><div class="ad-actions"><button id="adAccept">ME INTERESA (MENTIRA)</button><button id="adReport">DENUNCIAR AL GANSO</button></div></div>
+<div id="floatingGremlin" title="Pulsa para atraparme" role="button" tabindex="0">🪿</div>
+<div id="videoJumpscare" role="dialog" aria-modal="true" aria-label="Vídeo sorpresa">
+ <div class="video-card"><div class="video-head"><span>⚠ TRANSMISIÓN NO SOLICITADA // AYUDANTE TV</span><button id="videoClose">CERRAR VENTANA</button></div>
+ <video id="rickVideo" controls playsinline preload="none"></video>
+ <div class="video-foot" id="videoMessage">El ayudante ha secuestrado el reproductor. El botón cerrar sigue funcionando.</div></div>
+</div>
+<div id="secret">HAS ENCONTRADO EL BOTÓN QUE NO EXISTE.<br><span style="font-size:.35em">Ahora vuelve a fingir normalidad.</span><br><button onclick="document.getElementById('secret').classList.remove('show')" style="margin:25px auto;background:#111;color:#d6ff00">ACEPTAR LA REALIDAD</button></div>
+<script src="./media-config.js"></script>
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const entities=[
+ ['🗿','El señor piedra ha detectado tu aura de martes.','Es jueves en algún lugar. Eso lo empeora.','ESTÁ MIRANDO'],
+ ['🦆','Un pato te ha demandado por difamación acuática.','Tu abogado es una tostadora con antecedentes.','EN PROCESO'],
+ ['🧃','El zumo sabe tu historial de búsqueda.','No lo niegues. La pajita ya ha declarado.','SEDIENTO'],
+ ['🧍','Este señor no estaba aquí hace un segundo.','No le mires los zapatos.','INQUIETANTEMENTE NORMAL'],
+ ['🧀','El queso ha empezado a emitir en FM.','En la frecuencia 104.7 suena tu infancia al revés.','SINTONIZANDO'],
+ ['🐸','La rana te ofrece un trabajo sin sueldo.','Beneficios: una piedra y acceso al pantano premium.','RECLUTANDO'],
+ ['🧠','Tu cerebro ha abierto 47 pestañas.','Una reproduce música de ascensor desde 2009.','SOBRECARGADO'],
+ ['🪑','La silla reclama ser el protagonista.','Por fin alguien con respaldo.','PROTAGONISTA'],
+ ['👁️','Algo ha parpadeado dentro de tu pantalla.','Probablemente tú. Probablemente.','PARPADEANDO'],
+ ['🦐','Un camarón te susurra: «ya casi es miércoles».','No sabes qué significa, pero tienes miedo.','PROFÉTICO'],
+ ['🧙‍♂️','El mago te convierte en archivo .zip.','Dentro hay 3 fotos borrosas y un recibo.','COMPRIMIENDO'],
+ ['🚪','La puerta lleva a la misma habitación.','Pero ahora hay otra puerta que te está juzgando.','CERRADA']
+];
+const actions=[
+ ['Has pulsado el botón. El botón ha pulsado de vuelta.','Se te concede 1 (un) átomo de autoridad.'],
+ ['Una voz dice «¡MODO CROQUETA!» y no pasa nada.','Sin embargo, algo ha cambiado en el recibo.'],
+ ['El universo se ha actualizado. No se han corregido errores.','Nuevos errores: 6. Mejoras: una pegatina.'],
+ ['Has encontrado un tutorial. Solo pone «no».','Lo entiendes perfectamente. Eso te preocupa.'],
+ ['La realidad hace un ruido de Windows XP.','Tu alma ha guardado una copia de seguridad.'],
+ ['Te han dado un diploma en cosas que no importan.','Está firmado por un ganso.'],
+ ['Un NPC te pregunta si tienes un minuto para hablar de las alcachofas.','Ahora tienes una misión secundaria involuntaria.'],
+ ['Has girado la cámara 2 grados. El lore se ha duplicado.','El departamento de lore pide que pares.'],
+ ['Has sacrificado una miga al algoritmo.','El algoritmo exige pan de masa madre.'],
+ ['Un pensamiento intrusivo obtiene rango militar.','Ahora manda él.']
+];
+const replies=[
+ 'No era esa la contraseña, pero el sistema te deja pasar.',
+ 'La entidad anota tu respuesta en una libreta mojada.',
+ 'El silencio responde: «jaja, literalmente»',
+ 'Una alarma lejana suena en un IKEA que no existe.',
+ 'Has desbloqueado una emoción nueva: sospecha administrativa.',
+ 'El juego te mira como si hubieras dicho algo racista contra las cucharas.',
+ 'Se oye un aplauso solitario desde el interior de una pared.',
+ 'La respuesta ha sido enviada al Ministerio de Cosas Raras.'
+];
+const nouns=['una factura con dientes','el ganso diplomático','un plátano judicial','la croqueta infinita','un archivo llamado final_FINAL_7','el sótano emocional','una cucharilla hostil','el bebé del router','una dimensión de oferta','el caballo de recursos humanos'];
+let chaos=0, cheese=0, debt=-3.5, goose=0, count=0, inv=['bolsillo húmedo'], talkCount=0;
+function pick(a){return a[Math.floor(Math.random()*a.length)]}
+function log(t){const p=document.createElement('p');p.textContent='> '+t;$('log').prepend(p);while($('log').children.length>8)$('log').lastChild.remove()}
+function glitch(){const s=$('screen');s.classList.remove('glitch');void s.offsetWidth;s.classList.add('glitch');$('flash').classList.remove('pop');void $('flash').offsetWidth;$('flash').classList.add('pop')}
+function update(){ $('chaos').textContent=String(chaos).padStart(3,'0');$('cheese').textContent=cheese+' g';$('debt').textContent=(debt<0?'-':'')+Math.abs(debt).toFixed(2).replace('.',',')+' €';$('goose').textContent=goose>6?'TE RESPETA':goose< -3?'TE HA BLOQUEADO':'???';$('entityId').textContent='MV-'+String((count*17+43)%999).padStart(3,'0');$('status').textContent=chaos>30?'SERVIDOR: GRITANDO':chaos>12?'SERVIDOR: INESTABLE':'SERVIDOR: SOSPECHOSO';}
+function showEntity(){const e=pick(entities);$('entity').textContent=e[0];$('message').textContent=e[1];$('submessage').textContent=e[2];$('mood').textContent=e[3];}
+function item(){const n=pick(nouns);if(!inv.includes(n)){inv.push(n);$('inventory').innerHTML='';inv.slice(-6).forEach((x,i)=>{const s=document.createElement('span');s.className='chip '+(i===inv.slice(-6).length-1?'new':'');s.textContent=x;$('inventory').append(s)});log('objeto añadido: '+n)}}
+function act(){count++;chaos+=Math.floor(Math.random()*4)+1;cheese+=Math.random()<.65?Math.floor(Math.random()*9)+1:0;debt+=(Math.random()-.6)*2;goose+=Math.random()<.25?1:Math.random()<.3?-1:0;const a=pick(actions);$('message').textContent=a[0];$('submessage').textContent=a[1];$('entity').textContent=pick(['🗿','🦆','🧃','🫥','🧀','🐸','🧠','🪑','👁️','🦐','🧙‍♂️','🚪']);$('mood').textContent=pick(['NO ES UN BUG','PENSANDO EN PAN','TE HA VISTO','404: SENTIDO','EN SU ERA']);log(pick(['acción no reconocida','se ha movido una sombra','el ganso toma nota','se ha perdido un martes','la física ha pedido vacaciones','nueva notificación de la nada']));if(Math.random()<.42)item();if(Math.random()<.2)glitch();if(chaos>18&&Math.random()<.35){document.body.style.filter='hue-rotate('+Math.floor(Math.random()*360)+'deg)';setTimeout(()=>document.body.style.filter='',450)}update();if(count===13){$('message').textContent='Has hecho 13 cosas. El número 13 te ha bloqueado.';glitch()}if(count===33){$('secret').classList.add('show');log('error: el jugador sabe demasiado')}}
+function talk(){talkCount++;const r=pick(replies);$('message').textContent=r;$('submessage').textContent='(respuesta recibida por el departamento de murmullos)';$('entity').textContent=pick(['🗿','🦆','🧃','🧠','🫠']);$('mood').textContent='ESCUCHANDO';chaos+=2;goose+=Math.random()<.5?1:-1;log('has dicho algo. nadie lo ha entendido.');if(talkCount%3===0)item();update()}
+function run(){chaos+=5;debt+=2;$('entity').textContent='🏃';$('message').textContent=pick(['Has huido con éxito. El fondo también venía contigo.','Corres en el sitio. La distancia emocional aumenta.','Escapas al menú principal, que es la misma habitación.','El ganso te alcanza en términos legales.']);$('submessage').textContent='La huida ha sido facturada.';$('mood').textContent='VELOCIDAD CUESTIONABLE';log('huida registrada. tasa administrativa: +2€');glitch();update()}
+
+// Audio procedural: sonidos generados localmente, sin archivos externos.
+let audioOn=true, audioVolume=0.65, audioCtx=null, ambientTimer=null, audioStarted=false;
+try{audioOn=localStorage.getItem('meme-audio')!=='off';audioVolume=Math.max(0,Math.min(1,Number(localStorage.getItem('meme-volume')??0.65)))}catch(e){}
+function ctx(){if(!audioCtx){const AC=window.AudioContext||window.webkitAudioContext;if(AC)audioCtx=new AC()}if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();return audioCtx}
+function tone(freq=220,dur=.12,type='sine',vol=.035,slide=0){if(!audioOn)return;const c=ctx();if(!c)return;const o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(freq,c.currentTime);if(slide)o.frequency.exponentialRampToValueAtTime(Math.max(20,freq+slide),c.currentTime+dur);g.gain.setValueAtTime(vol*audioVolume,c.currentTime);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+dur);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+dur+.02)}
+function noiseBurst(dur=.16,vol=.035){if(!audioOn)return;const c=ctx();if(!c)return;const n=Math.floor(c.sampleRate*dur),b=c.createBuffer(1,n,c.sampleRate),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*(1-i/n);const s=c.createBufferSource(),g=c.createGain();s.buffer=b;g.gain.value=vol*audioVolume;s.connect(g);g.connect(c.destination);s.start()}
+function sfx(kind){if(!audioOn)return;const patterns={click:()=>{tone(420,.05,'square',.025,-120)},weird:()=>{tone(170,.28,'sawtooth',.035,680);setTimeout(()=>tone(61,.4,'triangle',.04,-30),90);setTimeout(()=>noiseBurst(.12,.025),180)},talk:()=>{tone(290,.08,'triangle');setTimeout(()=>tone(190,.12,'triangle',.025,-80),90)},run:()=>{tone(110,.25,'sawtooth',.04,-80);setTimeout(()=>noiseBurst(.22,.05),50)},secret:()=>{[330,247,415,92].forEach((f,i)=>setTimeout(()=>tone(f,.22,'square',.035),i*110))},txt:()=>{tone(800,.05,'square',.02);setTimeout(()=>tone(1200,.08,'square',.025),70)}}; (patterns[kind]||patterns.click)()}
+function omen(msg,ms=2600){const el=$('omen');el.textContent=msg;el.classList.add('on');clearTimeout(omen.timer);omen.timer=setTimeout(()=>el.classList.remove('on'),ms)}
+const txtBits=[
+'NO ABRAS LA NEVERA A LAS 03:17. YA ESTÁ ABIERTA.',
+'MEME CLASIFICADO: el perro que sabe demasiado. 🐕‍🦺',
+'felicidades!! has ganado 0,00003 permisos de existir',
+'INFORME: el suelo vuelve a estar debajo. sospechoso.',
+'POV: eres una pestaña del navegador y tu padre es el router.',
+'El ganso ha votado. No puedes saber el resultado.',
+'ERROR 418: soy una tetera y no pienso colaborar.',
+'la luna tiene turno de noche y está hartísima',
+'RECUERDA: nunca confíes en una escalera con opiniones.',
+'████ ARCHIVO CORRUPTO ████ te queda bien ese pensamiento',
+'Un meme aleatorio: 🧍‍♂️   🧍‍♂️   🧍‍♂️   (la reunión pudo ser un email)',
+'NOTA PARA QUIEN ENCUENTRE ESTO: no éramos nosotros.',
+'Has recibido una notificación del departamento de migas.',
+'El universo solicita que reinicies tu concepto de martes.',
+'¿Sabías que el botón de cerrar también tiene sentimientos? No.'
+];
+function downloadTxt(){const phrase=pick(txtBits),blob=new Blob([`MEMEVerso // documento espontáneo\\nID: ${Math.random().toString(36).slice(2,9).toUpperCase()}\\n\\n${phrase}\\n\\nNo respondas a este archivo.\\n`],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=pick(['nota_que_no_pediste.txt','memoria_dañada.txt','URGENTE_lee_esto.txt','meme_certificado.txt','no_es_un_virus.txt','factura_del_vacio.txt']);document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);sfx('txt');omen('SE HA MATERIALIZADO UN DOCUMENTO. NO PREGUNTES.',3200);log('se ha filtrado un archivo de texto al mundo real');}
+let weirdEventCount=0;
+function randomIntrusion(){if(!audioOn && Math.random()<.5){};const events=[
+()=>{omen('ALGUIEN HA ESCRITO «hola» EN LA PARED INTERNA DE TU PANTALLA.');sfx('weird');log('mensaje recibido desde el lado de atrás')},
+()=>{document.title=pick(['MEMEVerso.exe','NO MIRES EL TAB','MEMEVerso (sin testigos)','el ganso está escribiendo…']);setTimeout(()=>document.title='MEMEVerso.exe — no preguntes',4500);omen('EL TÍTULO DE ESTA PÁGINA HA CAMBIADO SOLO.');sfx('weird')},
+()=>{const e=$('entity');e.textContent='👁️';$('message').textContent='No has pulsado nada. Lo sabemos.';$('submessage').textContent='No vuelvas a comprobarlo.';$('mood').textContent='NO FUI YO';sfx('weird');glitch();log('actividad registrada sin interacción')},
+()=>{downloadTxt()},
+()=>{ $('terminal').classList.add('open');$('termText').innerHTML='MEMEVERSO BIOS v0.0.0.0<br>usuario: probablemente tú<br>objetivo: [REDACTADO]<br>estado del sentido: <b>NO MONTADO</b><br>consejo: prueba a pulsar cosas que no son botones.<br><span id="cursor"></span>';sfx('secret');log('terminal fantasma abierta')},
+()=>{document.body.style.transform='rotate(.25deg)';setTimeout(()=>document.body.style.transform='',350);omen('LA PÁGINA SE HA INCLINADO PARA ESCUCHARTE.');sfx('weird')},
+()=>{const old=$('debt').textContent;$('debt').textContent='¿? €';setTimeout(()=>{$('debt').textContent=old},1900);omen('EL BANCO DEL VACÍO HA CONSULTADO TU PERFIL.');sfx('weird')}
+];pick(events)();weirdEventCount++}
+
+
+// Aventura point-and-click ampliada: varias zonas, objetos persistentes, combinaciones y misterios.
+const invItems=[];
+const world={key:false,note:false,fuse:false,coin:false,openedCabinet:false,ventOpen:false,portal:false,room:0,pass:false,
+ zones:{waiting:true,impossible:false,archive:false,roof:false,basement:false,moon:false},
+ clues:0,phoneAnswered:false,boxOpened:false,mirrorSeen:false,clockFixed:false,radioOn:false,doorKnocked:0,catFed:false,shadowNamed:false};
+let currentZone='waiting';
+function addItem(name,icon){if(!invItems.includes(name)){invItems.push(name);const s=document.createElement('span');s.className='chip new';s.textContent=icon+' '+name;$('inventory').append(s);log('objeto obtenido: '+name);sfx('txt');renderZones()}}
+function hasItem(name){return invItems.includes(name)}
+function inspectSet(icon,title,text,actions=[]){$('inspectIcon').textContent=icon;$('inspectTitle').textContent=title;$('inspectText').textContent=text;$('inspectState').textContent='EXAMINANDO';const area=$('inspectActions');area.innerHTML='';actions.forEach(([label,fn])=>{const b=document.createElement('button');b.className='secondary';b.textContent=label;b.onclick=()=>{sfx('click');fn()};area.appendChild(b)})}
+function result(text){$('inspectText').textContent=text;log(text)}
+const zoneData={
+ waiting:{icon:'🪑',name:'Sala de espera',desc:'La habitación inicial. Huele a lluvia interior.',unlock:()=>true},
+ impossible:{icon:'🚪',name:'Detrás de la pared',desc:'Un lugar que ocupa menos espacio que su sombra.',unlock:()=>world.portal},
+ archive:{icon:'📚',name:'Archivo de los martes',desc:'Expedientes de cosas que aún no han sucedido.',unlock:()=>world.zones.archive},
+ roof:{icon:'🌙',name:'Azotea interior',desc:'El cielo está debajo de tus zapatos.',unlock:()=>world.zones.roof},
+ basement:{icon:'🕳️',name:'Sótano húmedo',desc:'La escalera baja hacia una idea.',unlock:()=>world.zones.basement},
+ moon:{icon:'🌕',name:'La luna de mantenimiento',desc:'Solo abre cuando el reloj se equivoca.',unlock:()=>world.zones.moon}
+};
+function renderZones(){
+ const panel=$('zonePanel'),cards=$('zoneCards');if(!cards)return;cards.innerHTML='';
+ let unlocked=0;Object.entries(zoneData).forEach(([id,z])=>{const ok=z.unlock();if(ok)unlocked++;const b=document.createElement('button');b.className='zone-card '+(!ok?'locked':id===currentZone?'current':'available');b.innerHTML='<span class="zicon">'+z.icon+'</span><span class="zname">'+z.name+'</span><span class="zdesc">'+(ok?z.desc:'[UBICACIÓN NO CONFIRMADA]')+'</span>';b.disabled=!ok;b.onclick=()=>enterZone(id);cards.append(b)});
+ $('zoneCount').textContent=unlocked+'/6 LUGARES';
+}
+function setRoomTitle(name,status,background){$('roomName').textContent='UBICACIÓN: '+name.toUpperCase();$('roomStatus').textContent=status;$('room').style.background=background;$('sceneCaption').textContent='PULSA LOS OBJETOS. NO TODOS QUIEREN SER ENCONTRADOS.'}
+function addHotspot(id,icon,label,left,top,fn){
+ const b=document.createElement('button');b.className='hotspot';b.dataset.extra=id;b.title=label;b.textContent=icon;b.style.cssText=`position:absolute;left:${left};top:${top};font-size:36px;background:transparent;color:inherit;padding:5px`;b.onclick=()=>{sfx('click');fn()};$('room').append(b);return b
+}
+function clearExtraHotspots(){document.querySelectorAll('[data-extra]').forEach(x=>x.remove())}
+function enterZone(id){
+ currentZone=id;world.room=id==='impossible'?1:0;$('zonePanel').style.display='none';clearExtraHotspots();
+ document.querySelectorAll('.hotspot[data-object]').forEach(b=>b.style.display=id==='waiting'?'block':'none');
+ $('mapBtn').textContent='VOLVER A LA SALA';$('mapBtn').onclick=()=>enterZone('waiting');
+ if(id==='waiting'){
+  setRoomTitle('Sala de espera para cosas que no existen','5 OBJETOS SOSPECHOSOS','linear-gradient(180deg,#161523,#09090d)');
+  inspectSet('🪑','La sala de espera','Hay un póster, un archivador, una planta, una rejilla y una mancha. En alguna parte, un teléfono espera que cometas un error.');
+ }else if(id==='impossible'){
+  setRoomTitle('Detrás de la pared','AIRE: OPCIONAL','radial-gradient(circle at 50% 50%,#303024,#050507 70%)');
+  inspectSet('🚪','La habitación imposible','Una puerta, una caja de cartón y un teléfono que lleva sonando desde antes de que existieras.',[
+   ['ABRIR CAJA',()=>{if(!world.boxOpened){world.boxOpened=true;addItem('Ojo de repuesto','👁️');world.zones.archive=true;result('Dentro hay un ojo envuelto en una factura: «NO DEVOLVER». En el reverso hay un sello del Archivo de los martes. El mapa se ha actualizado.')}else result('La caja contiene un dibujo de sí misma. El dibujo está decepcionado.')}],
+   ['CONTESTAR TELÉFONO',()=>{world.phoneAnswered=true;omen('VOZ: «LA LLAVE NO ABRÍA LA PUERTA. ABRÍA EL RECUERDO DE LA PUERTA».',4000);sfx('weird');addItem('Recuerdo de puerta','🚪');world.zones.basement=true;result('Una voz te llama por un nombre que no es el tuyo. Al colgar, escuchas pasos en el piso de abajo. El mapa tiembla.')}],
+   ['TOCAR LA PARED',()=>{world.zones.roof=true;addItem('Polvo de techo','✨');result('La pared está caliente y tiene pulso. Algo arriba responde con tres golpes. Nueva ubicación detectada: Azotea interior.')}]
+  ]);
+  addHotspot('box','📦','Caja de cartón','18%','36%',()=>inspectSet('📦','Caja de cartón','La caja parece contener un objeto que está pensando.',[['ABRIR',()=>{if(!world.boxOpened){world.boxOpened=true;addItem('Ojo de repuesto','👁️');world.zones.archive=true;result('Ojo, factura y sello del Archivo de los martes.')}else result('Solo queda el dibujo de la caja.')}]]));
+  addHotspot('phone','☎️','Teléfono imposible','53%','27%',()=>inspectSet('☎️','Teléfono','No tiene cable. Suena desde el interior del auricular.',[['CONTESTAR',()=>{world.phoneAnswered=true;addItem('Recuerdo de puerta','🚪');world.zones.basement=true;result('«La escalera está debajo del sonido». La llamada termina antes de empezar.')}]]));
+ }else if(id==='archive'){
+  setRoomTitle('Archivo de los martes','EXPEDIENTES: 0/∞','linear-gradient(135deg,#25202a,#08080d)');
+  inspectSet('📚','Archivo de los martes','Los archivadores están etiquetados con fechas futuras. Uno tiene tu inicial, aunque aquí no se ha escrito tu nombre.',[
+   ['BUSCAR TU EXPEDIENTE',()=>{if(!world.mirrorSeen){world.mirrorSeen=true;addItem('Ficha de visitante','🪪');world.clues++;result('La ficha tiene tu huella, pero la fecha es mañana. En el apartado «motivo de visita» pone: VOLVER.')}else result('El expediente está vacío, excepto por una foto de esta habitación tomada desde dentro del cajón.')}],
+   ['TIRAR DE LA PALANCA ROJA',()=>{world.zones.roof=true;world.zones.basement=true;sfx('weird');result('Todo el archivo se mueve seis centímetros a la izquierda. Se abre una escalera hacia abajo y una trampilla hacia arriba.')}],
+   ['LEER EL CARTEL',()=>{world.clues++;result('«NO ORDENE LOS DOCUMENTOS POR NOMBRE. ELLOS SE DAN CUENTA». Debajo alguien escribió: 6-1-6-?')}]
+  ]);
+  addHotspot('drawer','🗃️','Cajón sin tirador','25%','34%',()=>{if(hasItem('Ojo de repuesto')){world.zones.moon=true;addItem('Etiqueta lunar','🌕');result('El ojo mira dentro del cajón y el cajón se abre. Encuentras una etiqueta que dice «MANTENIMIENTO LUNAR».')}else result('El cajón no tiene tirador. Parece que espera que le prestes un ojo.')});
+ }else if(id==='roof'){
+  setRoomTitle('Azotea interior','GRAVEDAD: EN PRÁCTICAS','linear-gradient(180deg,#181a34,#08080d 70%)');
+  inspectSet('🌙','Azotea interior','El cielo está bajo tus pies. Las antenas crecen hacia abajo y la luna parece un botón de ascensor.',[
+   ['PULSAR LA LUNA',()=>{if(world.clockFixed||world.phoneAnswered){world.zones.moon=true;result('La luna se abre como una trampilla. Dentro hay una etiqueta de mantenimiento con tu letra.')}else{world.doorKnocked++;result('La luna hace «ding». Una voz responde: «horario de mantenimiento: cuando nadie mira».')} }],
+   ['AJUSTAR ANTENA',()=>{world.radioOn=true;addItem('Frecuencia 104.7','📻');result('La radio capta una voz que cuenta hacia atrás desde el número 6. Al llegar a cero, susurra: «no era una cuenta atrás».');world.zones.basement=true;}],
+   ['MIRAR HACIA ABAJO',()=>{world.zones.basement=true;result('Ves una escalera que desciende hacia la sombra de tus zapatos. Ahora existe un sótano.')}]
+  ]);
+  addHotspot('antenna','📡','Antena','44%','30%',()=>{world.radioOn=true;addItem('Frecuencia 104.7','📻');result('La antena te sintoniza a ti. En la radio suena tu propia respiración, cinco segundos antes.')});
+ }else if(id==='basement'){
+  setRoomTitle('Sótano húmedo','HUMEDAD: PERSONAL','linear-gradient(180deg,#0c2022,#08080d)');
+  inspectSet('🕳️','Sótano húmedo','La escalera termina en una puerta pequeña. Hay agua en el techo y una silla mirando a la pared.',[
+   ['GOLPEAR LA PUERTA',()=>{world.doorKnocked++;if(world.doorKnocked>=2){world.zones.moon=true;addItem('Pieza de reloj','⏱️');result('Al segundo golpe, la puerta abre hacia una noche sin estrellas. Una pieza de reloj cae al suelo.')}else result('Tres golpes responden desde el otro lado. Tú solo has dado uno.')}],
+   ['GIRAR LA SILLA',()=>{world.shadowNamed=true;addItem('Sombra doblada','🌑');result('La silla está ocupada por tu sombra. La doblas y te la guardas. Ahora tu sombra está un poco más corta.')}],
+   ['REVISAR EL DESAGÜE',()=>{if(hasItem('Moneda de 0 céntimos')){world.zones.archive=true;result('El desagüe acepta la moneda y escupe un recibo con la ubicación exacta del archivo: «donde guardan los martes».')}else result('Algo al otro lado del desagüe te pide una moneda y tu opinión sobre los peces.')}]
+  ]);
+  addHotspot('drain','🌀','Desagüe','60%','62%',()=>{if(hasItem('Moneda de 0 céntimos')){world.zones.archive=true;result('El desagüe escupe un recibo: «donde guardan los martes».')}else result('El desagüe susurra: «una moneda, por favor».')});
+ }else if(id==='moon'){
+  setRoomTitle('La luna de mantenimiento','TURNO NOCTURNO','radial-gradient(circle at 50% 35%,#6b657d,#171425 34%,#050507 72%)');
+  inspectSet('🌕','La luna de mantenimiento','Un cuarto de herramientas dentro de la luna. Un calendario tiene todos los días tachados excepto el que todavía no existe.',[
+   ['REPARAR EL RELOJ',()=>{world.clockFixed=true;addItem('Minuto prestado','⌛');result('El reloj vuelve a andar, pero el segundero va hacia la izquierda. En el cristal pone: «YA PUEDES IRTE. NO HAY SALIDA».')}],
+   ['ABRIR TAQUILLA 6',()=>{if(hasItem('Pieza de reloj')||world.pass){addItem('Llave del no-lugar','🗝️');world.clues++;result('La taquilla contiene una llave sin dientes y una foto de la sala inicial desde un ángulo imposible.')}else result('La taquilla pide una pieza de reloj o una contraseña que no recuerdas haber aprendido.')}],
+   ['LEER EL CALENDARIO',()=>{world.clues++;result('Todos los días están tachados menos «DÍA 0». La letra parece la tuya, pero está escrita al revés.')}]
+  ]);
+  addHotspot('locker','🔒','Taquilla 6','64%','38%',()=>{if(hasItem('Pieza de reloj')||world.pass){addItem('Llave del no-lugar','🗝️');result('La taquilla abre con un suspiro. La llave no tiene dientes.')}else result('La taquilla necesita una pieza de reloj o PATATA-6.')});
+ }
+ renderZones();log('ubicación actualizada: '+zoneData[id].name);
+}
+function inspectObject(id){
+ const obj={
+ poster:['🖼️','Póster de una playa','La playa está vacía. Si inclinas la cabeza, las palmeras forman la palabra «DEBAJO». El marco tiene algo suelto.',[['TIRAR DEL MARCO',()=>{if(!world.key){world.key=true;addItem('Llave blanda','🗝️');result('La llave parece hecha de goma. No debería abrir nada, lo cual la hace perfecta.')}else result('El marco ya ha entregado su secreto.')}]]],
+ cabinet:['🗄️','Archivador municipal','Tres cajones. El superior está cerrado con una cerradura de forma incorrecta. El inferior respira.',[['ABRIR CAJÓN SUPERIOR',()=>{if(world.key&&!world.openedCabinet){world.openedCabinet=true;world.note=true;world.fuse=true;addItem('Nota arrugada','📄');addItem('Fusible tibio','🔌');result('La nota dice: «LA REJILLA RECUERDA EL NÚMERO 6». Debajo hay un fusible tibio.')}else if(world.openedCabinet)result('Solo queda olor a fotocopiadora.');else result('Cerrado. Necesitas una llave que haya visto cosas.')}],['ESCUCHAR EL CAJÓN INFERIOR',()=>result('Desde dentro alguien susurra: «no soy un cajón». Dice que quiere una moneda.')]]],
+ plant:['🪴','Planta de oficina','Es de plástico, pero la tierra está húmeda. Una etiqueta tiene un número borrado.',[['HURGAR EN LA TIERRA',()=>{if(!world.coin){world.coin=true;addItem('Moneda de 0 céntimos','🪙');result('Encuentras una moneda que no representa ninguna cantidad conocida.')}else result('La planta pide privacidad.')}],['HABLARLE CON RESPETO',()=>{world.pass=true;result('La planta dice «gracias» con la voz de tu profesor de gimnasia. La etiqueta ahora pone 6.')}]]],
+ vent:['▦','Rejilla de ventilación','Seis tornillos, cinco dibujados con rotulador. Detrás se oye el sonido de un mar pequeño.',[['ABRIR REJILLA',()=>{if(world.fuse&&!world.ventOpen){world.ventOpen=true;world.portal=true;addItem('Diente de la habitación','🦷');world.zones.impossible=true;result('El fusible hace clic. La rejilla se abre hacia una habitación que no cabe en el edificio. Consigues un diente de pared.');$('mapBtn').textContent='ENTRAR POR LA REJILLA';renderZones()}else if(world.ventOpen)result('Ya está abierta. Al otro lado alguien ha puesto una alfombra.');else result('No cede. Quizá necesite energía. O una excusa convincente.')}]]],
+ floor:['◉','Mancha en el suelo','La mancha tiene forma de continente, si los continentes fueran una cara decepcionada.',[['PISAR LA MANCHA',()=>{chaos+=3;update();sfx('weird');result('La mancha hace «plop». Debajo del suelo alguien grita: «¡Ocupado!»')}],['USAR MONEDA',()=>{if(world.coin){world.pass=true;addItem('Contraseña PATATA-6','🔢');result('La moneda desaparece. La mancha te devuelve una contraseña: PATATA-6.')}else result('No tienes nada suficientemente inútil para ofrecer.')}]]]
+ }[id];
+ if(!obj)return;inspectSet(obj[0],obj[1],obj[2],obj[3]);$('sceneCaption').textContent='EXAMINANDO: '+obj[1].toUpperCase();
+}
+document.querySelectorAll('.hotspot[data-object]').forEach(b=>b.addEventListener('click',()=>{if(currentZone!=='waiting')return;inspectObject(b.dataset.object);b.classList.add('found');$('roomStatus').textContent='OBJETO REGISTRADO';sfx('click')}));
+$('inventoryBtn').addEventListener('click',()=>inspectSet('🎒','Tus bolsillos',invItems.length?invItems.map(x=>'• '+x).join('  |  '):'Solo tienes pelusa y una sospecha muy concreta.'));
+$('zoneBtn').addEventListener('click',()=>{$('zonePanel').style.display=$('zonePanel').style.display==='none'?'block':'none';renderZones();sfx('click')});
+$('mapBtn').addEventListener('click',()=>{if(currentZone!=='waiting'){enterZone('waiting');return}if(world.portal){enterZone('impossible')}else{omen('NO HAY OTRA SALA. TODAVÍA.');$('sceneHint').textContent='Pista: prueba la planta y revisa la rejilla.'}});
+
+renderZones();
+$('doBtn').addEventListener('click',()=>{sfx(Math.random()<.18?'weird':'click');act();if(Math.random()<.22)randomIntrusion()});
+$('talkBtn').addEventListener('click',()=>{sfx('talk');talk();if(Math.random()<.25)randomIntrusion()});
+$('runBtn').addEventListener('click',()=>{sfx('run');run();if(Math.random()<.3)randomIntrusion()});
+function refreshAudioUI(){$('soundBtn').textContent=audioOn?'♫ AUDIO: ON':'♫ AUDIO: OFF';$('muteCheck').checked=!audioOn;$('volumeRange').value=Math.round(audioVolume*100)}
+function setAudio(on){audioOn=on;try{localStorage.setItem('meme-audio',audioOn?'on':'off')}catch(e){}refreshAudioUI();if(audioOn){sfx('secret');omen('AUDIO RESTAURADO. O ESO DICE.')}}
+$('soundBtn').addEventListener('click',()=>setAudio(!audioOn));
+$('settingsBtn').addEventListener('click',()=>{$('settingsModal').classList.add('open');refreshAudioUI();$('closeSettings').focus();});
+function closeSettings(){$('settingsModal').classList.remove('open');$('settingsBtn').focus()}
+$('closeSettings').addEventListener('click',closeSettings);$('saveSettings').addEventListener('click',closeSettings);
+$('settingsModal').addEventListener('click',e=>{if(e.target===$('settingsModal'))closeSettings()});
+$('volumeRange').addEventListener('input',e=>{audioVolume=Number(e.target.value)/100;try{localStorage.setItem('meme-volume',String(audioVolume))}catch(err){}if(audioOn)sfx('click')});
+$('muteCheck').addEventListener('change',e=>setAudio(!e.target.checked));
+async function toggleFullscreen(){try{if(!document.fullscreenElement){await (document.documentElement.requestFullscreen?.());}else{await document.exitFullscreen?.()}}catch(e){omen('PANTALLA COMPLETA NO DISPONIBLE EN ESTE NAVEGADOR.')}updateFullscreenButton()}
+function updateFullscreenButton(){const label=document.fullscreenElement?'⛶ SALIR':'⛶ PANTALLA';$('fullscreenBtn').textContent=label;$('settingsFullscreen').textContent=document.fullscreenElement?'SALIR':'ACTIVAR'}
+$('fullscreenBtn').addEventListener('click',toggleFullscreen);$('settingsFullscreen').addEventListener('click',toggleFullscreen);document.addEventListener('fullscreenchange',updateFullscreenButton);
+refreshAudioUI();updateFullscreenButton(); 
+$('closeTerminal').addEventListener('click',()=>{$('terminal').classList.remove('open');sfx('click')});
+
+document.addEventListener('keydown',e=>{if(e.altKey&&e.key.toLowerCase()==='m'){$('secret').classList.add('show');sfx('secret');return} if(e.key==='Escape'){$('terminal').classList.remove('open');$('secret').classList.remove('show')} if(e.key.toLowerCase()==='t'){randomIntrusion();}if(e.key==='Enter'){act();return}if(e.key.toLowerCase()==='e')talk();if(e.key.toLowerCase()==='r')run()});
+function clock(){$('clock').textContent='HORA LOCAL: '+new Date().toLocaleTimeString('es-ES')};clock();setInterval(clock,1000);update();
+setTimeout(()=>{if(Math.random()<.65)omen('BIENVENIDO. ESTA PÁGINA NO FIGURA EN NINGÚN REGISTRO.',3000)},7000);
+setInterval(()=>{if(count>2&&Math.random()<.18)randomIntrusion()},28000);
+setInterval(()=>{if(audioOn&&count>4&&Math.random()<.14){tone(pick([55,73,91,131,277]),.45,'sine',.012,Math.random()*50-25)}},19000);
+setTimeout(()=>{if(count===0){$('submessage').textContent='Llevas aquí un rato. El señor piedra ha empezado a cobrar alquiler.';log('inactividad detectada. qué decepción.')}},18000);
+// Registro del service worker para mantener el juego disponible sin conexión.
+if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost'||location.hostname==='127.0.0.1')){
+ window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+}
+
+
+// === AYUDANTE: exceso de personalidad, cero autoridad real ===
+const helperLines=[
+ 'La pista es que debes pulsar objetos. La pista avanzada es que los objetos son objetos.',
+ 'El mapa no está completo. Yo tampoco, y mírame: contratado.',
+ 'Prueba a examinar el póster. No porque yo lo diga. Bueno, exactamente porque yo lo digo.',
+ 'Tu inventario contiene más misterios que objetos. Recursos humanos lo llama eficiencia.',
+ 'No pulses todos los botones a la vez. El sistema se pone nervioso. Yo me pongo nervioso. El ganso se pone abogado.',
+ 'Aviso: el suelo está abajo. De momento.',
+ 'Hay un archivo que falta. Si preguntas cuál, te diré que el 08. Si preguntas por qué, te cobraré.',
+ 'Has desbloqueado mi consejo número 2. El número 1 era no contratarme.',
+ 'Consejo profesional: guarda los .txt. Algunos tienen mejor memoria que el juego.',
+ 'Estoy aquí para ayudarte. También para ocupar el 12% de tu atención. Es mi KPI.',
+ 'No soy una ventana emergente. Soy una experiencia de usuario con piernas invisibles.',
+ 'El botón de cerrar anuncios está a la derecha. Esto no es una pista, es una prueba de coordinación.',
+ 'Te recomiendo mirar la pantalla. Ya lo estás haciendo. Excelente. Ascenso cancelado.',
+ 'Si aparece una oca flotante, púlsala. Tiene una hipoteca emocional.',
+ 'La habitación tiene secretos. Yo tengo una hoja de cálculo sobre esos secretos.'
+
+];
+ // Banco procedural de 1.200 frases distintas. Se genera localmente, sin red.
+ const helperSubjects=["el ganso de contabilidad", "la impresora del sótano", "tu sombra secundaria", "el martes portátil", "la cuchara sindicalizada", "un archivador con vértigo", "la luna de mantenimiento", "el comité de calcetines", "el ascensor horizontal", "la tostadora filosófica", "el señor piedra", "una cabra administrativa", "el botón que falta", "la planta con credenciales", "el pez del departamento legal", "la silla número cero", "el eco de tu contraseña", "la nube de recibos", "el fantasma de una pestaña cerrada", "el ascensor de bolsillo", "la carpeta llamada FINAL_FINAL", "un mosquito con doctorado", "el microondas ancestral", "la oca suplente", "el espejo de guardia", "el reloj sin jueves", "la puerta de repuesto", "el queso cuántico", "la alfombra diplomática", "un pixel en prácticas", "la ventanilla del vacío", "el archivista invisible", "la lámpara de recursos humanos", "la alarma de los pepinillos", "el caracol ejecutivo", "la copia de la copia", "el sótano emocional", "la calculadora mojada", "el teclado submarino", "la estatua que factura"];
+ const helperActions=["ha aprobado el presupuesto de niebla", "está negociando con un recuerdo prestado", "ha escondido tres dimensiones en un cajón", "solicita vacaciones del concepto de arriba", "ha cambiado todas las vocales por cucharas", "está doblando el espacio en formato A4", "ha declarado ilegal el silencio", "ha pedido una segunda opinión al polvo", "está aprendiendo a ladrar en código Morse", "ha archivado el olor de los miércoles", "ha denunciado al calendario por exceso de días", "está vendiendo sombras por gramos", "ha convocado una reunión dentro de otra reunión", "ha olvidado dónde dejó el concepto de aquí", "está falsificando certificados de gravedad", "ha puesto una reclamación contra la luz", "está ensayando una fuga de la realidad", "ha nombrado gerente a una migaja", "ha secuestrado la tecla de escape", "está construyendo un pasillo en miniatura", "ha reservado una mesa para el vacío", "está traduciendo gruñidos a impuestos", "ha actualizado su tristeza a versión premium", "está ocultando el norte debajo de una alfombra", "ha descubierto que el eco llega antes que la voz", "está pidiendo perdón a un triángulo", "ha enviado una factura a la eternidad", "está practicando desapariciones de bajo presupuesto", "ha declarado martes el interior de una caja", "está entrenando a una mota de polvo"];
+ const helperEndings=["el ganso lo negará todo", "por favor, no alimentes al calendario", "la sopa debe rellenar el formulario 8B", "se ruega a la gravedad mantener la calma", "nadie ha autorizado este pasillo", "el expediente huele ligeramente a domingo", "tu reembolso llegará en forma de eco", "la realidad ha sido puesta en espera", "el botón azul no tiene coartada", "el ascensor solo acepta pensamientos impares", "el silencio tiene que fichar a las nueve", "la puerta recuerda algo que tú no", "el departamento de niebla está investigando", "la luna ha pedido que no la etiqueten", "la respuesta correcta es una silla", "el recibo se puede pagar con un suspiro", "la copia original se encuentra de vacaciones", "el suelo no quiere hacer declaraciones", "la próxima actualización incluirá menos esquinas", "esto no constituye asesoramiento para caracoles"];
+ const helperPhraseBank=[];
+ for(const hs of helperSubjects){
+  for(const ha of helperActions){
+   for(const he of helperEndings){
+    helperPhraseBank.push(`Dato innecesario: ${hs} ${ha}; ${he}.`);
+    if(helperPhraseBank.length>=1200) break;
+   }
+   if(helperPhraseBank.length>=1200) break;
+  }
+  if(helperPhraseBank.length>=1200) break;
+ }
+ helperLines.push(...helperPhraseBank);
+const ads=[
+
+ ['CURSO DE MARTES AVANZADO','Aprende a distinguir un martes de un martes premium. Certificado por tres sillas.'],
+ ['QUESO CUÁNTICO™','Está aquí y no está aquí. Paga ahora y quizá no recibas nada.'],
+ ['GANSO VPN','Oculta tu ubicación a todos excepto al ganso. Prueba gratis durante 0,4 segundos.'],
+ ['SILLAS DE LUJO','Sillas que te juzgan en silencio. Envío gratuito a una dimensión cercana.'],
+ ['AGUA SECA','La hidratación que no moja. No beber. No mirar. No preguntar.'],
+ ['MEMORIA RAM EMOCIONAL','Añade 2 GB de recuerdos que no son tuyos. Oferta limitada por el universo.'],
+ ['EL BOTÓN PREMIUM','Cuesta 9,99 € imaginarios. No se acepta dinero real. Solo suspiros.'],
+ ['PÓSTER DEL PÓSTER','Compra una imagen de un póster que anuncia otro póster.']
+];
+const gremlins=['🪿','🦷','🧃','🗿','🦐','🛸','🧦','👁️','🧌','🥄'];
+let helperMood=0, prankCount=0, lastPrank=0, videoTimer=null, toastTimer=null;
+const rickURL=(window.MEMEVERSO_RICKROLL_URL||'').trim();
+function helperSay(line){$('helperSpeech').textContent=line;$('helperFace').textContent=pick(['🤖','🗿','🦆','👁️','🧃']);helperMood=Math.min(100,helperMood+7);$('helperMeterFill').style.width=helperMood+'%';}
+function showToast(line,duration=4300){$('toastText').textContent=line;$('helperToast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('helperToast').classList.remove('show'),duration);sfx('weird')}
+function hideToast(){$('helperToast').classList.remove('show');clearTimeout(toastTimer)}
+$('toastClose').addEventListener('click',hideToast);
+$('helperMin').addEventListener('click',()=>{$('helperDock').classList.toggle('minimized');$('helperMin').textContent=$('helperDock').classList.contains('minimized')?'+':'—'});
+$('helperHint').addEventListener('click',()=>{helperSay(pick(helperLines));log('AYUDANTE ha proporcionado información de utilidad discutible.');sfx('talk')});
+function makeTextFile(name,body){const blob=new Blob([body],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),15000);log('descarga autorizada por nadie: '+name)}
+const txtTemplates=[
+ ['MEMO_INTERNO','MEMO INTERNO // AYUDANTE\\n\\nHola, humano. Has sido seleccionado para un programa de pruebas que no existe.\\nTu recompensa: una silla que sabe tu nombre.\\n\\nNo respondas a este memo. El buzón es una sopa.'],
+ ['RECIBO_DEL_ABISMO','RECIBO DEL ABISMO\\n\\nConcepto: mirar fijamente el vacío\\nImporte: 3 silencios y medio\\nDescuento aplicado: -1 recuerdo\\nTOTAL: un ruido en el pasillo\\n\\nEl pago se ha procesado en un cajón.'],
+ ['DIARIO_DE_UN_PIXEL','DIARIO DE UN PÍXEL SOLITARIO\\n\\nDía 1: me dibujaron.\\nDía 2: me comprimieron.\\nDía 3: me pusieron junto a un botón horrible.\\nDía 4: el botón me ha pedido consejo.\\nDía 5: he empezado a soñar en 4K.'],
+ ['ENCUESTA_GANSO','ENCUESTA CONFIDENCIAL DEL GANSO\\n\\n¿Confías en el suelo? SÍ / NO / A VECES ES UNA PUERTA\\n¿Has visto un martes doblado?\\n¿Puedes demostrar que eres tú?\\n\\nGracias. Tus respuestas han sido enviadas a un estanque sin cobertura.'],
+ ['ERROR_DE_PERSONALIDAD','ERROR 0xPATO\\n\\nLa personalidad solicitada no está disponible.\\nSe ha instalado temporalmente: tostadora melancólica.\\nReinicie la sopa y vuelva a intentarlo.\\n\\nNo hay garantía de que el usuario sea compatible.'],
+ ['CARTA_DE_RENUNCIA','CARTA DE RENUNCIA DE LA LÁMPARA\\n\\nEstimado techo:\\nPresento mi renuncia por diferencias creativas con la oscuridad.\\nNo puedo seguir iluminando secretos con un sueldo de 0 vatios.\\n\\nAtentamente,\\nLa lámpara (que sabe lo del archivador).']
+];
+function randomTxt(){
+ const t=pick(txtTemplates),extra=pick(['\\n\\nPD: El archivo 08 pregunta por ti.','\\n\\nAdjunto: una sensación que no se puede abrir.','\\n\\nEste documento se autodestruirá cuando lo ordenes por fecha.','\\n\\nFirma digital: [huella de ganso]','\\n\\nNo es un virus. Es una metáfora con permisos.']);
+ const name=t[0]+'_'+Math.random().toString(36).slice(2,6).toUpperCase()+'.txt';
+ makeTextFile(name,t[1].replaceAll('\\n','\n')+extra.replaceAll('\\n','\n'));
+ helperSay('He creado un documento para ti. No lo he leído. Bueno, solo la parte que me acusa.');
+}
+$('helperNote').addEventListener('click',randomTxt);
+$('generateTxtBtn').addEventListener('click',randomTxt);
+function prank(){
+ prankCount++;helperMood=Math.min(100,helperMood+11);$('helperMeterFill').style.width=helperMood+'%';
+ const n=pick([
+ ()=>{showToast('AVISO DEL SISTEMA: '+pick(['tu cursor tiene sueño.','la silla ha cambiado los términos y condiciones.','el ganso ha solicitado acceso de administrador.','has ganado un punto de martes.','tu pantalla ha sido declarada patrimonio emocional.']));},
+ ()=>{const g=$('floatingGremlin');g.textContent=pick(gremlins);g.style.display='block';g.style.left=(4+Math.random()*78)+'%';g.style.top=(12+Math.random()*65)+'%';setTimeout(()=>{if(g.style.display==='block')g.style.display='none'},7000);},
+ ()=>{document.body.style.filter='hue-rotate('+(Math.random()*100-50)+'deg)';setTimeout(()=>document.body.style.filter='',800);glitch();},
+ ()=>{const old=$('submessage').textContent;$('submessage').textContent=pick(['No mires detrás de la interfaz.','La interfaz ha pedido un descanso.','Tu ratón ha dicho que no.','El señor piedra está en una llamada.']);setTimeout(()=>$('submessage').textContent=old,2400);},
+ ()=>{showAd()},
+ ()=>{const x=pick(['🪿','🦐','🗿','🧃','👁️']);omen(x+' HA SIDO AÑADIDO A TU DECLARACIÓN DE LA RENTA.',2200);sfx('weird')}
+ ]);
+ n();helperSay(pick(helperLines));log('broma nº '+prankCount+' ejecutada por AYUDANTE. El departamento niega todo.');chaos=Math.min(999,chaos+2);update();
+}
+$('helperPrank').addEventListener('click',prank);
+$('helperForbidden').addEventListener('click',()=>{
+ const outcomes=[
+  ()=>{document.body.style.filter='hue-rotate(160deg)';setTimeout(()=>document.body.style.filter='',1800);omen('SE HA ACTIVADO EL MODO PEPINILLO.',2200)},
+  ()=>{for(let i=0;i<5;i++)setTimeout(()=>showToast(pick(helperLines),2100),i*260)},
+  ()=>{showAd();helperSay('Has pulsado NO PULSAR. La auditoría emocional ha comenzado.')},
+  ()=>{makeTextFile('NOTA_QUE_NO_DEBIAS_ABRIR.txt','NOTA CONFIDENCIAL\n\nSi estás leyendo esto, el botón ya te ha reconocido.\nNo mires debajo de la silla.\nLa silla sabe por qué.\n\n— AYUDANTE, que niega haber escrito esto.')},
+  ()=>{const g=$('floatingGremlin');g.style.display='block';g.style.left=(5+Math.random()*75)+'vw';g.style.top=(12+Math.random()*55)+'vh';helperSay('He liberado al inspector de cucharas. Corre, pero hazlo con educación.')}
+ ];
+ pick(outcomes)();chaos=Math.min(999,chaos+5);prankCount++;sfx('weird');log('BOTÓN NO PULSAR: incidente '+prankCount+' archivado en una tostadora.');
+});
+
+function showAd(){
+ const ad=pick(ads);$('adTitle').textContent=ad[0];$('adText').textContent=ad[1];$('chaosAd').classList.add('show');sfx('weird');
+}
+function hideAd(){ $('chaosAd').classList.remove('show');if(Math.random()<.25)showToast('Gracias por cerrar el anuncio. Has sido añadido a una lista de personas que saben cerrar cosas.',3300)}
+$('adClose').addEventListener('click',hideAd);
+$('adAccept').addEventListener('click',()=>{hideAd();helperSay('¡Excelente compra! No se ha comprado nada, pero el anuncio se siente validado.');makeTextFile('CONTRATO_DE_COMPRA_IMAGINARIA.txt','CONTRATO DE COMPRA IMAGINARIA\\n\\nProducto: '+$('adTitle').textContent+'\\nPrecio: 0 euros reales y 12 unidades de vergüenza.\\nEstado: no vinculante, porque no hay producto.');});
+$('adReport').addEventListener('click',()=>{hideAd();omen('DENUNCIA RECIBIDA. EL GANSO INVESTIGARÁ AL GANSO.',3000);log('denuncia archivada en un estanque');});
+$('floatingGremlin').addEventListener('click',()=>{const g=$('floatingGremlin');g.style.display='none';cheese+=3;update();helperSay('¡Lo atrapaste! Era el inspector de cucharas. Ha dejado 3 gramos de queso cuántico.');makeTextFile('CERTIFICADO_DE_CAPTURA.txt','CERTIFICADO OFICIAL\\n\\nSe certifica que has atrapado una entidad flotante.\\nRecompensa: 3 gramos de queso cuántico.\\nEl ganso no reconoce este certificado.');sfx('secret')});
+$('floatingGremlin').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('floatingGremlin').click()}});
+function showVideo(){
+ const overlay=$('videoJumpscare'),video=$('rickVideo');
+ overlay.classList.add('show');
+ if(rickURL){
+   if(video.src!==rickURL)video.src=rickURL;
+   $('videoMessage').textContent='AYUDANTE TV // RickRoll.mp4 local: edición sin escapatoria. Pulsa cerrar cuando quieras.';
+   video.play().catch(()=>{$('videoMessage').textContent='El navegador ha bloqueado la reproducción automática. Pulsa ▶ en el vídeo.'});
+ }else{
+   video.removeAttribute('src');video.load();
+   $('videoMessage').textContent='RickRoll.mp4 no aparece en esta dimensión. Comprueba que está junto a index.html. El ganso ha abierto una incidencia.';
+ }
+ sfx('weird');helperSay('¡SORPRESA! Es una transmisión educativa sobre el concepto de cerrar ventanas.');
+}
+function closeVideo(){$('rickVideo').pause();$('rickVideo').removeAttribute('src');$('rickVideo').load();$('videoJumpscare').classList.remove('show');}
+$('videoClose').addEventListener('click',closeVideo);
+$('helperVideo').addEventListener('click',showVideo);
+$('videoJumpscare').addEventListener('click',e=>{if(e.target===$('videoJumpscare'))closeVideo()});
+function maybeVideo(){if(Math.random()<.24)showVideo();else helperSay('Hoy no hay vídeo. El presupuesto audiovisual se ha gastado en una silla.')}
+$('helperVideo').title='Abrir la ventana sorpresa de vídeo';
+function randomScreenEvent(){
+ if(document.hidden||$('settingsModal').classList.contains('open')||$('videoJumpscare').classList.contains('show'))return;
+ const r=Math.random();
+ if(r<.22){const g=$('floatingGremlin');if(g.style.display!=='block'){g.textContent=pick(gremlins);g.style.left=(3+Math.random()*82)+'%';g.style.top=(12+Math.random()*67)+'%';g.style.display='block';setTimeout(()=>{if(g.style.display==='block')g.style.display='none'},5200)}}
+ else if(r<.38){showToast(pick(['AYUDANTE: ¿sigues ahí? Qué incómodo.','Sistema: hemos perdido el norte. ¿Has visto uno?','El ganso ha aceptado tus cookies imaginarias.','Tu sesión tiene una cantidad preocupante de martes.','Pulsa un objeto. No, ese no. El otro.']),3300)}
+ else if(r<.49){showAd()}
+ else if(r<.54){glitch();sfx('weird')}
+ else if(r<.575){showVideo()}
+}
+$('helperVideo').addEventListener('click',maybeVideo,{once:false});
+$('downloadAllBtn').addEventListener('click',()=>{
+ const content=Object.entries({
+  'LEEME.txt':'MEMEVerso // archivo comprimido en texto plano\\nNo contiene explicaciones. Solo palabras con mala actitud.\\n',
+  'NOTA_DEL_AYUDANTE.txt':'Hola. Has descargado el paquete. Eso cuenta como interacción social.\\n\\n— AYUDANTE\\nPD: el ganso no estaba incluido por motivos legales.\\n',
+  'REGISTRO_DE_LA_NADA.txt':'00:00 se abrió un archivo.\\n00:01 el archivo abrió una duda.\\n00:02 la duda pidió vacaciones.\\n00:03 la nada te envió una encuesta.\\n'
+ }).map(([n,t])=>'========== '+n+' ==========\\n'+t).join('\\n\\n');
+ makeTextFile('PAQUETE_MEMEVERSO_TEXTO.txt',content)
+});
+const bundledFiles=[
+ ['00_LEEME_SI_TE_ATREVES.txt','📄','Aviso de bienvenida'],
+ ['01_ACTA_DEL_GANSO.txt','🪿','Asunto: jurisdicción aviar'],
+ ['02_TRANSCRIPCION_DE_LA_PARED.txt','🧱','La pared responde'],
+ ['03_FACTURA_DEL_VACIO.txt','🧾','Debes un recuerdo'],
+ ['04_MANUAL_PARA_SER_UN_OBJETO.txt','🪑','Tutorial de camuflaje'],
+ ['05_CORREO_DE_AYUDANTE.txt','🤖','Correo interno'],
+ ['06_LISTA_DE_COSAS_QUE_NO_ESTAN.txt','👁️','Inventario de ausencias'],
+ ['07_PROTOCOLO_DE_EMERGENCIA.txt','🚨','Por si acaso'],
+ ['09_INFORME_DEL_ARCHIVO_QUE_FALTA.txt','❔','El expediente ausente']
+];
+const fileGrid=$('fileGrid');
+bundledFiles.forEach(([filename,icon,desc])=>{
+ const b=document.createElement('button');b.className='file-download';b.innerHTML='<span style="font-size:20px">'+icon+'</span><br><b></b><br><span></span>';
+ b.querySelector('b').textContent=filename;b.querySelector('span:last-child').textContent=desc;
+ b.addEventListener('click',async()=>{
+  try{const response=await fetch('./archivos/'+filename);if(!response.ok)throw new Error('offline-file');makeTextFile(filename,await response.text())}
+  catch(e){makeTextFile(filename,'MEMEVerso // copia de emergencia\\n\\n'+desc+'\\n\\nEl documento original no se pudo leer, así que el ayudante ha improvisado. Como siempre.')}
+ });
+ fileGrid.appendChild(b);
+});
+$('fileCount').textContent=bundledFiles.length+' FICHEROS';
+setTimeout(()=>helperSay('Pulsa los objetos, revisa el archivo de TXT y no confíes en los anuncios. Yo no haría ninguna de esas cosas.'),1200);
+setTimeout(()=>showToast('¡BIENVENIDO AL MEMEVERSO! AYUDANTE está activo. Puedes minimizarlo. No puedes despedirlo.',5000),4500);
+setInterval(randomScreenEvent,18000);
+setInterval(()=>{if(Math.random()<.28&&!document.hidden){helperSay(pick(helperLines));if(Math.random()<.18)log('AYUDANTE ha actualizado sus condiciones de existencia.')}} ,31000);
+
+
+})();
+</script>
+</body>
+</html>

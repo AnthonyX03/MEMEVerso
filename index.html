@@ -8,7 +8,7 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
-<title>MEMEVerso.exe v1.3.3 — Gramola & ABDUZCAN</title>
+<title>MEMEVerso.exe v1.4.0 — Gramola & ABDUZCAN</title>
 <style>
 :root{--acid:#d6ff00;--pink:#ff3d9a;--blue:#5cf6ff;--ink:#09090d;--paper:#f4f1e8}
 body.theme-rosa{--acid:#ff6bcb;--pink:#ff3d9a;--blue:#ffb3d9;--ink:#1a0a14;--paper:#ffe8f4}
@@ -210,6 +210,20 @@ header>div:last-child{flex-wrap:wrap;justify-content:flex-end}
  #videoJumpscare video{max-height:58dvh}
 }
 
+
+/* v1.4 locuras */
+#voidEyes{position:fixed;inset:0;pointer-events:none;z-index:15}
+#voidEyes .eye{position:absolute;width:28px;height:28px;border-radius:50%;background:#f4f1e8;border:2px solid #09090d;box-shadow:0 0 12px #ff3d9a88;display:grid;place-items:center}
+#voidEyes .pupil{width:10px;height:10px;border-radius:50%;background:#09090d;transition:transform .08s linear}
+#bsod{display:none;position:fixed;inset:0;z-index:100;background:#0000aa;color:#fff;font-family:monospace;padding:8vw;font-size:clamp(12px,2.2vw,18px);line-height:1.5}
+#bsod.show{display:block}
+#bsod .bsod-title{font-size:1.4em;margin-bottom:1em}
+.jb-viz{display:flex;gap:3px;align-items:flex-end;height:28px;margin-top:8px}
+.jb-viz span{flex:1;background:linear-gradient(180deg,var(--acid),var(--pink));min-height:4px;opacity:.85;transition:height .12s}
+body.tilt-chaos{transition:transform .6s ease}
+#gooseModeBanner{display:none;position:fixed;top:0;left:0;right:0;z-index:40;background:var(--acid);color:#09090d;font:900 12px monospace;text-align:center;padding:8px;letter-spacing:.08em}
+#gooseModeBanner.on{display:block}
+
 </style>
 </head>
 <body>
@@ -265,17 +279,17 @@ header>div:last-child{flex-wrap:wrap;justify-content:flex-end}
   </div>
 
   <div class="setting-version">
-   <b>MEMEVerso v1.3.3</b><br>
-   En algún pasillo del edificio suena una gramola que nadie enchufó. Las pistas llegan antes que las personas. El vacío hace cola con educación.
+   <b>MEMEVerso v1.4.0</b><br>
+   La gramola no pide permiso. Los vídeos llegan sin invitación. En la luna alguien tararea ABDUZCAN entre dientes.
   </div>
   <div class="setting-actions"><button class="primary" id="saveSettings">LISTO</button></div>
  </div>
 </div>
 <input type="file" id="importFileInput" accept=".json,application/json" style="display:none">
 <main>
-  <div class="eyebrow">PROTOCOLO 00 // NO EXISTE UN TUTORIAL · v1.3.3</div>
+  <div class="eyebrow">PROTOCOLO 00 // NO EXISTE UN TUTORIAL · v1.4.0</div>
   <h1>¿QUÉ <span>ESTÁ</span><br> PASANDO.</h1>
-  <p class="intro">Bienvenido al <b>MEMEVerso v1.3.3</b>. Explora, combina objetos, usa la <b>gramola</b> y desbloquea pistas prohibidas. Audio en <b>/audio</b>, vídeos en <b>/video</b>. <br><span style="color:#716c7a">[ CONSEJO: gramola en la sala · memes popup · el Ayudante cuenta chistes ]</span></p>
+  <p class="intro">Bienvenido al <b>MEMEVerso v1.4.0</b>. Explora, combina objetos, usa la <b>gramola</b> y desbloquea pistas prohibidas. Audio en <b>/audio</b>, vídeos en <b>/video</b>. <br><span style="color:#716c7a">[ CONSEJO: gramola en la sala · memes popup · el Ayudante cuenta chistes ]</span></p>
 
   <section class="panel" id="roomPanel" style="margin-top:28px">
     <div class="panel-head"><span id="roomName">UBICACIÓN: SALA DE ESPERA PARA COSAS QUE NO EXISTEN</span><span id="roomStatus">5 OBJETOS SOSPECHOSOS</span></div>
@@ -314,6 +328,7 @@ header>div:last-child{flex-wrap:wrap;justify-content:flex-end}
       <div class="jukebox-display">
         <div class="jb-track" id="jbTrackName">— sin señal —</div>
         <div class="jb-status" id="jbTrackStatus">Pulsa ▶ REPRODUCIR. La pista MEME debería sonar.</div>
+        <div class="jb-viz" id="jbViz" aria-hidden="true"></div>
       </div>
       <div class="jukebox-list" id="jbList"></div>
       <div class="jukebox-controls">
@@ -361,8 +376,13 @@ header>div:last-child{flex-wrap:wrap;justify-content:flex-end}
       </section>
     </aside>
   </div>
-  <div class="footer"><span>MEMEVerso v1.3.3 // Gramola</span><span id="clock">HORA LOCAL: --:--:--</span><span>ALT+M · ↑↑↓↓←→←→BA</span></div>
+  <div class="footer"><span>MEMEVerso v1.4.0 // Gramola</span><span id="clock">HORA LOCAL: --:--:--</span><span>ALT+M · ↑↑↓↓←→←→BA</span></div>
 </main>
+
+<div id="voidEyes" aria-hidden="true"></div>
+<div id="bsod" role="alertdialog"><div class="bsod-title">:) MEMEVERSO_EXCEPTION</div><p>La realidad ha dejado de responder.</p><p>Error: 0xGANSO_NO_ENCONTRADO</p><p>Si es la primera vez que ve esto: es normal.<br>Si es la quinta: el ganso ya tiene tu dirección.</p><p style="margin-top:2em">Pulsa cualquier tecla o toca la pantalla para fingir que no pasó nada.</p></div>
+<div id="gooseModeBanner">MODO GANSO ACTIVADO — todo es más sospechoso de lo habitual</div>
+
 <div id="helperDock" aria-live="polite">
  <div class="helper-head"><span>◈ AYUDANTE v1.2 // 1.200+ FRASES</span><button id="helperMin" title="Minimizar ayudante">—</button></div>
  <div id="helperBody">
@@ -449,7 +469,7 @@ let musicVolume=0.4, bgMusic=null, currentTrackId='meme', musicPlaying=false;
 let abduzcanUnlocked=false, abduzcanVideoSeen=false, forceVideoMandatory=false;
 let annoyLevel=70, eventsOn=true, adsOn=true, autoPrankOn=true;
 let reduceMotion=false, currentTheme='acid', annoyCountToday=0, helperSilencedUntil=0;
-const APP_VERSION='1.3.3';
+const APP_VERSION='1.4.0';
 const playlist=[
   {id:'meme',name:'MEME',file:()=>(window.MEMEVERSO_MUSIC_URL||'audio/MEME.mp3'),locked:false},
   {id:'abduzcan',name:'ABDUZCAN',file:()=>(window.MEMEVERSO_ABDUZCAN_URL||'audio/ABDUZCAN.mp3'),locked:true}
@@ -457,7 +477,9 @@ const playlist=[
 function resolveMediaUrl(path){
   const p=(path||'').trim();
   if(!p)return '';
-  try{return new URL(p,document.baseURI||location.href).href}catch(e){return p}
+  // Codifica espacios y caracteres raros por segmento (ABDUZCAN - MEME.mp4, etc.)
+  const encoded=p.split('/').map(function(seg){return encodeURIComponent(seg)}).join('/');
+  try{return new URL(encoded,document.baseURI||location.href).href}catch(e){return encoded}
 }
 try{
   audioOn=localStorage.getItem('meme-audio')!=='off';
@@ -506,36 +528,49 @@ function trackUrl(id){
 function playBgMusicFromGesture(){
   if(!audioOn){if($('jbTrackStatus'))$('jbTrackStatus').textContent='Audio silenciado en ajustes.';return}
   initBgMusic();
-  try{ctx()}catch(e){}
+  try{if(typeof ctx==='function')ctx()}catch(e){}
   let id=currentTrackId||'meme';
-  const t0=getTrack(id);if(!t0||t0.locked)id='meme';
+  let t0=getTrack(id);if(!t0||t0.locked)id='meme';
   currentTrackId=id;
   try{localStorage.setItem('meme-track',id)}catch(e){}
   const url=trackUrl(id);
   if(!url){if($('jbTrackStatus'))$('jbTrackStatus').textContent='Ruta de audio vacía.';return}
   const fileName=id==='abduzcan'?'ABDUZCAN.mp3':'MEME.mp3';
   bgMusic.loop=true;
-  bgMusic.volume=musicVolume;
-  if(!bgMusic.currentSrc||!bgMusic.currentSrc.includes(fileName)){
+  bgMusic.volume=Math.max(0.01, musicVolume); // nunca 0 accidental
+  // Forzar recarga limpia de la pista
+  try{
+    bgMusic.pause();
+    bgMusic.removeAttribute('src');
     bgMusic.src=url;
-  }
-  if($('jbTrackName'))$('jbTrackName').textContent=getTrack(id).name;
+  }catch(e){bgMusic.src=url}
+  if($('jbTrackName'))$('jbTrackName').textContent=(getTrack(id)||{}).name||id;
   if($('jbTrackStatus'))$('jbTrackStatus').textContent='Reproduciendo…';
   const markPlaying=()=>{musicPlaying=true;if($('jbTrackStatus'))$('jbTrackStatus').textContent='REPRODUCIENDO · bucle activo';updateJukeboxUI()};
-  const markFail=(msg)=>{musicPlaying=false;if($('jbTrackStatus'))$('jbTrackStatus').textContent=msg;updateJukeboxUI()};
-  const doPlay=()=>{
+  const markFail=(msg)=>{musicPlaying=false;if($('jbTrackStatus'))$('jbTrackStatus').textContent=msg;updateJukeboxUI();log(msg)};
+  const attempt=()=>{
     const p=bgMusic.play();
-    if(p&&p.then)p.then(markPlaying).catch(()=>{
-      const retry=()=>{bgMusic.play().then(markPlaying).catch(err=>{
-        markFail('¿Falta audio/'+fileName+' en el repo?');
-        log('play error: '+(err&&err.message?err.message:err));
-      })};
-      if(bgMusic.readyState>=2)retry();
-      else bgMusic.addEventListener('canplay',retry,{once:true});
-    });
-    else markPlaying();
+    if(p&&p.then){
+      p.then(markPlaying).catch(function(err){
+        // Si MEME falla, intentar ABDUZCAN si está desbloqueada
+        if(id==='meme'&&abduzcanUnlocked){
+          currentTrackId='abduzcan';
+          const u2=trackUrl('abduzcan');
+          bgMusic.src=u2;
+          bgMusic.play().then(markPlaying).catch(function(){markFail('Audio bloqueado o archivo inválido (audio/'+fileName+')')});
+          return;
+        }
+        markFail('No se pudo reproducir audio/'+fileName+' (¿archivo vacío o ruta mal?)');
+      });
+    } else markPlaying();
   };
-  doPlay();
+  if(bgMusic.readyState>=2)attempt();
+  else{
+    bgMusic.addEventListener('canplay',attempt,{once:true});
+    bgMusic.addEventListener('error',function(){markFail('Error cargando audio/'+fileName+'. Revisa el archivo en GitHub.')},{once:true});
+    // Algunos navegadores no disparan canplay si el archivo es inválido
+    setTimeout(function(){if(!musicPlaying&&bgMusic.paused)attempt()},400);
+  }
   updateJukeboxUI();
 }
 function loadTrack(id,autoplay){
@@ -1292,34 +1327,42 @@ function getAbduzcanVidUrl(){return resolveMediaUrl((window.MEMEVERSO_ABDUZCAN_V
 let currentVideoKind='rick';
 function showSpecialVideo(kind,mandatory){
  const overlay=$('videoJumpscare'),video=$('rickVideo');
+ if(!overlay||!video){log('No hay contenedor de vídeo');return}
  currentVideoKind=kind||'rick';
  forceVideoMandatory=!!mandatory;
  overlay.classList.add('show');
  overlay.classList.toggle('mandatory',forceVideoMandatory);
  stopBgMusic();
- const url=currentVideoKind==='abduzcan'?getAbduzcanVidUrl():getRickUrl();
- const label=currentVideoKind==='abduzcan'?'ABDUZCAN-MEME.mp4':'RickRoll.mp4';
- if(url){
-  try{
-   video.pause();
-   video.removeAttribute('src');
-   video.src=url;
-   video.load();
-  }catch(e){}
+ let url=currentVideoKind==='abduzcan'?getAbduzcanVidUrl():getRickUrl();
+ let label=currentVideoKind==='abduzcan'?'ABDUZCAN-MEME.mp4':'RickRoll.mp4';
+ const trySrc=(u,lab,isFallback)=>{
+  try{video.pause();video.removeAttribute('src');video.src=u;video.load()}catch(e){}
   $('videoMessage').textContent=forceVideoMandatory
-   ?('TRANSMISIÓN OBLIGATORIA // '+label+' · No puedes cerrar hasta el final.')
-   :('AYUDANTE TV // '+label+' · Pulsa cerrar cuando quieras.');
-  const tryPlay=()=>video.play().catch(()=>{$('videoMessage').textContent='Pulsa ▶ en el vídeo para reproducir.'+(forceVideoMandatory?' Debes verlo entero.':'')});
+   ?('TRANSMISIÓN OBLIGATORIA // '+lab+' · No puedes cerrar hasta el final.')
+   :('AYUDANTE TV // '+lab+(isFallback?' (reserva)':'')+' · Pulsa cerrar cuando quieras.');
+  const tryPlay=()=>{video.play().catch(()=>{$('videoMessage').textContent='Pulsa ▶ en el vídeo.'+(forceVideoMandatory?' Debes verlo entero.':'')})};
   if(video.readyState>=2)tryPlay();
   else video.addEventListener('canplay',tryPlay,{once:true});
-  video.onerror=()=>{$('videoMessage').textContent='No se pudo cargar '+label+'. ¿Está en la carpeta video/ del repo?'};
- }else{
+ };
+ video.onerror=function(){
+  // RickRoll a menudo está vacío en el repo: caer a ABDUZCAN-MEME
+  if(currentVideoKind!=='abduzcan'){
+   currentVideoKind='abduzcan';
+   trySrc(getAbduzcanVidUrl(),'ABDUZCAN-MEME.mp4',true);
+   helperSay('RickRoll no cargó (¿archivo de 0 bytes?). Usando ABDUZCAN-MEME.');
+  }else{
+   $('videoMessage').textContent='No se pudo cargar el vídeo. ¿Está video/ABDUZCAN-MEME.mp4 en el repo?';
+   if(forceVideoMandatory){forceVideoMandatory=false;overlay.classList.remove('mandatory')}
+  }
+ };
+ if(url)trySrc(url,label,false);
+ else{
   video.removeAttribute('src');video.load();
-  $('videoMessage').textContent=label+' no está disponible.';
+  $('videoMessage').textContent=label+' no disponible.';
   if(forceVideoMandatory){forceVideoMandatory=false;overlay.classList.remove('mandatory')}
  }
  sfx('weird');
- helperSay(currentVideoKind==='abduzcan'?'ABDUZCAN está en el aire. La gramola calla.':'¡SORPRESA! Transmisión no solicitada. La música se ha escondido.');
+ helperSay(currentVideoKind==='abduzcan'?'ABDUZCAN está en el aire. La gramola calla.':'¡SORPRESA! Transmisión no solicitada.');
 }
 function showVideo(){showSpecialVideo('rick',false)}
 function closeVideo(){
@@ -1491,6 +1534,142 @@ setInterval(()=>{
   if(annoyLevel<55||document.hidden||helperIsSilent())return;
   if(Math.random()<0.18)helperSay(pick(helperLines));
 }, 14000);
+
+
+// ===== v1.4 LOCURAS =====
+(function chaosLayer(){
+  // Ojos del vacío que siguen el cursor
+  const eyesRoot=$('voidEyes');
+  if(eyesRoot){
+    for(let i=0;i<2;i++){
+      const e=document.createElement('div');e.className='eye';
+      e.innerHTML='<div class="pupil"></div>';
+      e.style.left=(20+i*50)+'vw';e.style.top='12vh';
+      eyesRoot.appendChild(e);
+    }
+    const pupils=[...eyesRoot.querySelectorAll('.pupil')];
+    document.addEventListener('mousemove',ev=>{
+      pupils.forEach(p=>{
+        const r=p.parentElement.getBoundingClientRect();
+        const cx=r.left+r.width/2, cy=r.top+r.height/2;
+        const dx=Math.max(-6,Math.min(6,(ev.clientX-cx)/20));
+        const dy=Math.max(-6,Math.min(6,(ev.clientY-cy)/20));
+        p.style.transform='translate('+dx+'px,'+dy+'px)';
+      });
+    });
+  }
+
+  // Visualizador falso de la gramola
+  const viz=$('jbViz');
+  if(viz){
+    for(let i=0;i<12;i++){const s=document.createElement('span');viz.appendChild(s)}
+    setInterval(()=>{
+      if(!viz)return;
+      [...viz.children].forEach(s=>{
+        s.style.height=(musicPlaying?(8+Math.random()*20):4)+'px';
+        s.style.opacity=musicPlaying?0.9:0.25;
+      });
+    },120);
+  }
+
+  // BSOD falso
+  function showBsod(){
+    const b=$('bsod');if(!b)return;
+    b.classList.add('show');
+    const hide=()=>{b.classList.remove('show');document.removeEventListener('keydown',hide);b.removeEventListener('click',hide)};
+    document.addEventListener('keydown',hide);b.addEventListener('click',hide);
+    sfx('weird');log('pantalla azul emocional desplegada');
+  }
+  // Inyectar en pranks ocasionalmente via randomScreenEvent hook
+  const _rse=typeof randomScreenEvent==='function'?randomScreenEvent:null;
+  if(_rse){
+    // no replace - add parallel interval
+  }
+  setInterval(()=>{
+    if(document.hidden||!eventsOn)return;
+    if(Math.random()<0.015+annoyLevel/5000)showBsod();
+  },45000);
+
+  // Si es martes de verdad en el mundo real
+  if(new Date().getDay()===2){
+    setTimeout(()=>{
+      omen('HOY ES MARTES DE VERDAD. EL MEMEVERSO LO SABE.',4000);
+      helperSay('Martes real detectado. Procedo a ser un 40% más molesto por educación.');
+      annoyLevel=Math.min(100,annoyLevel+10);
+    },8000);
+  }
+
+  // Inclinación de página con mucho caos
+  setInterval(()=>{
+    if(chaos>25&&!reduceMotion){
+      document.body.style.transform='rotate('+(Math.random()*1.2-0.6)+'deg)';
+      setTimeout(()=>{document.body.style.transform=''},1200);
+    }
+  },22000);
+
+  // Título de pestaña parpadeante
+  const baseTitle=document.title;
+  setInterval(()=>{
+    if(document.hidden)return;
+    if(Math.random()<0.12){
+      document.title=pick(['EL GANSO TE VE','no cierres esto','MEMEVerso (mentira)','¿sigues ahí?','ABDUZCAN…']);
+      setTimeout(()=>{document.title=baseTitle},2200);
+    }
+  },16000);
+
+  // Modo ganso: ALT+G
+  let gooseMode=false;
+  document.addEventListener('keydown',e=>{
+    if(e.altKey&&(e.key==='g'||e.key==='G')){
+      gooseMode=!gooseMode;
+      const ban=$('gooseModeBanner');
+      if(ban)ban.classList.toggle('on',gooseMode);
+      document.body.style.filter=gooseMode?'hue-rotate(80deg) saturate(1.4)':'';
+      helperSay(gooseMode?'Modo ganso ON. Todo lo que hagas será usado en tu contra.':'Modo ganso OFF. El ganso finge que no pasó nada.');
+      if(gooseMode){cheese+=1;update();sfx('secret')}
+    }
+  });
+
+  // Logro por escuchar ABDUZCAN un rato
+  let abduzcanListen=0;
+  setInterval(()=>{
+    if(musicPlaying&&currentTrackId==='abduzcan'){
+      abduzcanListen+=5;
+      if(abduzcanListen>=60){try{unlockAch('abduzcan')}catch(e){} /* ya existe el de desbloqueo */ }
+    }
+  },5000);
+
+  // Clipboard troll ocasional al copiar
+  document.addEventListener('copy',()=>{
+    if(Math.random()<0.2){
+      try{navigator.clipboard.writeText('El ganso ha interceptado tu copia. Vuelve al MEMEVerso.')}catch(e){}
+    }
+  });
+
+  // Botón extra en controles de sala si existe
+  const roomControls=document.querySelector('#roomPanel .controls');
+  if(roomControls&&!$('bsodBtn')){
+    const b=document.createElement('button');
+    b.className='secondary';b.id='bsodBtn';b.textContent='💥 BSOD';
+    b.title='Pantalla azul emocional';
+    b.onclick=()=>showBsod();
+    roomControls.appendChild(b);
+    const g=document.createElement('button');
+    g.className='secondary';g.textContent='🪿 MODO GANSO';
+    g.onclick=()=>{document.dispatchEvent(new KeyboardEvent('keydown',{key:'g',altKey:true}))};
+    roomControls.appendChild(g);
+  }
+
+  // Fade volumen música al abrir ajustes (ducking ligero)
+  const settingsBtn=$('settingsBtn');
+  if(settingsBtn){
+    settingsBtn.addEventListener('click',()=>{if(bgMusic&&musicPlaying)bgMusic.volume=musicVolume*0.35});
+  }
+  const closeSet=$('closeSettings');
+  if(closeSet){
+    closeSet.addEventListener('click',()=>{if(bgMusic)bgMusic.volume=audioOn?musicVolume:0});
+  }
+})();
 
 })();
 </script>

@@ -1,5 +1,5 @@
 /* MEMEVerso service worker — fuerza actualización de la app */
-const SW_VERSION = '1.3.2';
+const SW_VERSION = '1.4.0';
 const CACHE_NAME = 'memeverso-offline-v' + SW_VERSION;
 
 const CORE = [

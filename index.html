@@ -110,7 +110,14 @@ header>div:last-child{flex-wrap:wrap;justify-content:flex-end}
 .setting-section{margin:18px 0 6px;font:900 11px monospace;color:var(--pink);letter-spacing:.18em;text-transform:uppercase}
 .setting-hint{font:10px/1.45 monospace;color:#8d8998;margin:-4px 0 8px}
 .setting-version{margin-top:16px;padding:12px;border:1px dashed #ffffff33;background:#0c0c12;font:11px/1.55 monospace;color:#b8b4c4}
-.setting-version b{color:var(--acid)}
+.setting-version b{color:var(--acid);cursor:default;user-select:none}
+.setting-version b:active{opacity:.8}
+.version-secret{cursor:default;user-select:none}
+#cheatModal{display:none;position:fixed;inset:0;z-index:70;background:#000e;align-items:center;justify-content:center;padding:18px}
+#cheatModal.open{display:flex}
+.cheat-card{width:min(100%,390px);background:#101016;border:1px solid #34343b;padding:18px;box-shadow:5px 5px 0 #17171d;font:11px/1.5 monospace}
+.cheat-card button{width:100%;text-align:left;margin-top:8px}
+.cheat-card .cheat-dismiss{width:auto;float:right;margin:0;padding:5px 8px}
 .setting-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
 .setting-actions button{flex:1}
 .install-note{font:11px/1.6 monospace;color:#aaa;margin-top:15px}
@@ -279,17 +286,18 @@ body.tilt-chaos{transition:transform .6s ease}
   </div>
 
   <div class="setting-version">
-   <b>MEMEVerso v1.4.0</b><br>
+   <b id="secretVersion" title="">MEMEVerso v1.4.0</b><br>
    La gramola no pide permiso. Los vídeos llegan sin invitación. En la luna alguien tararea ABDUZCAN entre dientes.
   </div>
   <div class="setting-actions"><button class="primary" id="saveSettings">LISTO</button></div>
  </div>
 </div>
+<div id="cheatModal" role="dialog" aria-modal="true" aria-label=""><div class="cheat-card"><button type="button" class="secondary cheat-dismiss" id="closeCheat" aria-label="Cerrar">×</button><div style="color:#8b8995;margin:2px 0 14px">// señal local</div><button type="button" class="secondary" id="unlockAbduzcanCheat">Desbloquear ABDUZCAN</button></div></div>
 <input type="file" id="importFileInput" accept=".json,application/json" style="display:none">
 <main>
   <div class="eyebrow">PROTOCOLO 00 // NO EXISTE UN TUTORIAL · v1.4.0</div>
   <h1>¿QUÉ <span>ESTÁ</span><br> PASANDO.</h1>
-  <p class="intro">Bienvenido al <b>MEMEVerso v1.4.0</b>. Explora, combina objetos, usa la <b>gramola</b> y desbloquea pistas prohibidas. Audio en <b>/audio</b>, vídeos en <b>/video</b>. <br><span style="color:#716c7a">[ CONSEJO: gramola en la sala · memes popup · el Ayudante cuenta chistes ]</span></p>
+  <p class="intro">Bienvenido al <b>MEMEVerso v1.4.0</b>. Explora, combina objetos, usa la <b>gramola</b> y desbloquea pistas prohibidas. <br><span style="color:#716c7a">[ CONSEJO: gramola en la sala · memes popup · el Ayudante cuenta chistes ]</span></p>
 
   <section class="panel" id="roomPanel" style="margin-top:28px">
     <div class="panel-head"><span id="roomName">UBICACIÓN: SALA DE ESPERA PARA COSAS QUE NO EXISTEN</span><span id="roomStatus">5 OBJETOS SOSPECHOSOS</span></div>
@@ -376,7 +384,7 @@ body.tilt-chaos{transition:transform .6s ease}
       </section>
     </aside>
   </div>
-  <div class="footer"><span>MEMEVerso v1.4.0 // Gramola</span><span id="clock">HORA LOCAL: --:--:--</span><span>ALT+M · ↑↑↓↓←→←→BA</span></div>
+  <div class="footer"><span id="footerVersion" class="version-secret">MEMEVerso v1.4.0 // Gramola</span><span id="clock">HORA LOCAL: --:--:--</span><span>ALT+M · ↑↑↓↓←→←→BA</span></div>
 </main>
 
 <div id="voidEyes" aria-hidden="true"></div>
@@ -552,8 +560,8 @@ function playBgMusicFromGesture(){
     const p=bgMusic.play();
     if(p&&p.then){
       p.then(markPlaying).catch(function(err){
-        // Cada pista es independiente: MEME nunca usa ABDUZCAN como reserva.
-        markFail('No se pudo reproducir audio/'+fileName+' (¿archivo vacío, bloqueado o ruta incorrecta?)');
+        // No hay pista de reserva: MEME siempre intenta reproducir MEME.
+        markFail('No se pudo reproducir audio/'+fileName+' (¿archivo vacío o ruta mal?)');
       });
     } else markPlaying();
   };
@@ -961,6 +969,22 @@ function setAudio(on){
 }
 $('soundBtn').addEventListener('click',()=>setAudio(!audioOn));
 $('settingsBtn').addEventListener('click',()=>{$('settingsModal').classList.add('open');refreshAudioUI();$('closeSettings').focus();});
+function openSecretMenu(){ $('cheatModal').classList.add('open'); }
+function closeSecretMenu(){ $('cheatModal').classList.remove('open'); }
+// El acceso está escondido en el texto de versión, sin anunciar su función.
+$('secretVersion').addEventListener('click',openSecretMenu);
+$('footerVersion').addEventListener('click',openSecretMenu);
+$('closeCheat').addEventListener('click',closeSecretMenu);
+$('cheatModal').addEventListener('click',e=>{if(e.target===$('cheatModal'))closeSecretMenu()});
+$('unlockAbduzcanCheat').addEventListener('click',()=>{
+ closeSecretMenu();
+ const track=playlist.find(p=>p.id==='abduzcan');
+ abduzcanUnlocked=true; if(track)track.locked=false;
+ try{localStorage.setItem('meme-abduzcan','on')}catch(e){}
+ unlockAch('abduzcan'); updateJukeboxUI(); saveProgress();
+ if(!abduzcanVideoSeen){showSpecialVideo('abduzcan',true)}
+ else{showSpecialVideo('abduzcan',true)}
+});
 function closeSettings(){$('settingsModal').classList.remove('open');$('settingsBtn').focus()}
 $('closeSettings').addEventListener('click',closeSettings);$('saveSettings').addEventListener('click',closeSettings);
 $('settingsModal').addEventListener('click',e=>{if(e.target===$('settingsModal'))closeSettings()});
@@ -1028,7 +1052,7 @@ $('fullscreenBtn').addEventListener('click',toggleFullscreen);$('settingsFullscr
 refreshAudioUI();updateFullscreenButton(); 
 $('closeTerminal').addEventListener('click',()=>{$('terminal').classList.remove('open');sfx('click')});
 
-document.addEventListener('keydown',e=>{if(e.altKey&&e.key.toLowerCase()==='m'){$('secret').classList.add('show');sfx('secret');return} if(e.key==='Escape'){$('terminal').classList.remove('open');$('secret').classList.remove('show')} if(e.key.toLowerCase()==='t'){randomIntrusion();}if(e.key==='Enter'){act();return}if(e.key.toLowerCase()==='e')talk();if(e.key.toLowerCase()==='r')run()});
+document.addEventListener('keydown',e=>{if(e.altKey&&e.key.toLowerCase()==='m'){$('secret').classList.add('show');sfx('secret');return} if(e.key==='Escape'){$('terminal').classList.remove('open');$('secret').classList.remove('show');closeSecretMenu()} if(e.key.toLowerCase()==='t'){randomIntrusion();}if(e.key==='Enter'){act();return}if(e.key.toLowerCase()==='e')talk();if(e.key.toLowerCase()==='r')run()});
 function clock(){$('clock').textContent='HORA LOCAL: '+new Date().toLocaleTimeString('es-ES')};clock();setInterval(clock,1000);update();
 setTimeout(()=>{if(Math.random()<.65)omen('BIENVENIDO. ESTA PÁGINA NO FIGURA EN NINGÚN REGISTRO.',3000)},7000);
 setInterval(()=>{if(count>2&&Math.random()<.18)randomIntrusion()},28000);
@@ -1328,7 +1352,7 @@ function showSpecialVideo(kind,mandatory){
  stopBgMusic();
  let url=currentVideoKind==='abduzcan'?getAbduzcanVidUrl():getRickUrl();
  let label=currentVideoKind==='abduzcan'?'ABDUZCAN-MEME.mp4':'RickRoll.mp4';
- const trySrc=(u,lab,isFallback)=>{
+ const trySrc=(u,lab)=>{
   try{video.pause();video.removeAttribute('src');video.src=u;video.load()}catch(e){}
   $('videoMessage').textContent=forceVideoMandatory
    ?('TRANSMISIÓN OBLIGATORIA // '+lab+' · No puedes cerrar hasta el final.')
@@ -1338,15 +1362,14 @@ function showSpecialVideo(kind,mandatory){
   else video.addEventListener('canplay',tryPlay,{once:true});
  };
  video.onerror=function(){
-  // Sin reservas: el RickRoll siempre intenta su propio archivo y nunca revela ABDUZCAN.
-  // Si el archivo falla, mostramos el error sin cambiar de vídeo.
-  const expected=currentVideoKind==='abduzcan'?'video/ABDUZCAN-MEME.mp4':'video/RickRoll.mp4';
-  $('videoMessage').textContent='No se pudo cargar '+expected+'. Comprueba que el archivo exista y no esté vacío.';
-  if(currentVideoKind==='abduzcan'&&forceVideoMandatory){
-   $('videoMessage').textContent='TRANSMISIÓN OBLIGATORIA // ABDUZCAN-MEME.mp4 no se pudo cargar. Comprueba el archivo para poder completar el secreto.';
+  // RickRoll no tiene reserva: si falla, no se sustituye por el vídeo secreto.
+  $('videoMessage').textContent=label+' no disponible. No hay vídeo de reserva.';
+  if(forceVideoMandatory&&currentVideoKind==='abduzcan'){
+   // No permitir cerrar el vídeo secreto obligatorio por un error de carga.
+   $('videoMessage').textContent='No se pudo cargar '+label+'. Recarga la página para intentarlo de nuevo.';
   }
  };
- if(url)trySrc(url,label,false);
+ if(url)trySrc(url,label);
  else{
   video.removeAttribute('src');video.load();
   $('videoMessage').textContent=label+' no disponible.';

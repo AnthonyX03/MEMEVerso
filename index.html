@@ -552,15 +552,8 @@ function playBgMusicFromGesture(){
     const p=bgMusic.play();
     if(p&&p.then){
       p.then(markPlaying).catch(function(err){
-        // Si MEME falla, intentar ABDUZCAN si está desbloqueada
-        if(id==='meme'&&abduzcanUnlocked){
-          currentTrackId='abduzcan';
-          const u2=trackUrl('abduzcan');
-          bgMusic.src=u2;
-          bgMusic.play().then(markPlaying).catch(function(){markFail('Audio bloqueado o archivo inválido (audio/'+fileName+')')});
-          return;
-        }
-        markFail('No se pudo reproducir audio/'+fileName+' (¿archivo vacío o ruta mal?)');
+        // Cada pista es independiente: MEME nunca usa ABDUZCAN como reserva.
+        markFail('No se pudo reproducir audio/'+fileName+' (¿archivo vacío, bloqueado o ruta incorrecta?)');
       });
     } else markPlaying();
   };
@@ -1339,20 +1332,18 @@ function showSpecialVideo(kind,mandatory){
   try{video.pause();video.removeAttribute('src');video.src=u;video.load()}catch(e){}
   $('videoMessage').textContent=forceVideoMandatory
    ?('TRANSMISIÓN OBLIGATORIA // '+lab+' · No puedes cerrar hasta el final.')
-   :('AYUDANTE TV // '+lab+(isFallback?' (reserva)':'')+' · Pulsa cerrar cuando quieras.');
+   :('AYUDANTE TV // '+lab+' · Pulsa cerrar cuando quieras.');
   const tryPlay=()=>{video.play().catch(()=>{$('videoMessage').textContent='Pulsa ▶ en el vídeo.'+(forceVideoMandatory?' Debes verlo entero.':'')})};
   if(video.readyState>=2)tryPlay();
   else video.addEventListener('canplay',tryPlay,{once:true});
  };
  video.onerror=function(){
-  // RickRoll a menudo está vacío en el repo: caer a ABDUZCAN-MEME
-  if(currentVideoKind!=='abduzcan'){
-   currentVideoKind='abduzcan';
-   trySrc(getAbduzcanVidUrl(),'ABDUZCAN-MEME.mp4',true);
-   helperSay('RickRoll no cargó (¿archivo de 0 bytes?). Usando ABDUZCAN-MEME.');
-  }else{
-   $('videoMessage').textContent='No se pudo cargar el vídeo. ¿Está video/ABDUZCAN-MEME.mp4 en el repo?';
-   if(forceVideoMandatory){forceVideoMandatory=false;overlay.classList.remove('mandatory')}
+  // Sin reservas: el RickRoll siempre intenta su propio archivo y nunca revela ABDUZCAN.
+  // Si el archivo falla, mostramos el error sin cambiar de vídeo.
+  const expected=currentVideoKind==='abduzcan'?'video/ABDUZCAN-MEME.mp4':'video/RickRoll.mp4';
+  $('videoMessage').textContent='No se pudo cargar '+expected+'. Comprueba que el archivo exista y no esté vacío.';
+  if(currentVideoKind==='abduzcan'&&forceVideoMandatory){
+   $('videoMessage').textContent='TRANSMISIÓN OBLIGATORIA // ABDUZCAN-MEME.mp4 no se pudo cargar. Comprueba el archivo para poder completar el secreto.';
   }
  };
  if(url)trySrc(url,label,false);

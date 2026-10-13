@@ -8,7 +8,7 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
-<title>MEMEVerso.exe v1.3.1 — Gramola & ABDUZCAN</title>
+<title>MEMEVerso.exe v1.3.2 — Gramola & ABDUZCAN</title>
 <style>
 :root{--acid:#d6ff00;--pink:#ff3d9a;--blue:#5cf6ff;--ink:#09090d;--paper:#f4f1e8}
 body.theme-rosa{--acid:#ff6bcb;--pink:#ff3d9a;--blue:#ffb3d9;--ink:#1a0a14;--paper:#ffe8f4}
@@ -257,6 +257,7 @@ header>div:last-child{flex-wrap:wrap;justify-content:flex-end}
 
   <div class="settings-pane" id="pane-system" role="tabpanel">
    <div class="setting-row"><span>PANTALLA COMPLETA</span><button class="secondary" id="settingsFullscreen">ACTIVAR</button></div>
+   <div class="setting-row"><span>BUSCAR ACTUALIZACIÓN</span><button class="secondary" id="forceUpdateBtn">ACTUALIZAR</button></div>
    <div class="setting-row"><span>EXPORTAR PARTIDA</span><button class="secondary" id="exportSaveBtn">JSON</button></div>
    <div class="setting-row"><span>IMPORTAR PARTIDA</span><button class="secondary" id="importSaveBtn">CARGAR</button></div>
    <div class="setting-row"><span>REINICIAR PROGRESO</span><button class="secondary" id="resetProgressBtn" title="Borra datos locales">BORRAR</button></div>
@@ -264,7 +265,7 @@ header>div:last-child{flex-wrap:wrap;justify-content:flex-end}
   </div>
 
   <div class="setting-version">
-   <b>MEMEVerso v1.3.1</b><br>
+   <b>MEMEVerso v1.3.2</b><br>
    En algún pasillo del edificio suena una gramola que nadie enchufó. Las pistas llegan antes que las personas. El vacío hace cola con educación.
   </div>
   <div class="setting-actions"><button class="primary" id="saveSettings">LISTO</button></div>
@@ -272,9 +273,9 @@ header>div:last-child{flex-wrap:wrap;justify-content:flex-end}
 </div>
 <input type="file" id="importFileInput" accept=".json,application/json" style="display:none">
 <main>
-  <div class="eyebrow">PROTOCOLO 00 // NO EXISTE UN TUTORIAL · v1.3.1</div>
+  <div class="eyebrow">PROTOCOLO 00 // NO EXISTE UN TUTORIAL · v1.3.2</div>
   <h1>¿QUÉ <span>ESTÁ</span><br> PASANDO.</h1>
-  <p class="intro">Bienvenido al <b>MEMEVerso v1.3.1</b>. Explora, combina objetos, usa la <b>gramola</b> y desbloquea pistas prohibidas. Audio en <b>/audio</b>, vídeos en <b>/videos</b>. <br><span style="color:#716c7a">[ CONSEJO: gramola en la sala · memes popup · el Ayudante cuenta chistes ]</span></p>
+  <p class="intro">Bienvenido al <b>MEMEVerso v1.3.2</b>. Explora, combina objetos, usa la <b>gramola</b> y desbloquea pistas prohibidas. Audio en <b>/audio</b>, vídeos en <b>/videos</b>. <br><span style="color:#716c7a">[ CONSEJO: gramola en la sala · memes popup · el Ayudante cuenta chistes ]</span></p>
 
   <section class="panel" id="roomPanel" style="margin-top:28px">
     <div class="panel-head"><span id="roomName">UBICACIÓN: SALA DE ESPERA PARA COSAS QUE NO EXISTEN</span><span id="roomStatus">5 OBJETOS SOSPECHOSOS</span></div>
@@ -360,7 +361,7 @@ header>div:last-child{flex-wrap:wrap;justify-content:flex-end}
       </section>
     </aside>
   </div>
-  <div class="footer"><span>MEMEVerso v1.3.1 // Gramola</span><span id="clock">HORA LOCAL: --:--:--</span><span>ALT+M · ↑↑↓↓←→←→BA</span></div>
+  <div class="footer"><span>MEMEVerso v1.3.2 // Gramola</span><span id="clock">HORA LOCAL: --:--:--</span><span>ALT+M · ↑↑↓↓←→←→BA</span></div>
 </main>
 <div id="helperDock" aria-live="polite">
  <div class="helper-head"><span>◈ AYUDANTE v1.2 // 1.200+ FRASES</span><button id="helperMin" title="Minimizar ayudante">—</button></div>
@@ -448,7 +449,7 @@ let musicVolume=0.4, bgMusic=null, currentTrackId='meme', musicPlaying=false;
 let abduzcanUnlocked=false, abduzcanVideoSeen=false, forceVideoMandatory=false;
 let annoyLevel=70, eventsOn=true, adsOn=true, autoPrankOn=true;
 let reduceMotion=false, currentTheme='acid', annoyCountToday=0, helperSilencedUntil=0;
-const APP_VERSION='1.3.1';
+const APP_VERSION='1.3.2';
 const playlist=[
   {id:'meme',name:'MEME',file:()=>(window.MEMEVERSO_MUSIC_URL||'audio/MEME.mp3'),locked:false},
   {id:'abduzcan',name:'ABDUZCAN',file:()=>(window.MEMEVERSO_ABDUZCAN_URL||'audio/ABDUZCAN.mp3'),locked:true}
@@ -942,6 +943,24 @@ $('resetProgressBtn').addEventListener('click',()=>{
 });
 $('themeSelect').addEventListener('change',e=>{applyTheme(e.target.value);helperSay('Tema cambiado a '+e.target.options[e.target.selectedIndex].text+'. El ganso odia los cambios de decoración.')});
 $('motionCheck').addEventListener('change',e=>applyMotion(e.target.checked));
+$('forceUpdateBtn').addEventListener('click',async()=>{
+  omen('BUSCANDO ACTUALIZACIÓN…',2000);
+  try{
+    if(!('serviceWorker' in navigator)){
+      location.reload(true);return;
+    }
+    const regs=await navigator.serviceWorker.getRegistrations();
+    await Promise.all(regs.map(r=>r.update()));
+    const keys=await caches.keys();
+    await Promise.all(keys.map(k=>caches.delete(k)));
+    const regs2=await navigator.serviceWorker.getRegistrations();
+    await Promise.all(regs2.map(r=>r.unregister()));
+    omen('CACHÉ LIMPIADA · RECargando…',2000);
+    setTimeout(()=>location.reload(),600);
+  }catch(e){
+    location.reload();
+  }
+});
 $('exportSaveBtn').addEventListener('click',()=>{
  saveProgress();
  const data=localStorage.getItem('meme-save')||'{}';
@@ -970,9 +989,44 @@ setTimeout(()=>{if(Math.random()<.65)omen('BIENVENIDO. ESTA PÁGINA NO FIGURA EN
 setInterval(()=>{if(count>2&&Math.random()<.18)randomIntrusion()},28000);
 setInterval(()=>{if(audioOn&&count>4&&Math.random()<.14){tone(pick([55,73,91,131,277]),.45,'sine',.012,Math.random()*50-25)}},19000);
 setTimeout(()=>{if(count===0){$('submessage').textContent='Llevas aquí un rato. El señor piedra ha empezado a cobrar alquiler.';log('inactividad detectada. qué decepción.')}},18000);
-// Registro del service worker para mantener el juego disponible sin conexión.
+// Service worker: actualiza la app en el PC (red primero + recarga al activar)
 if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost'||location.hostname==='127.0.0.1')){
- window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+  let refreshing=false;
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{
+    if(refreshing)return;
+    refreshing=true;
+    location.reload();
+  });
+  navigator.serviceWorker.addEventListener('message',(e)=>{
+    if(e.data&&e.data.type==='SW_ACTIVATED'){
+      try{omen('ACTUALIZACIÓN APLICADA · v'+(e.data.version||''),2800)}catch(err){}
+    }
+  });
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'})
+      .then((reg)=>{
+        try{reg.update()}catch(e){}
+        setInterval(()=>{try{reg.update()}catch(e){}},30*60*1000);
+        if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
+        reg.addEventListener('updatefound',()=>{
+          const nw=reg.installing;
+          if(!nw)return;
+          nw.addEventListener('statechange',()=>{
+            if(nw.state==='installed'&&navigator.serviceWorker.controller){
+              nw.postMessage({type:'SKIP_WAITING'});
+              try{omen('NUEVA VERSIÓN DETECTADA · RECargando…',2500)}catch(err){}
+            }
+          });
+        });
+      })
+      .catch(()=>{});
+  });
+  // Al volver a la pestaña, buscar actualización
+  document.addEventListener('visibilitychange',()=>{
+    if(document.visibilityState==='visible'&&navigator.serviceWorker.controller){
+      navigator.serviceWorker.getRegistration().then((r)=>r&&r.update()).catch(()=>{});
+    }
+  });
 }
 
 

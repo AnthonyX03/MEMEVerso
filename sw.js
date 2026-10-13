@@ -1,36 +1,92 @@
-const CACHE_NAME='memeverso-offline-v1.3.0';
-const CORE=[
-  './','./index.html','./manifest.webmanifest','./media-config.js',
-  './icons/icon-192.png','./icons/icon-512.png','./icons/icon-maskable-512.png',
-  './audio/MEME.mp3','./audio/ABDUZCAN.mp3',
-  './videos/RickRoll.mp4','./videos/ABDUZCAN-MEME.mp4',
-  './archivos/10_1200_FRASES_DE_AYUDANTE.txt',
-  './archivos/00_LEEME_SI_TE_ATREVES.txt','./archivos/01_ACTA_DEL_GANSO.txt',
-  './archivos/02_TRANSCRIPCION_DE_LA_PARED.txt','./archivos/03_FACTURA_DEL_VACIO.txt',
-  './archivos/04_MANUAL_PARA_SER_UN_OBJETO.txt','./archivos/05_CORREO_DE_AYUDANTE.txt',
-  './archivos/06_LISTA_DE_COSAS_QUE_NO_ESTAN.txt','./archivos/07_PROTOCOLO_DE_EMERGENCIA.txt',
-  './archivos/09_INFORME_DEL_ARCHIVO_QUE_FALTA.txt'
+/* MEMEVerso service worker — fuerza actualización de la app */
+const SW_VERSION = '1.3.2';
+const CACHE_NAME = 'memeverso-offline-v' + SW_VERSION;
+
+const CORE = [
+  './',
+  './index.html',
+  './manifest.webmanifest',
+  './media-config.js',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
+  './icons/icon-maskable-512.png'
 ];
-self.addEventListener('install',event=>{
+
+self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache=>
-      Promise.all(CORE.map(u=>cache.add(u).catch(()=>null)))
-    ).then(()=>self.skipWaiting())
+    caches.open(CACHE_NAME)
+      .then((cache) => Promise.all(CORE.map((u) => cache.add(u).catch(() => null))))
+      .then(() => self.skipWaiting())
   );
 });
-self.addEventListener('activate',event=>{
+
+self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE_NAME).map(k=>caches.delete(k))))
-      .then(()=>self.clients.claim())
+    caches.keys()
+      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k))))
+      .then(() => self.clients.claim())
+      .then(() =>
+        self.clients.matchAll({ type: 'window' }).then((clients) => {
+          clients.forEach((c) => c.postMessage({ type: 'SW_ACTIVATED', version: SW_VERSION }));
+        })
+      )
   );
 });
-self.addEventListener('fetch',event=>{
-  const req=event.request;
-  if(req.method!=='GET'||new URL(req.url).origin!==self.location.origin)return;
+
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting();
+  if (event.data && event.data.type === 'GET_VERSION') {
+    event.source && event.source.postMessage({ type: 'SW_VERSION', version: SW_VERSION });
+  }
+});
+
+function isHTMLRequest(req) {
+  const url = new URL(req.url);
+  if (req.mode === 'navigate') return true;
+  if (url.pathname.endsWith('.html') || url.pathname.endsWith('/')) return true;
+  const dest = req.destination;
+  return dest === 'document' || dest === 'script' || dest === '';
+}
+
+function isMedia(req) {
+  const p = new URL(req.url).pathname.toLowerCase();
+  return /\.(mp3|mp4|webm|png|jpg|jpeg|webp|gif|svg|woff2?)$/.test(p) ||
+    p.includes('/audio/') || p.includes('/videos/') || p.includes('/icons/') || p.includes('/archivos/');
+}
+
+self.addEventListener('fetch', (event) => {
+  const req = event.request;
+  if (req.method !== 'GET') return;
+  const url = new URL(req.url);
+  if (url.origin !== self.location.origin) return;
+
+  // HTML / JS de la app: red primero (así se actualiza en el PC)
+  if (isHTMLRequest(req) && !isMedia(req)) {
+    event.respondWith(
+      fetch(req)
+        .then((response) => {
+          if (response && response.ok) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
+          }
+          return response;
+        })
+        .catch(() => caches.match(req).then((c) => c || caches.match('./index.html')))
+    );
+    return;
+  }
+
+  // Media y estáticos: caché primero, luego red
   event.respondWith(
-    caches.match(req).then(cached=>cached||fetch(req).then(response=>{
-      if(response&&response.ok){const copy=response.clone();caches.open(CACHE_NAME).then(cache=>cache.put(req,copy));}
-      return response;
-    }).catch(()=>caches.match('./index.html')))
+    caches.match(req).then((cached) => {
+      if (cached) return cached;
+      return fetch(req).then((response) => {
+        if (response && response.ok) {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
+        }
+        return response;
+      }).catch(() => cached);
+    })
   );
 });

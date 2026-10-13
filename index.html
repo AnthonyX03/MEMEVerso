@@ -8,7 +8,7 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
-<title>MEMEVerso.exe v1.3.0 — Gramola & ABDUZCAN</title>
+<title>MEMEVerso.exe v1.3.1 — Gramola & ABDUZCAN</title>
 <style>
 :root{--acid:#d6ff00;--pink:#ff3d9a;--blue:#5cf6ff;--ink:#09090d;--paper:#f4f1e8}
 body.theme-rosa{--acid:#ff6bcb;--pink:#ff3d9a;--blue:#ffb3d9;--ink:#1a0a14;--paper:#ffe8f4}
@@ -232,7 +232,6 @@ header>div:last-child{flex-wrap:wrap;justify-content:flex-end}
    <div class="setting-row"><label for="musicRange">VOLUMEN MÚSICA</label><input id="musicRange" type="range" min="0" max="100" value="40"></div>
    <div class="setting-row"><label for="volumeRange">VOLUMEN DE EFECTOS</label><input id="volumeRange" type="range" min="0" max="100" value="65"></div>
    <div class="setting-row"><label for="muteCheck">SILENCIAR TODO</label><input id="muteCheck" type="checkbox"></div>
-   <p class="setting-hint">La música se controla en la <b>GRAMOLA</b> (sala de espera). Archivos en <b>/audio</b> y <b>/videos</b>.</p>
   </div>
 
   <div class="settings-pane" id="pane-helper" role="tabpanel">
@@ -265,18 +264,17 @@ header>div:last-child{flex-wrap:wrap;justify-content:flex-end}
   </div>
 
   <div class="setting-version">
-   <b>MEMEVerso v1.3.0</b> — Gramola · Memes · ABDUZCAN<br>
-   Build: 1.3.0 · Chistes · Popups infinitos · Pestañas · /audio /videos<br>
-   El ganso no ha aprobado esta versión. Eso es bueno.
+   <b>MEMEVerso v1.3.1</b><br>
+   En algún pasillo del edificio suena una gramola que nadie enchufó. Las pistas llegan antes que las personas. El vacío hace cola con educación.
   </div>
   <div class="setting-actions"><button class="primary" id="saveSettings">LISTO</button></div>
  </div>
 </div>
 <input type="file" id="importFileInput" accept=".json,application/json" style="display:none">
 <main>
-  <div class="eyebrow">PROTOCOLO 00 // NO EXISTE UN TUTORIAL · v1.3.0</div>
+  <div class="eyebrow">PROTOCOLO 00 // NO EXISTE UN TUTORIAL · v1.3.1</div>
   <h1>¿QUÉ <span>ESTÁ</span><br> PASANDO.</h1>
-  <p class="intro">Bienvenido al <b>MEMEVerso v1.3.0</b>. Explora, combina objetos, usa la <b>gramola</b> y desbloquea pistas prohibidas. Audio en <b>/audio</b>, vídeos en <b>/videos</b>. <br><span style="color:#716c7a">[ CONSEJO: gramola en la sala · memes popup · el Ayudante cuenta chistes ]</span></p>
+  <p class="intro">Bienvenido al <b>MEMEVerso v1.3.1</b>. Explora, combina objetos, usa la <b>gramola</b> y desbloquea pistas prohibidas. Audio en <b>/audio</b>, vídeos en <b>/videos</b>. <br><span style="color:#716c7a">[ CONSEJO: gramola en la sala · memes popup · el Ayudante cuenta chistes ]</span></p>
 
   <section class="panel" id="roomPanel" style="margin-top:28px">
     <div class="panel-head"><span id="roomName">UBICACIÓN: SALA DE ESPERA PARA COSAS QUE NO EXISTEN</span><span id="roomStatus">5 OBJETOS SOSPECHOSOS</span></div>
@@ -314,7 +312,7 @@ header>div:last-child{flex-wrap:wrap;justify-content:flex-end}
     <div class="jukebox">
       <div class="jukebox-display">
         <div class="jb-track" id="jbTrackName">— sin señal —</div>
-        <div class="jb-status" id="jbTrackStatus">Coloca archivos en /audio. La primera pista se desbloquea sola.</div>
+        <div class="jb-status" id="jbTrackStatus">Pulsa ▶ REPRODUCIR. La pista MEME debería sonar.</div>
       </div>
       <div class="jukebox-list" id="jbList"></div>
       <div class="jukebox-controls">
@@ -362,7 +360,7 @@ header>div:last-child{flex-wrap:wrap;justify-content:flex-end}
       </section>
     </aside>
   </div>
-  <div class="footer"><span>MEMEVerso v1.3.0 // Gramola</span><span id="clock">HORA LOCAL: --:--:--</span><span>ALT+M · ↑↑↓↓←→←→BA</span></div>
+  <div class="footer"><span>MEMEVerso v1.3.1 // Gramola</span><span id="clock">HORA LOCAL: --:--:--</span><span>ALT+M · ↑↑↓↓←→←→BA</span></div>
 </main>
 <div id="helperDock" aria-live="polite">
  <div class="helper-head"><span>◈ AYUDANTE v1.2 // 1.200+ FRASES</span><button id="helperMin" title="Minimizar ayudante">—</button></div>
@@ -450,11 +448,16 @@ let musicVolume=0.4, bgMusic=null, currentTrackId='meme', musicPlaying=false;
 let abduzcanUnlocked=false, abduzcanVideoSeen=false, forceVideoMandatory=false;
 let annoyLevel=70, eventsOn=true, adsOn=true, autoPrankOn=true;
 let reduceMotion=false, currentTheme='acid', annoyCountToday=0, helperSilencedUntil=0;
-const APP_VERSION='1.3.0';
+const APP_VERSION='1.3.1';
 const playlist=[
-  {id:'meme',name:'MEME',file:()=>window.MEMEVERSO_MUSIC_URL||'./audio/MEME.mp3',locked:false},
-  {id:'abduzcan',name:'ABDUZCAN',file:()=>window.MEMEVERSO_ABDUZCAN_URL||'./audio/ABDUZCAN.mp3',locked:true}
+  {id:'meme',name:'MEME',file:()=>(window.MEMEVERSO_MUSIC_URL||'audio/MEME.mp3'),locked:false},
+  {id:'abduzcan',name:'ABDUZCAN',file:()=>(window.MEMEVERSO_ABDUZCAN_URL||'audio/ABDUZCAN.mp3'),locked:true}
 ];
+function resolveMediaUrl(path){
+  const p=(path||'').trim();
+  if(!p)return '';
+  try{return new URL(p,document.baseURI||location.href).href}catch(e){return p}
+}
 try{
   audioOn=localStorage.getItem('meme-audio')!=='off';
   audioVolume=Math.max(0,Math.min(1,Number(localStorage.getItem('meme-volume')??0.65)));
@@ -475,47 +478,80 @@ try{
 
 function getTrack(id){return playlist.find(p=>p.id===id)||playlist[0]}
 function initBgMusic(){
-  if(bgMusic)return;
+  if(bgMusic)return bgMusic;
   bgMusic=new Audio();
   bgMusic.loop=true;
   bgMusic.preload='auto';
+  bgMusic.crossOrigin='anonymous';
   bgMusic.volume=audioOn?musicVolume:0;
   bgMusic.addEventListener('error',()=>{
     const t=getTrack(currentTrackId);
-    log('Audio no encontrado: '+t.name+'. Colócalo en /audio/');
-    if($('jbTrackStatus'))$('jbTrackStatus').textContent='Archivo no encontrado en /audio. Revisa GitHub.';
+    const src=bgMusic&&bgMusic.currentSrc?bgMusic.currentSrc:'(sin src)';
+    log('Audio falló: '+(t?t.name:'?')+' → '+src);
+    if($('jbTrackStatus'))$('jbTrackStatus').textContent='No se pudo cargar. ¿Está audio/'+(t?t.name:'MEME')+'.mp3 en el repo?';
+    musicPlaying=false;updateJukeboxUI();
   });
   bgMusic.addEventListener('play',()=>{musicPlaying=true;updateJukeboxUI()});
   bgMusic.addEventListener('pause',()=>{musicPlaying=false;updateJukeboxUI()});
+  bgMusic.addEventListener('playing',()=>{musicPlaying=true;updateJukeboxUI()});
+  return bgMusic;
 }
 function loadTrack(id,autoplay){
   initBgMusic();
   const t=getTrack(id);
-  if(t.locked){helperSay('Esa pista está bloqueada. La gramola se niega.');return false}
+  if(!t)return false;
+  if(t.locked){
+    if(typeof helperSay==='function')helperSay('Esa pista está bloqueada. La gramola se niega.');
+    return false;
+  }
   currentTrackId=id;
   try{localStorage.setItem('meme-track',id)}catch(e){}
-  const url=(typeof t.file==='function'?t.file():t.file).trim();
+  const raw=(typeof t.file==='function'?t.file():t.file);
+  const url=resolveMediaUrl(raw);
   bgMusic.loop=true;
-  if(bgMusic.src!==new URL(url,location.href).href){bgMusic.src=url}
   bgMusic.volume=audioOn?musicVolume:0;
+  // Siempre asignar src y recargar (evita fallos de comparación de URL)
+  try{
+    bgMusic.pause();
+    bgMusic.src=url;
+    bgMusic.load();
+  }catch(e){log('Error cargando pista: '+e.message)}
+  if($('jbTrackName'))$('jbTrackName').textContent=t.name;
+  if($('jbTrackStatus'))$('jbTrackStatus').textContent=autoplay?'Cargando…':'Lista · '+t.name;
   updateJukeboxUI();
   if(autoplay&&audioOn){
     const p=bgMusic.play();
-    if(p&&p.catch)p.catch(()=>{});
+    if(p&&typeof p.then==='function'){
+      p.then(()=>{musicPlaying=true;updateJukeboxUI()}).catch(err=>{
+        musicPlaying=false;
+        if($('jbTrackStatus'))$('jbTrackStatus').textContent='Pulsa ▶ de nuevo (el navegador bloqueó el autoplay)';
+        log('play bloqueado: '+(err&&err.message?err.message:'autoplay'));
+        updateJukeboxUI();
+      });
+    }
   }
   return true;
 }
 function startBgMusic(){
   if(!audioOn)return;
   initBgMusic();
-  const t=getTrack(currentTrackId);
-  if(t.locked){currentTrackId='meme'}
+  let t=getTrack(currentTrackId);
+  if(!t||t.locked)currentTrackId='meme';
   loadTrack(currentTrackId,true);
 }
-function stopBgMusic(){if(bgMusic){bgMusic.pause()}}
+function stopBgMusic(){if(bgMusic){try{bgMusic.pause()}catch(e){}}musicPlaying=false;updateJukeboxUI()}
 function toggleBgMusic(){
-  if(!bgMusic||bgMusic.paused)startBgMusic();
-  else stopBgMusic();
+  initBgMusic();
+  if(!bgMusic)return;
+  if(bgMusic.paused||bgMusic.ended||!musicPlaying){
+    // Si no hay src, cargar pista actual
+    if(!bgMusic.src&&!bgMusic.currentSrc)loadTrack(currentTrackId||'meme',true);
+    else{
+      bgMusic.volume=audioOn?musicVolume:0;
+      const p=bgMusic.play();
+      if(p&&p.catch)p.catch(()=>loadTrack(currentTrackId||'meme',true));
+    }
+  }else stopBgMusic();
 }
 function setMusicVolume(v){
   musicVolume=Math.max(0,Math.min(1,v));
@@ -525,7 +561,12 @@ function setMusicVolume(v){
 function updateJukeboxUI(){
   const t=getTrack(currentTrackId);
   if($('jbTrackName'))$('jbTrackName').textContent=t?t.name:'—';
-  if($('jbTrackStatus'))$('jbTrackStatus').textContent=musicPlaying?'REPRODUCIENDO · bucle activo':(t&&t.locked?'BLOQUEADA':'EN PAUSA · pulsa reproducir');
+  if($('jbTrackStatus')){
+    if(musicPlaying)$('jbTrackStatus').textContent='REPRODUCIENDO · bucle activo';
+    else if(t&&t.locked)$('jbTrackStatus').textContent='BLOQUEADA';
+    else if($('jbTrackStatus').textContent.indexOf('No se pudo')===0||$('jbTrackStatus').textContent.indexOf('Pulsa ▶')===0){/* conservar mensaje de error */}
+    else $('jbTrackStatus').textContent='EN PAUSA · pulsa reproducir';
+  }
   if($('jbHeadStatus'))$('jbHeadStatus').textContent=musicPlaying?'ON AIR':'STANDBY';
   if($('jbPlayPause'))$('jbPlayPause').textContent=musicPlaying?'⏸ PAUSAR':'▶ REPRODUCIR';
   const list=$('jbList');
@@ -550,20 +591,19 @@ function unlockAbduzcan(reason){
   omen('PISTA DESBLOQUEADA: ABDUZCAN',4000);
   helperSay('La gramola ha recibido una señal prohibida: ABDUZCAN. '+ (reason||''));
   updateJukeboxUI();
-  // Primera vez: vídeo obligatorio sin saltar
-  if(!abduzcanVideoSeen){
-    showSpecialVideo('abduzcan',true);
-  }
+  if(!abduzcanVideoSeen)showSpecialVideo('abduzcan',true);
   saveProgress();
 }
 initBgMusic();
+// Precargar pista por defecto (sin autoplay hasta interacción)
+try{loadTrack(currentTrackId&&!getTrack(currentTrackId).locked?currentTrackId:'meme',false)}catch(e){}
 function unlockAudioOnce(){
   if(audioStarted)return;
   audioStarted=true;
-  ctx();
+  try{ctx()}catch(e){}
   startBgMusic();
 }
-['click','keydown','touchstart'].forEach(ev=>document.addEventListener(ev,unlockAudioOnce,{once:true,passive:true}));
+['pointerdown','click','keydown','touchstart'].forEach(ev=>document.addEventListener(ev,unlockAudioOnce,{once:true,passive:true}));
 
 // Settings tabs
 document.querySelectorAll('.settings-tab').forEach(tab=>{
@@ -1176,8 +1216,8 @@ $('adAccept').addEventListener('click',()=>{hideAd();helperSay('¡Excelente comp
 $('adReport').addEventListener('click',()=>{hideAd();omen('DENUNCIA RECIBIDA. EL GANSO INVESTIGARÁ AL GANSO.',3000);log('denuncia archivada en un estanque');helperSay(pick(auronJokes))});
 $('floatingGremlin').addEventListener('click',()=>{const g=$('floatingGremlin');g.style.display='none';cheese+=3;update();helperSay('¡Lo atrapaste! Era el inspector de cucharas. Ha dejado 3 gramos de queso cuántico.');makeTextFile('CERTIFICADO_DE_CAPTURA.txt','CERTIFICADO OFICIAL\n\nSe certifica que has atrapado una entidad flotante.\nRecompensa: 3 gramos de queso cuántico.\nEl ganso no reconoce este certificado.');sfx('secret');unlockAch('gremlin');if(cheese>=50)unlockAch('cheese50');saveProgress()});
 $('floatingGremlin').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('floatingGremlin').click()}});
-const rickURL=(window.MEMEVERSO_RICKROLL_URL||'./videos/RickRoll.mp4').trim();
-const abduzcanVidURL=(window.MEMEVERSO_ABDUZCAN_VIDEO_URL||'./videos/ABDUZCAN-MEME.mp4').trim();
+function getRickUrl(){return resolveMediaUrl((window.MEMEVERSO_RICKROLL_URL||'videos/RickRoll.mp4').trim())}
+function getAbduzcanVidUrl(){return resolveMediaUrl((window.MEMEVERSO_ABDUZCAN_VIDEO_URL||'videos/ABDUZCAN-MEME.mp4').trim())}
 let currentVideoKind='rick';
 function showSpecialVideo(kind,mandatory){
  const overlay=$('videoJumpscare'),video=$('rickVideo');
@@ -1186,21 +1226,29 @@ function showSpecialVideo(kind,mandatory){
  overlay.classList.add('show');
  overlay.classList.toggle('mandatory',forceVideoMandatory);
  stopBgMusic();
- const url=currentVideoKind==='abduzcan'?abduzcanVidURL:rickURL;
- const label=currentVideoKind==='abduzcan'?'ABDUZCAN — MEME.mp4':'RickRoll.mp4';
+ const url=currentVideoKind==='abduzcan'?getAbduzcanVidUrl():getRickUrl();
+ const label=currentVideoKind==='abduzcan'?'ABDUZCAN-MEME.mp4':'RickRoll.mp4';
  if(url){
-  if(video.src!==url)video.src=url;
+  try{
+   video.pause();
+   video.removeAttribute('src');
+   video.src=url;
+   video.load();
+  }catch(e){}
   $('videoMessage').textContent=forceVideoMandatory
    ?('TRANSMISIÓN OBLIGATORIA // '+label+' · No puedes cerrar hasta el final.')
    :('AYUDANTE TV // '+label+' · Pulsa cerrar cuando quieras.');
-  video.play().catch(()=>{$('videoMessage').textContent='Reproducción bloqueada. Pulsa ▶ en el vídeo.'+(forceVideoMandatory?' Debes verlo entero.':'')});
+  const tryPlay=()=>video.play().catch(()=>{$('videoMessage').textContent='Pulsa ▶ en el vídeo para reproducir.'+(forceVideoMandatory?' Debes verlo entero.':'')});
+  if(video.readyState>=2)tryPlay();
+  else video.addEventListener('canplay',tryPlay,{once:true});
+  video.onerror=()=>{$('videoMessage').textContent='No se pudo cargar '+label+'. ¿Está en la carpeta videos/ del repo?'};
  }else{
   video.removeAttribute('src');video.load();
-  $('videoMessage').textContent=label+' no está en /videos/. Sube el archivo a GitHub.';
+  $('videoMessage').textContent=label+' no está disponible.';
   if(forceVideoMandatory){forceVideoMandatory=false;overlay.classList.remove('mandatory')}
  }
  sfx('weird');
- helperSay(currentVideoKind==='abduzcan'?'ABDUZCAN está en el aire. La gramola calla.':'¡SORPRESA! RickRoll. La música se ha escondido.');
+ helperSay(currentVideoKind==='abduzcan'?'ABDUZCAN está en el aire. La gramola calla.':'¡SORPRESA! Transmisión no solicitada. La música se ha escondido.');
 }
 function showVideo(){showSpecialVideo('rick',false)}
 function closeVideo(){

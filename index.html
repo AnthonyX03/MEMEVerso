@@ -8,7 +8,7 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
-<title>MEMEVerso.exe v1.3.2 — Gramola & ABDUZCAN</title>
+<title>MEMEVerso.exe v1.3.3 — Gramola & ABDUZCAN</title>
 <style>
 :root{--acid:#d6ff00;--pink:#ff3d9a;--blue:#5cf6ff;--ink:#09090d;--paper:#f4f1e8}
 body.theme-rosa{--acid:#ff6bcb;--pink:#ff3d9a;--blue:#ffb3d9;--ink:#1a0a14;--paper:#ffe8f4}
@@ -265,7 +265,7 @@ header>div:last-child{flex-wrap:wrap;justify-content:flex-end}
   </div>
 
   <div class="setting-version">
-   <b>MEMEVerso v1.3.2</b><br>
+   <b>MEMEVerso v1.3.3</b><br>
    En algún pasillo del edificio suena una gramola que nadie enchufó. Las pistas llegan antes que las personas. El vacío hace cola con educación.
   </div>
   <div class="setting-actions"><button class="primary" id="saveSettings">LISTO</button></div>
@@ -273,9 +273,9 @@ header>div:last-child{flex-wrap:wrap;justify-content:flex-end}
 </div>
 <input type="file" id="importFileInput" accept=".json,application/json" style="display:none">
 <main>
-  <div class="eyebrow">PROTOCOLO 00 // NO EXISTE UN TUTORIAL · v1.3.2</div>
+  <div class="eyebrow">PROTOCOLO 00 // NO EXISTE UN TUTORIAL · v1.3.3</div>
   <h1>¿QUÉ <span>ESTÁ</span><br> PASANDO.</h1>
-  <p class="intro">Bienvenido al <b>MEMEVerso v1.3.2</b>. Explora, combina objetos, usa la <b>gramola</b> y desbloquea pistas prohibidas. Audio en <b>/audio</b>, vídeos en <b>/videos</b>. <br><span style="color:#716c7a">[ CONSEJO: gramola en la sala · memes popup · el Ayudante cuenta chistes ]</span></p>
+  <p class="intro">Bienvenido al <b>MEMEVerso v1.3.3</b>. Explora, combina objetos, usa la <b>gramola</b> y desbloquea pistas prohibidas. Audio en <b>/audio</b>, vídeos en <b>/video</b>. <br><span style="color:#716c7a">[ CONSEJO: gramola en la sala · memes popup · el Ayudante cuenta chistes ]</span></p>
 
   <section class="panel" id="roomPanel" style="margin-top:28px">
     <div class="panel-head"><span id="roomName">UBICACIÓN: SALA DE ESPERA PARA COSAS QUE NO EXISTEN</span><span id="roomStatus">5 OBJETOS SOSPECHOSOS</span></div>
@@ -361,7 +361,7 @@ header>div:last-child{flex-wrap:wrap;justify-content:flex-end}
       </section>
     </aside>
   </div>
-  <div class="footer"><span>MEMEVerso v1.3.2 // Gramola</span><span id="clock">HORA LOCAL: --:--:--</span><span>ALT+M · ↑↑↓↓←→←→BA</span></div>
+  <div class="footer"><span>MEMEVerso v1.3.3 // Gramola</span><span id="clock">HORA LOCAL: --:--:--</span><span>ALT+M · ↑↑↓↓←→←→BA</span></div>
 </main>
 <div id="helperDock" aria-live="polite">
  <div class="helper-head"><span>◈ AYUDANTE v1.2 // 1.200+ FRASES</span><button id="helperMin" title="Minimizar ayudante">—</button></div>
@@ -449,7 +449,7 @@ let musicVolume=0.4, bgMusic=null, currentTrackId='meme', musicPlaying=false;
 let abduzcanUnlocked=false, abduzcanVideoSeen=false, forceVideoMandatory=false;
 let annoyLevel=70, eventsOn=true, adsOn=true, autoPrankOn=true;
 let reduceMotion=false, currentTheme='acid', annoyCountToday=0, helperSilencedUntil=0;
-const APP_VERSION='1.3.2';
+const APP_VERSION='1.3.3';
 const playlist=[
   {id:'meme',name:'MEME',file:()=>(window.MEMEVERSO_MUSIC_URL||'audio/MEME.mp3'),locked:false},
   {id:'abduzcan',name:'ABDUZCAN',file:()=>(window.MEMEVERSO_ABDUZCAN_URL||'audio/ABDUZCAN.mp3'),locked:true}
@@ -497,6 +497,47 @@ function initBgMusic(){
   bgMusic.addEventListener('playing',()=>{musicPlaying=true;updateJukeboxUI()});
   return bgMusic;
 }
+function trackUrl(id){
+  const t=getTrack(id||currentTrackId);
+  if(!t)return '';
+  const raw=typeof t.file==='function'?t.file():t.file;
+  return resolveMediaUrl(raw);
+}
+function playBgMusicFromGesture(){
+  if(!audioOn){if($('jbTrackStatus'))$('jbTrackStatus').textContent='Audio silenciado en ajustes.';return}
+  initBgMusic();
+  try{ctx()}catch(e){}
+  let id=currentTrackId||'meme';
+  const t0=getTrack(id);if(!t0||t0.locked)id='meme';
+  currentTrackId=id;
+  try{localStorage.setItem('meme-track',id)}catch(e){}
+  const url=trackUrl(id);
+  if(!url){if($('jbTrackStatus'))$('jbTrackStatus').textContent='Ruta de audio vacía.';return}
+  const fileName=id==='abduzcan'?'ABDUZCAN.mp3':'MEME.mp3';
+  bgMusic.loop=true;
+  bgMusic.volume=musicVolume;
+  if(!bgMusic.currentSrc||!bgMusic.currentSrc.includes(fileName)){
+    bgMusic.src=url;
+  }
+  if($('jbTrackName'))$('jbTrackName').textContent=getTrack(id).name;
+  if($('jbTrackStatus'))$('jbTrackStatus').textContent='Reproduciendo…';
+  const markPlaying=()=>{musicPlaying=true;if($('jbTrackStatus'))$('jbTrackStatus').textContent='REPRODUCIENDO · bucle activo';updateJukeboxUI()};
+  const markFail=(msg)=>{musicPlaying=false;if($('jbTrackStatus'))$('jbTrackStatus').textContent=msg;updateJukeboxUI()};
+  const doPlay=()=>{
+    const p=bgMusic.play();
+    if(p&&p.then)p.then(markPlaying).catch(()=>{
+      const retry=()=>{bgMusic.play().then(markPlaying).catch(err=>{
+        markFail('¿Falta audio/'+fileName+' en el repo?');
+        log('play error: '+(err&&err.message?err.message:err));
+      })};
+      if(bgMusic.readyState>=2)retry();
+      else bgMusic.addEventListener('canplay',retry,{once:true});
+    });
+    else markPlaying();
+  };
+  doPlay();
+  updateJukeboxUI();
+}
 function loadTrack(id,autoplay){
   initBgMusic();
   const t=getTrack(id);
@@ -507,52 +548,22 @@ function loadTrack(id,autoplay){
   }
   currentTrackId=id;
   try{localStorage.setItem('meme-track',id)}catch(e){}
-  const raw=(typeof t.file==='function'?t.file():t.file);
-  const url=resolveMediaUrl(raw);
+  const url=trackUrl(id);
   bgMusic.loop=true;
   bgMusic.volume=audioOn?musicVolume:0;
-  // Siempre asignar src y recargar (evita fallos de comparación de URL)
-  try{
-    bgMusic.pause();
-    bgMusic.src=url;
-    bgMusic.load();
-  }catch(e){log('Error cargando pista: '+e.message)}
+  try{bgMusic.src=url}catch(e){}
   if($('jbTrackName'))$('jbTrackName').textContent=t.name;
-  if($('jbTrackStatus'))$('jbTrackStatus').textContent=autoplay?'Cargando…':'Lista · '+t.name;
   updateJukeboxUI();
-  if(autoplay&&audioOn){
-    const p=bgMusic.play();
-    if(p&&typeof p.then==='function'){
-      p.then(()=>{musicPlaying=true;updateJukeboxUI()}).catch(err=>{
-        musicPlaying=false;
-        if($('jbTrackStatus'))$('jbTrackStatus').textContent='Pulsa ▶ de nuevo (el navegador bloqueó el autoplay)';
-        log('play bloqueado: '+(err&&err.message?err.message:'autoplay'));
-        updateJukeboxUI();
-      });
-    }
-  }
+  if(autoplay&&audioOn)playBgMusicFromGesture();
   return true;
 }
-function startBgMusic(){
-  if(!audioOn)return;
-  initBgMusic();
-  let t=getTrack(currentTrackId);
-  if(!t||t.locked)currentTrackId='meme';
-  loadTrack(currentTrackId,true);
-}
+function startBgMusic(){if(!audioOn)return;playBgMusicFromGesture()}
 function stopBgMusic(){if(bgMusic){try{bgMusic.pause()}catch(e){}}musicPlaying=false;updateJukeboxUI()}
 function toggleBgMusic(){
   initBgMusic();
   if(!bgMusic)return;
-  if(bgMusic.paused||bgMusic.ended||!musicPlaying){
-    // Si no hay src, cargar pista actual
-    if(!bgMusic.src&&!bgMusic.currentSrc)loadTrack(currentTrackId||'meme',true);
-    else{
-      bgMusic.volume=audioOn?musicVolume:0;
-      const p=bgMusic.play();
-      if(p&&p.catch)p.catch(()=>loadTrack(currentTrackId||'meme',true));
-    }
-  }else stopBgMusic();
+  if(!bgMusic.paused&&musicPlaying)stopBgMusic();
+  else playBgMusicFromGesture();
 }
 function setMusicVolume(v){
   musicVolume=Math.max(0,Math.min(1,v));
@@ -578,7 +589,7 @@ function updateJukeboxUI(){
       b.className='secondary'+(tr.locked?' locked':'')+(tr.id===currentTrackId&&musicPlaying?' playing':'');
       b.innerHTML='<span>'+(tr.locked?'🔒 ':'🎵 ')+tr.name+'</span><span style="font-size:9px">'+(tr.locked?'BLOQUEADA':(tr.id===currentTrackId?'ACTUAL':'ELEGIR'))+'</span>';
       b.disabled=!!tr.locked;
-      b.onclick=()=>{if(!tr.locked){loadTrack(tr.id,true);sfx('click')}};
+      b.onclick=()=>{if(!tr.locked){currentTrackId=tr.id;playBgMusicFromGesture();}};
       list.appendChild(b);
     });
   }
@@ -602,7 +613,13 @@ function unlockAudioOnce(){
   if(audioStarted)return;
   audioStarted=true;
   try{ctx()}catch(e){}
-  startBgMusic();
+  // Intento suave: si el navegador bloquea, la gramola ▶ lo resuelve con gesto real
+  try{
+    initBgMusic();
+    const id=(getTrack(currentTrackId)&&!getTrack(currentTrackId).locked)?currentTrackId:'meme';
+    const url=trackUrl(id);
+    if(url){bgMusic.src=url;bgMusic.volume=audioOn?musicVolume:0;bgMusic.play().then(()=>{musicPlaying=true;updateJukeboxUI()}).catch(()=>{musicPlaying=false;updateJukeboxUI()})}
+  }catch(e){}
 }
 ['pointerdown','click','keydown','touchstart'].forEach(ev=>document.addEventListener(ev,unlockAudioOnce,{once:true,passive:true}));
 
@@ -881,7 +898,7 @@ $('jukeboxBtn').addEventListener('click',()=>{
   updateJukeboxUI();sfx('click');
   if(open)helperSay('Gramola online. MEME está libre. ABDUZCAN espera en la luna.');
 });
-$('jbPlayPause').addEventListener('click',()=>{toggleBgMusic();sfx('click')});
+$('jbPlayPause').addEventListener('click',(e)=>{e.preventDefault();toggleBgMusic();});
 $('jbStop').addEventListener('click',()=>{stopBgMusic();updateJukeboxUI();sfx('click')});
 $('jbUnlockHint').addEventListener('click',()=>{
   if(abduzcanUnlocked)helperSay('ABDUZCAN ya está desbloqueada. Elige la pista en la lista.');
@@ -1270,8 +1287,8 @@ $('adAccept').addEventListener('click',()=>{hideAd();helperSay('¡Excelente comp
 $('adReport').addEventListener('click',()=>{hideAd();omen('DENUNCIA RECIBIDA. EL GANSO INVESTIGARÁ AL GANSO.',3000);log('denuncia archivada en un estanque');helperSay(pick(auronJokes))});
 $('floatingGremlin').addEventListener('click',()=>{const g=$('floatingGremlin');g.style.display='none';cheese+=3;update();helperSay('¡Lo atrapaste! Era el inspector de cucharas. Ha dejado 3 gramos de queso cuántico.');makeTextFile('CERTIFICADO_DE_CAPTURA.txt','CERTIFICADO OFICIAL\n\nSe certifica que has atrapado una entidad flotante.\nRecompensa: 3 gramos de queso cuántico.\nEl ganso no reconoce este certificado.');sfx('secret');unlockAch('gremlin');if(cheese>=50)unlockAch('cheese50');saveProgress()});
 $('floatingGremlin').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('floatingGremlin').click()}});
-function getRickUrl(){return resolveMediaUrl((window.MEMEVERSO_RICKROLL_URL||'videos/RickRoll.mp4').trim())}
-function getAbduzcanVidUrl(){return resolveMediaUrl((window.MEMEVERSO_ABDUZCAN_VIDEO_URL||'videos/ABDUZCAN-MEME.mp4').trim())}
+function getRickUrl(){return resolveMediaUrl((window.MEMEVERSO_RICKROLL_URL||'video/RickRoll.mp4').trim())}
+function getAbduzcanVidUrl(){return resolveMediaUrl((window.MEMEVERSO_ABDUZCAN_VIDEO_URL||'video/ABDUZCAN-MEME.mp4').trim())}
 let currentVideoKind='rick';
 function showSpecialVideo(kind,mandatory){
  const overlay=$('videoJumpscare'),video=$('rickVideo');
@@ -1295,7 +1312,7 @@ function showSpecialVideo(kind,mandatory){
   const tryPlay=()=>video.play().catch(()=>{$('videoMessage').textContent='Pulsa ▶ en el vídeo para reproducir.'+(forceVideoMandatory?' Debes verlo entero.':'')});
   if(video.readyState>=2)tryPlay();
   else video.addEventListener('canplay',tryPlay,{once:true});
-  video.onerror=()=>{$('videoMessage').textContent='No se pudo cargar '+label+'. ¿Está en la carpeta videos/ del repo?'};
+  video.onerror=()=>{$('videoMessage').textContent='No se pudo cargar '+label+'. ¿Está en la carpeta video/ del repo?'};
  }else{
   video.removeAttribute('src');video.load();
   $('videoMessage').textContent=label+' no está disponible.';

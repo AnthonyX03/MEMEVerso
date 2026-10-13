@@ -51,7 +51,7 @@ function isHTMLRequest(req) {
 function isMedia(req) {
   const p = new URL(req.url).pathname.toLowerCase();
   return /\.(mp3|mp4|webm|png|jpg|jpeg|webp|gif|svg|woff2?)$/.test(p) ||
-    p.includes('/audio/') || p.includes('/videos/') || p.includes('/icons/') || p.includes('/archivos/');
+    p.includes('/audio/') || p.includes('/video/') || p.includes('/icons/') || p.includes('/archivos/');
 }
 
 self.addEventListener('fetch', (event) => {

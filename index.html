@@ -8,7 +8,7 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
-<title>MEMEVerso.exe v1.5.0 — Gramola & ABDUZCAN</title>
+<title>MEMEVerso.exe v1.5.1 — Gramola & ABDUZCAN</title>
 <style>
 :root{--acid:#d6ff00;--pink:#ff3d9a;--blue:#5cf6ff;--ink:#09090d;--paper:#f4f1e8}
 body.theme-rosa{--acid:#ff6bcb;--pink:#ff3d9a;--blue:#ffb3d9;--ink:#1a0a14;--paper:#ffe8f4}
@@ -295,7 +295,7 @@ body.tilt-chaos{transition:transform .6s ease}
   </div>
 
   <div class="setting-version">
-   <b id="secretVersion" title="">MEMEVerso v1.5.0</b><br>
+   <b id="secretVersion" title="">MEMEVerso v1.5.1</b><br>
    La gramola no pide permiso. Los vídeos llegan sin invitación. En la luna alguien tararea ABDUZCAN entre dientes.
   </div>
   <div class="setting-actions"><button class="primary" id="saveSettings">LISTO</button></div>
@@ -304,9 +304,9 @@ body.tilt-chaos{transition:transform .6s ease}
 <div id="cheatModal" role="dialog" aria-modal="true" aria-label=""><div class="cheat-card"><button type="button" class="secondary cheat-dismiss" id="closeCheat" aria-label="Cerrar">×</button><div style="color:#8b8995;margin:2px 0 14px">// señal local · pistas de la gramola</div><button type="button" class="secondary" id="unlockAbduzcanCheat">Desbloquear ABDUZCAN</button><button type="button" class="secondary" id="unlockRickCheat" style="margin-top:8px">Desbloquear RICKROLL</button><button type="button" class="secondary" id="unlockXokasCheat" style="margin-top:8px">Desbloquear XOKAS-REMIX</button></div></div>
 <input type="file" id="importFileInput" accept=".json,application/json" style="display:none">
 <main>
-  <div class="eyebrow">PROTOCOLO 00 // NO EXISTE UN TUTORIAL · v1.5.0</div>
+  <div class="eyebrow">PROTOCOLO 00 // NO EXISTE UN TUTORIAL · v1.5.1</div>
   <h1>¿QUÉ <span>ESTÁ</span><br> PASANDO.</h1>
-  <p class="intro">Bienvenido al <b>MEMEVerso v1.5.0</b>. Menús por páginas (sin scroll infinito). Desbloquea pistas en la <b>gramola</b>. <br><span style="color:#716c7a">[ SALA · MAPA · GRAMOLA · LOGROS · ARCHIVO · CAOS ]</span></p>
+  <p class="intro">Bienvenido al <b>MEMEVerso v1.5.1</b>. Menús por páginas (sin scroll infinito). Desbloquea pistas en la <b>gramola</b>. <br><span style="color:#716c7a">[ SALA · MAPA · GRAMOLA · LOGROS · ARCHIVO · CAOS ]</span></p>
 
   <nav class="page-nav" id="pageNav" aria-label="Secciones">
     <button type="button" class="active" data-page="sala">🏠 SALA</button>
@@ -413,7 +413,7 @@ body.tilt-chaos{transition:transform .6s ease}
     </aside>
   </div>
   </div><!-- /page-caos -->
-  <div class="footer"><span id="footerVersion" class="version-secret">MEMEVerso v1.5.0 // Gramola</span><span id="clock">HORA LOCAL: --:--:--</span><span>ALT+M · ↑↑↓↓←→←→BA</span></div>
+  <div class="footer"><span id="footerVersion" class="version-secret">MEMEVerso v1.5.1 // Gramola</span><span id="clock">HORA LOCAL: --:--:--</span><span>ALT+M · ↑↑↓↓←→←→BA</span></div>
 </main>
 
 <div id="voidEyes" aria-hidden="true"></div>
@@ -507,7 +507,7 @@ let abduzcanUnlocked=false, abduzcanVideoSeen=false, forceVideoMandatory=false;
 let rickUnlocked=false, rickVideoSeen=false, xokasUnlocked=false;
 let annoyLevel=70, eventsOn=true, adsOn=true, autoPrankOn=true;
 let reduceMotion=false, currentTheme='acid', annoyCountToday=0, helperSilencedUntil=0;
-const APP_VERSION='1.5.0';
+const APP_VERSION='1.5.1';
 const playlist=[
   {id:'meme',name:'MEME',file:()=>(window.MEMEVERSO_MUSIC_URL||'audio/MEME.mp3'),locked:false},
   {id:'abduzcan',name:'ABDUZCAN',file:()=>(window.MEMEVERSO_ABDUZCAN_URL||'audio/ABDUZCAN.mp3'),locked:true},
@@ -545,23 +545,8 @@ try{
 }catch(e){}
 
 function getTrack(id){return playlist.find(p=>p.id===id)||playlist[0]}
-function initBgMusic(){
-  if(bgMusic)return bgMusic;
-  bgMusic=new Audio();
-  bgMusic.loop=true;
-  bgMusic.preload='auto';
-  bgMusic.volume=audioOn?musicVolume:0;
-  bgMusic.addEventListener('error',()=>{
-    const t=getTrack(currentTrackId);
-    const src=bgMusic&&bgMusic.currentSrc?bgMusic.currentSrc:'(sin src)';
-    log('Audio falló: '+(t?t.name:'?')+' → '+src);
-    if($('jbTrackStatus'))$('jbTrackStatus').textContent='No se pudo cargar. ¿Está audio/'+(t?t.name:'MEME')+'.mp3 en el repo?';
-    musicPlaying=false;updateJukeboxUI();
-  });
-  bgMusic.addEventListener('play',()=>{musicPlaying=true;updateJukeboxUI()});
-  bgMusic.addEventListener('pause',()=>{musicPlaying=false;updateJukeboxUI()});
-  bgMusic.addEventListener('playing',()=>{musicPlaying=true;updateJukeboxUI()});
-  return bgMusic;
+function trackFileName(id){
+  return ({meme:'MEME.mp3',abduzcan:'ABDUZCAN.mp3',rickroll:'RICKROLL.mp3',xokas:'XOKAS-REMIX.mp3'})[id]||((id||'track')+'.mp3');
 }
 function trackUrl(id){
   const t=getTrack(id||currentTrackId);
@@ -569,68 +554,133 @@ function trackUrl(id){
   const raw=typeof t.file==='function'?t.file():t.file;
   return resolveMediaUrl(raw);
 }
+function audioSrcMatches(id){
+  if(!bgMusic)return false;
+  const src=(bgMusic.currentSrc||bgMusic.src||'');
+  if(!src)return false;
+  const fn=trackFileName(id);
+  try{return decodeURIComponent(src).indexOf(fn)>=0||src.indexOf(encodeURIComponent(fn))>=0||src.indexOf(fn)>=0}catch(e){return src.indexOf(fn)>=0}
+}
+let musicWanted=false; // el usuario quiere música en marcha
+let musicSwitching=false;
+function initBgMusic(){
+  if(bgMusic)return bgMusic;
+  bgMusic=new Audio();
+  bgMusic.loop=true;
+  bgMusic.preload='auto';
+  bgMusic.volume=audioOn?musicVolume:0;
+  bgMusic.addEventListener('error',()=>{
+    if(musicSwitching)return;
+    const t=getTrack(currentTrackId);
+    log('Audio falló: '+(t?t.name:'?')+' → '+(bgMusic.currentSrc||''));
+    if($('jbTrackStatus'))$('jbTrackStatus').textContent='No se pudo cargar audio/'+trackFileName(currentTrackId);
+    musicPlaying=false;musicWanted=false;updateJukeboxUI();
+  });
+  bgMusic.addEventListener('playing',()=>{musicPlaying=true;musicWanted=true;updateJukeboxUI(false)});
+  bgMusic.addEventListener('play',()=>{musicPlaying=true;updateJukeboxUI(false)});
+  bgMusic.addEventListener('pause',()=>{
+    if(musicSwitching)return;
+    musicPlaying=false;
+    updateJukeboxUI(false);
+  });
+  // Si el navegador pausa por política, no destruir la pista
+  bgMusic.addEventListener('ended',()=>{
+    if(bgMusic.loop){bgMusic.currentTime=0;bgMusic.play().catch(()=>{})}
+  });
+  return bgMusic;
+}
+function resolvePlayableId(id){
+  let t0=getTrack(id);
+  if(!t0)return 'meme';
+  if(!t0.locked)return id;
+  if(id==='abduzcan'){
+    if($('jbTrackStatus'))$('jbTrackStatus').textContent='ABDUZCAN bloqueada · luna + taquilla 6';
+    return null;
+  }
+  if(id==='rickroll'){
+    if($('jbTrackStatus'))$('jbTrackStatus').textContent='RICKROLL bloqueada · mira el vídeo una vez';
+    return null;
+  }
+  if(id==='xokas'){
+    if($('jbTrackStatus'))$('jbTrackStatus').textContent='XOKAS-REMIX bloqueada · Konami o «xokas»';
+    return null;
+  }
+  return 'meme';
+}
 function playBgMusicFromGesture(){
   if(!audioOn){if($('jbTrackStatus'))$('jbTrackStatus').textContent='Audio silenciado en ajustes.';return}
-  if(isVideoOpen()){if($('jbTrackStatus'))$('jbTrackStatus').textContent='Vídeo en curso · música en pausa';return}
+  if(typeof isVideoOpen==='function'&&isVideoOpen()){
+    if($('jbTrackStatus'))$('jbTrackStatus').textContent='Vídeo en curso · música en pausa';
+    return;
+  }
   initBgMusic();
   try{if(typeof ctx==='function')ctx()}catch(e){}
-  let id=currentTrackId||'meme';
-  let t0=getTrack(id);
-  // Solo forzar MEME si la pista pedida está bloqueada de verdad
-  if(!t0){id='meme';t0=getTrack('meme')}
-  else if(t0.locked){
-    if(id==='abduzcan'){
-      if($('jbTrackStatus'))$('jbTrackStatus').textContent='ABDUZCAN bloqueada · luna + taquilla 6';
-      if(typeof helperSay==='function')helperSay('ABDUZCAN: repara el reloj y abre la taquilla 6.');
-      updateJukeboxUI();return;
-    }
-    if(id==='rickroll'){
-      if($('jbTrackStatus'))$('jbTrackStatus').textContent='RICKROLL bloqueada · mira el vídeo RickRoll una vez';
-      if(typeof helperSay==='function')helperSay('RICKROLL se desbloquea la primera vez que te Rickrolleas.');
-      updateJukeboxUI();return;
-    }
-    if(id==='xokas'){
-      if($('jbTrackStatus'))$('jbTrackStatus').textContent='XOKAS-REMIX bloqueada · código Konami o escribe xokas';
-      if(typeof helperSay==='function')helperSay('XOKAS-REMIX: ↑↑↓↓←→←→BA o escribe «xokas» al Ayudante.');
-      updateJukeboxUI();return;
-    }
-    id='meme';t0=getTrack('meme');
-  }
+  let id=resolvePlayableId(currentTrackId||'meme');
+  if(id===null){updateJukeboxUI();return}
   currentTrackId=id;
   try{localStorage.setItem('meme-track',id)}catch(e){}
   const url=trackUrl(id);
   if(!url){if($('jbTrackStatus'))$('jbTrackStatus').textContent='Ruta de audio vacía.';return}
-  const fileName=({meme:'MEME.mp3',abduzcan:'ABDUZCAN.mp3',rickroll:'RICKROLL.mp3',xokas:'XOKAS-REMIX.mp3'})[id]||(id+'.mp3');
+  const name=(getTrack(id)||{}).name||id;
   bgMusic.loop=true;
-  bgMusic.volume=Math.max(0.05, musicVolume);
-  // Recarga limpia siempre al cambiar de pista (evita oír MEME con etiqueta ABDUZCAN)
+  bgMusic.volume=Math.max(0.05, musicVolume||0.4);
+  musicWanted=true;
+
+  // Misma pista ya cargada: solo reanudar, NO recargar (esto evitaba el corte continuo)
+  if(audioSrcMatches(id)){
+    if(!bgMusic.paused&&!bgMusic.ended){
+      musicPlaying=true;
+      if($('jbTrackName'))$('jbTrackName').textContent=name;
+      if($('jbTrackStatus'))$('jbTrackStatus').textContent='REPRODUCIENDO · '+name+' · bucle';
+      updateJukeboxUI(false);
+      return;
+    }
+    if($('jbTrackStatus'))$('jbTrackStatus').textContent='Reproduciendo '+name+'…';
+    bgMusic.play().then(()=>{
+      musicPlaying=true;
+      if($('jbTrackStatus'))$('jbTrackStatus').textContent='REPRODUCIENDO · '+name+' · bucle';
+      updateJukeboxUI(false);
+    }).catch(err=>{
+      musicPlaying=false;
+      if($('jbTrackStatus'))$('jbTrackStatus').textContent='Pulsa ▶ otra vez (autoplay bloqueado)';
+      log('play resume: '+(err&&err.message?err.message:err));
+      updateJukeboxUI(false);
+    });
+    return;
+  }
+
+  // Cambio de pista: cargar una sola vez
+  musicSwitching=true;
+  if($('jbTrackName'))$('jbTrackName').textContent=name;
+  if($('jbTrackStatus'))$('jbTrackStatus').textContent='Cargando '+trackFileName(id)+'…';
   try{
     bgMusic.pause();
-    bgMusic.removeAttribute('src');
-    bgMusic.load();
     bgMusic.src=url;
-  }catch(e){try{bgMusic.src=url}catch(e2){}}
-  if($('jbTrackName'))$('jbTrackName').textContent=(getTrack(id)||{}).name||id;
-  if($('jbTrackStatus'))$('jbTrackStatus').textContent='Cargando '+fileName+'…';
-  const markPlaying=()=>{musicPlaying=true;if($('jbTrackStatus'))$('jbTrackStatus').textContent='REPRODUCIENDO · '+((getTrack(id)||{}).name||id)+' · bucle';updateJukeboxUI()};
-  const markFail=(msg)=>{musicPlaying=false;if($('jbTrackStatus'))$('jbTrackStatus').textContent=msg;updateJukeboxUI();log(msg)};
-  let attempted=false;
-  const attempt=()=>{
-    if(attempted)return;attempted=true;
-    const p=bgMusic.play();
-    if(p&&p.then){
-      p.then(markPlaying).catch(function(err){
-        markFail('No se pudo reproducir audio/'+fileName+' (¿falta en el repo?)');
-      });
-    } else markPlaying();
+  }catch(e){bgMusic.src=url}
+  musicSwitching=false;
+
+  const tryPlay=()=>{
+    if(!musicWanted||(typeof isVideoOpen==='function'&&isVideoOpen()))return;
+    bgMusic.volume=Math.max(0.05, musicVolume||0.4);
+    bgMusic.play().then(()=>{
+      musicPlaying=true;
+      if($('jbTrackStatus'))$('jbTrackStatus').textContent='REPRODUCIENDO · '+name+' · bucle';
+      updateJukeboxUI(false);
+    }).catch(err=>{
+      musicPlaying=false;
+      if($('jbTrackStatus'))$('jbTrackStatus').textContent='Pulsa ▶ para reproducir '+name;
+      log('play new: '+(err&&err.message?err.message:err));
+      updateJukeboxUI(false);
+    });
   };
-  bgMusic.addEventListener('canplay',attempt,{once:true});
-  bgMusic.addEventListener('error',function(){markFail('Error cargando audio/'+fileName+'. Comprueba que existe en /audio.')},{once:true});
-  setTimeout(function(){if(!musicPlaying)attempt()},500);
-  updateJukeboxUI();
+  if(bgMusic.readyState>=3)tryPlay();
+  else{
+    bgMusic.addEventListener('canplay',tryPlay,{once:true});
+    setTimeout(tryPlay,600);
+  }
+  updateJukeboxUI(false);
 }
 function loadTrack(id,autoplay){
-  initBgMusic();
   const t=getTrack(id);
   if(!t)return false;
   if(t.locked){
@@ -639,48 +689,75 @@ function loadTrack(id,autoplay){
   }
   currentTrackId=id;
   try{localStorage.setItem('meme-track',id)}catch(e){}
-  const url=trackUrl(id);
-  bgMusic.loop=true;
-  bgMusic.volume=audioOn?musicVolume:0;
-  try{bgMusic.src=url}catch(e){}
   if($('jbTrackName'))$('jbTrackName').textContent=t.name;
-  updateJukeboxUI();
+  updateJukeboxUI(false);
   if(autoplay&&audioOn)playBgMusicFromGesture();
+  else{
+    // Precarga sin forzar play
+    initBgMusic();
+    const url=trackUrl(id);
+    if(url&&!audioSrcMatches(id)){try{bgMusic.src=url}catch(e){}}
+  }
   return true;
 }
-function startBgMusic(){if(!audioOn)return;playBgMusicFromGesture()}
-function stopBgMusic(){if(bgMusic){try{bgMusic.pause()}catch(e){}}musicPlaying=false;updateJukeboxUI()}
+function startBgMusic(){
+  if(!audioOn)return;
+  if(typeof isVideoOpen==='function'&&isVideoOpen())return;
+  musicWanted=true;
+  playBgMusicFromGesture();
+}
+function stopBgMusic(){
+  musicWanted=false;
+  if(bgMusic){try{bgMusic.pause()}catch(e){}}
+  musicPlaying=false;
+  updateJukeboxUI(false);
+}
 function toggleBgMusic(){
   initBgMusic();
   if(!bgMusic)return;
-  if(!bgMusic.paused&&musicPlaying)stopBgMusic();
-  else playBgMusicFromGesture();
+  if(musicPlaying&&!bgMusic.paused){
+    stopBgMusic();
+  }else{
+    musicWanted=true;
+    playBgMusicFromGesture();
+  }
 }
 function setMusicVolume(v){
   musicVolume=Math.max(0,Math.min(1,v));
   if(bgMusic)bgMusic.volume=audioOn?musicVolume:0;
   try{localStorage.setItem('meme-music-vol',String(musicVolume))}catch(e){}
 }
-function updateJukeboxUI(){
+function updateJukeboxUI(rebuildList){
+  if(rebuildList===undefined)rebuildList=true;
   const t=getTrack(currentTrackId);
-  if($('jbTrackName'))$('jbTrackName').textContent=t?t.name:'—';
-  if($('jbTrackStatus')){
-    if(musicPlaying)$('jbTrackStatus').textContent='REPRODUCIENDO · bucle activo';
-    else if(t&&t.locked)$('jbTrackStatus').textContent='BLOQUEADA';
-    else if($('jbTrackStatus').textContent.indexOf('No se pudo')===0||$('jbTrackStatus').textContent.indexOf('Pulsa ▶')===0){/* conservar mensaje de error */}
-    else $('jbTrackStatus').textContent='EN PAUSA · pulsa reproducir';
-  }
+  if($('jbTrackName')&&t)$('jbTrackName').textContent=t.name;
   if($('jbHeadStatus'))$('jbHeadStatus').textContent=musicPlaying?'ON AIR':'STANDBY';
   if($('jbPlayPause'))$('jbPlayPause').textContent=musicPlaying?'⏸ PAUSAR':'▶ REPRODUCIR';
+  // No pisar mensajes de error / carga si están activos
+  if($('jbTrackStatus')){
+    const st=$('jbTrackStatus').textContent||'';
+    const keep=/^(No se pudo|Pulsa ▶|Cargando|Vídeo en curso|Audio silenciado|ABDUZCAN bloqueada|RICKROLL bloqueada|XOKAS)/.test(st);
+    if(musicPlaying){
+      if(!keep||st.indexOf('REPRODUCIENDO')===0)$('jbTrackStatus').textContent='REPRODUCIENDO · '+(t?t.name:'')+' · bucle';
+    }else if(!keep){
+      if(t&&t.locked)$('jbTrackStatus').textContent='BLOQUEADA';
+      else $('jbTrackStatus').textContent='EN PAUSA · pulsa ▶ reproducir';
+    }
+  }
   const list=$('jbList');
-  if(list){
+  if(list&&rebuildList){
     list.innerHTML='';
     playlist.forEach(tr=>{
       const b=document.createElement('button');
-      b.className='secondary'+(tr.locked?' locked':'')+(tr.id===currentTrackId&&musicPlaying?' playing':'');
+      b.className='secondary'+(tr.locked?' locked':'')+(tr.id===currentTrackId?' playing':'');
       b.innerHTML='<span>'+(tr.locked?'🔒 ':'🎵 ')+tr.name+'</span><span style="font-size:9px">'+(tr.locked?'BLOQUEADA':(tr.id===currentTrackId?'ACTUAL':'ELEGIR'))+'</span>';
       b.disabled=!!tr.locked;
-      b.onclick=()=>{if(!tr.locked){currentTrackId=tr.id;playBgMusicFromGesture();}};
+      b.onclick=()=>{
+        if(tr.locked)return;
+        if(tr.id===currentTrackId&&musicPlaying&&bgMusic&&!bgMusic.paused)return; // ya suena
+        currentTrackId=tr.id;
+        playBgMusicFromGesture();
+      };
       list.appendChild(b);
     });
   }
@@ -724,13 +801,15 @@ function unlockAudioOnce(){
   if(audioStarted)return;
   audioStarted=true;
   try{ctx()}catch(e){}
-  // Intento suave: si el navegador bloquea, la gramola ▶ lo resuelve con gesto real
-  try{
-    initBgMusic();
-    const id=(getTrack(currentTrackId)&&!getTrack(currentTrackId).locked)?currentTrackId:'meme';
-    const url=trackUrl(id);
-    if(url){bgMusic.src=url;bgMusic.volume=audioOn?musicVolume:0;bgMusic.play().then(()=>{musicPlaying=true;updateJukeboxUI()}).catch(()=>{musicPlaying=false;updateJukeboxUI()})}
-  }catch(e){}
+  // Solo desbloquea el contexto; la gramola controla qué suena
+  if(audioOn&&musicWanted)playBgMusicFromGesture();
+  else if(audioOn){
+    try{
+      initBgMusic();
+      musicWanted=true;
+      playBgMusicFromGesture();
+    }catch(e){}
+  }
 }
 ['pointerdown','click','keydown','touchstart'].forEach(ev=>document.addEventListener(ev,unlockAudioOnce,{once:true,passive:true}));
 

@@ -8,7 +8,7 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
-<title>MEMEVerso.exe v1.4.0 — Gramola & ABDUZCAN</title>
+<title>MEMEVerso.exe v1.5.0 — Gramola & ABDUZCAN</title>
 <style>
 :root{--acid:#d6ff00;--pink:#ff3d9a;--blue:#5cf6ff;--ink:#09090d;--paper:#f4f1e8}
 body.theme-rosa{--acid:#ff6bcb;--pink:#ff3d9a;--blue:#ffb3d9;--ink:#1a0a14;--paper:#ffe8f4}
@@ -231,6 +231,15 @@ body.tilt-chaos{transition:transform .6s ease}
 #gooseModeBanner{display:none;position:fixed;top:0;left:0;right:0;z-index:40;background:var(--acid);color:#09090d;font:900 12px monospace;text-align:center;padding:8px;letter-spacing:.08em}
 #gooseModeBanner.on{display:block}
 
+
+.page-nav{display:flex;flex-wrap:wrap;gap:6px;margin:18px 0 12px;position:sticky;top:0;z-index:5;background:linear-gradient(180deg,var(--bg) 70%,transparent);padding:8px 0 10px}
+.page-nav button{font:900 10px monospace;padding:10px 12px;border:1px solid #ffffff28;background:#14141c;color:#b8b4c4;cursor:pointer;letter-spacing:.06em}
+.page-nav button.active{background:var(--acid);color:#09090d;border-color:var(--acid)}
+.page{display:none}
+.page.active{display:block}
+#roomPanel .controls .nav-dup{display:none}
+@media(max-width:720px){.page-nav button{flex:1 1 40%;text-align:center}}
+
 </style>
 </head>
 <body>
@@ -286,19 +295,29 @@ body.tilt-chaos{transition:transform .6s ease}
   </div>
 
   <div class="setting-version">
-   <b id="secretVersion" title="">MEMEVerso v1.4.0</b><br>
+   <b id="secretVersion" title="">MEMEVerso v1.5.0</b><br>
    La gramola no pide permiso. Los vídeos llegan sin invitación. En la luna alguien tararea ABDUZCAN entre dientes.
   </div>
   <div class="setting-actions"><button class="primary" id="saveSettings">LISTO</button></div>
  </div>
 </div>
-<div id="cheatModal" role="dialog" aria-modal="true" aria-label=""><div class="cheat-card"><button type="button" class="secondary cheat-dismiss" id="closeCheat" aria-label="Cerrar">×</button><div style="color:#8b8995;margin:2px 0 14px">// señal local</div><button type="button" class="secondary" id="unlockAbduzcanCheat">Desbloquear ABDUZCAN</button></div></div>
+<div id="cheatModal" role="dialog" aria-modal="true" aria-label=""><div class="cheat-card"><button type="button" class="secondary cheat-dismiss" id="closeCheat" aria-label="Cerrar">×</button><div style="color:#8b8995;margin:2px 0 14px">// señal local · pistas de la gramola</div><button type="button" class="secondary" id="unlockAbduzcanCheat">Desbloquear ABDUZCAN</button><button type="button" class="secondary" id="unlockRickCheat" style="margin-top:8px">Desbloquear RICKROLL</button><button type="button" class="secondary" id="unlockXokasCheat" style="margin-top:8px">Desbloquear XOKAS-REMIX</button></div></div>
 <input type="file" id="importFileInput" accept=".json,application/json" style="display:none">
 <main>
-  <div class="eyebrow">PROTOCOLO 00 // NO EXISTE UN TUTORIAL · v1.4.0</div>
+  <div class="eyebrow">PROTOCOLO 00 // NO EXISTE UN TUTORIAL · v1.5.0</div>
   <h1>¿QUÉ <span>ESTÁ</span><br> PASANDO.</h1>
-  <p class="intro">Bienvenido al <b>MEMEVerso v1.4.0</b>. Explora, combina objetos, usa la <b>gramola</b> y desbloquea pistas prohibidas. <br><span style="color:#716c7a">[ CONSEJO: gramola en la sala · memes popup · el Ayudante cuenta chistes ]</span></p>
+  <p class="intro">Bienvenido al <b>MEMEVerso v1.5.0</b>. Menús por páginas (sin scroll infinito). Desbloquea pistas en la <b>gramola</b>. <br><span style="color:#716c7a">[ SALA · MAPA · GRAMOLA · LOGROS · ARCHIVO · CAOS ]</span></p>
 
+  <nav class="page-nav" id="pageNav" aria-label="Secciones">
+    <button type="button" class="active" data-page="sala">🏠 SALA</button>
+    <button type="button" data-page="mapa">🗺️ MAPA</button>
+    <button type="button" data-page="gramola">🎵 GRAMOLA</button>
+    <button type="button" data-page="logros">🏆 LOGROS</button>
+    <button type="button" data-page="archivo">📁 ARCHIVO</button>
+    <button type="button" data-page="caos">💥 CAOS</button>
+  </nav>
+
+  <div class="page active" id="page-sala">
   <section class="panel" id="roomPanel" style="margin-top:28px">
     <div class="panel-head"><span id="roomName">UBICACIÓN: SALA DE ESPERA PARA COSAS QUE NO EXISTEN</span><span id="roomStatus">5 OBJETOS SOSPECHOSOS</span></div>
     <div id="room" style="position:relative;min-height:260px;overflow:hidden;background:linear-gradient(180deg,#161523,#09090d);border-bottom:1px solid #ffffff24">
@@ -310,27 +329,32 @@ body.tilt-chaos{transition:transform .6s ease}
       <button class="hotspot" data-object="floor" title="Examinar mancha" style="position:absolute;left:58%;bottom:7%;font-size:22px;background:transparent;color:#ff3d9a;padding:5px">◉</button>
       <div id="sceneCaption" style="position:absolute;left:12px;bottom:8px;color:#8d8998;font:10px monospace;pointer-events:none">PULSA LOS OBJETOS. NO TODOS QUIEREN SER ENCONTRADOS.</div>
     </div>
-    <div class="controls" style="align-items:center"><button class="secondary" id="inventoryBtn">REVISAR BOLSILLOS</button><button class="secondary" id="mapBtn">¿HAY OTRA SALA?</button><button class="secondary" id="zoneBtn">MAPA DE LUGARES</button><button class="secondary" id="jukeboxBtn">🎵 GRAMOLA</button><button class="secondary" id="achievementsBtn">LOGROS</button><button class="secondary" id="miniGameBtn">MINI-JUEGO</button><span class="tiny" id="sceneHint" style="flex:1;min-width:150px">Pista: el póster está torcido por una razón.</span></div>
+    <div class="controls" style="align-items:center"><button class="secondary" id="inventoryBtn">REVISAR BOLSILLOS</button><button class="secondary" id="mapBtn">¿HAY OTRA SALA?</button><button class="secondary" id="miniGameBtn">MINI-JUEGO</button><span class="tiny" id="sceneHint" style="flex:1;min-width:150px">Pista: el póster está torcido por una razón.</span></div>
   </section>
   <section class="panel" id="puzzlePanel" style="margin-top:14px">
     <div class="panel-head"><span>OBJETO EN PRIMER PLANO</span><span id="inspectState">NADA SELECCIONADO</span></div>
     <div style="padding:18px;display:flex;gap:14px;align-items:flex-start"><div id="inspectIcon" style="font-size:42px;min-width:52px;text-align:center">❔</div><div style="flex:1"><div id="inspectTitle" style="font-weight:900;margin-bottom:6px">Examina algo</div><div id="inspectText" class="tiny">Hay cosas que puedes recoger, otras que necesitan un objeto y una que solo funciona si la insultas educadamente.</div><div id="inspectActions" class="controls" style="padding:12px 0 0;border:0"></div></div></div>
   </section>
+  </div><!-- /page-sala -->
 
-
-  <section class="panel" id="zonePanel" style="margin-top:14px;display:none">
+  <div class="page" id="page-mapa">
+  <section class="panel" id="zonePanel" style="margin-top:0">
     <div class="panel-head"><span>MAPA INCOMPLETO // EL EDIFICIO NO CABE EN SÍ MISMO</span><span id="zoneCount">1/6 LUGARES</span></div>
     <div id="zoneCards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;padding:14px"></div>
     <div class="tiny" style="padding:0 14px 14px">Algunas ubicaciones solo aparecen cuando el lugar decide que ya estás preparado. El mapa no está de acuerdo consigo mismo.</div>
   </section>
+  </div><!-- /page-mapa -->
 
-  <section class="panel" id="achievementsPanel" style="margin-top:14px;display:none">
+  <div class="page" id="page-logros">
+  <section class="panel" id="achievementsPanel" style="margin-top:0">
     <div class="panel-head"><span>REGISTRO DE INCIDENTES OFICIALES</span><span id="achCount">0/12</span></div>
     <div id="achList" style="padding:8px 14px 14px"></div>
     <div class="tiny" style="padding:0 14px 14px">Los logros no se pueden devolver. El ganso los archiva para siempre.</div>
   </section>
+  </div><!-- /page-logros -->
 
-  <section class="panel" id="jukeboxPanel" style="margin-top:14px;display:none">
+  <div class="page" id="page-gramola">
+  <section class="panel" id="jukeboxPanel" style="margin-top:0">
     <div class="panel-head"><span>🎵 GRAMOLA DEL MEMEVERSO</span><span id="jbHeadStatus">LISTA</span></div>
     <div class="jukebox">
       <div class="jukebox-display">
@@ -344,16 +368,20 @@ body.tilt-chaos{transition:transform .6s ease}
         <button class="secondary" id="jbStop">⏹ PARAR</button>
         <button class="secondary" id="jbUnlockHint">¿PISTA BLOQUEADA?</button>
       </div>
-      <div class="tiny" style="margin-top:10px">Pista bloqueada: <b>ABDUZCAN</b>. Se desbloquea sintonizando la frecuencia prohibida en la luna de mantenimiento (repara el reloj y abre la taquilla 6). La primera vez verás el vídeo completo sin poder saltarlo.</div>
+      <div class="tiny" style="margin-top:10px"><b>MEME</b> libre · <b>ABDUZCAN</b> luna/taquilla 6 · <b>RICKROLL</b> 1ª vez el vídeo · <b>XOKAS-REMIX</b> Konami o escribe «xokas».</div>
     </div>
   </section>
+  </div><!-- /page-gramola -->
 
+  <div class="page" id="page-archivo">
   <section class="panel" id="fileCabinet">
     <div class="panel-head"><span>ARCHIVO DE DOCUMENTOS NO SOLICITADOS</span><span id="fileCount">9 FICHEROS</span></div>
     <div class="file-grid" id="fileGrid"></div>
     <div class="controls"><button class="secondary" id="generateTxtBtn">GENERAR TXT ALEATORIO</button><button class="secondary" id="downloadAllBtn">DESCARGAR PAQUETE DE TEXTO</button></div>
   </section>
+  </div><!-- /page-archivo -->
 
+  <div class="page" id="page-caos">
   <div class="layout">
     <section class="panel">
       <div class="panel-head"><span>ENTIDAD ACTIVA // <span id="entityId">???</span></span><span id="mood">ESTÁ MIRANDO</span></div>
@@ -384,7 +412,8 @@ body.tilt-chaos{transition:transform .6s ease}
       </section>
     </aside>
   </div>
-  <div class="footer"><span id="footerVersion" class="version-secret">MEMEVerso v1.4.0 // Gramola</span><span id="clock">HORA LOCAL: --:--:--</span><span>ALT+M · ↑↑↓↓←→←→BA</span></div>
+  </div><!-- /page-caos -->
+  <div class="footer"><span id="footerVersion" class="version-secret">MEMEVerso v1.5.0 // Gramola</span><span id="clock">HORA LOCAL: --:--:--</span><span>ALT+M · ↑↑↓↓←→←→BA</span></div>
 </main>
 
 <div id="voidEyes" aria-hidden="true"></div>
@@ -475,12 +504,15 @@ function run(){chaos+=5;debt+=2;$('entity').textContent='🏃';$('message').text
 let audioOn=true, audioVolume=0.65, audioCtx=null, ambientTimer=null, audioStarted=false;
 let musicVolume=0.4, bgMusic=null, currentTrackId='meme', musicPlaying=false;
 let abduzcanUnlocked=false, abduzcanVideoSeen=false, forceVideoMandatory=false;
+let rickUnlocked=false, rickVideoSeen=false, xokasUnlocked=false;
 let annoyLevel=70, eventsOn=true, adsOn=true, autoPrankOn=true;
 let reduceMotion=false, currentTheme='acid', annoyCountToday=0, helperSilencedUntil=0;
-const APP_VERSION='1.4.0';
+const APP_VERSION='1.5.0';
 const playlist=[
   {id:'meme',name:'MEME',file:()=>(window.MEMEVERSO_MUSIC_URL||'audio/MEME.mp3'),locked:false},
-  {id:'abduzcan',name:'ABDUZCAN',file:()=>(window.MEMEVERSO_ABDUZCAN_URL||'audio/ABDUZCAN.mp3'),locked:true}
+  {id:'abduzcan',name:'ABDUZCAN',file:()=>(window.MEMEVERSO_ABDUZCAN_URL||'audio/ABDUZCAN.mp3'),locked:true},
+  {id:'rickroll',name:'RICKROLL',file:()=>(window.MEMEVERSO_RICKROLL_AUDIO_URL||'audio/RICKROLL.mp3'),locked:true},
+  {id:'xokas',name:'XOKAS-REMIX',file:()=>(window.MEMEVERSO_XOKAS_URL||'audio/XOKAS-REMIX.mp3'),locked:true}
 ];
 function resolveMediaUrl(path){
   const p=(path||'').trim();
@@ -495,7 +527,12 @@ try{
   musicVolume=Math.max(0,Math.min(1,Number(localStorage.getItem('meme-music-vol')??0.4)));
   abduzcanUnlocked=localStorage.getItem('meme-abduzcan')==='on';
   abduzcanVideoSeen=localStorage.getItem('meme-abduzcan-vid')==='on';
+  rickUnlocked=localStorage.getItem('meme-rick-audio')==='on';
+  rickVideoSeen=localStorage.getItem('meme-rick-vid')==='on';
+  xokasUnlocked=localStorage.getItem('meme-xokas')==='on';
   if(abduzcanUnlocked){const t=playlist.find(p=>p.id==='abduzcan');if(t)t.locked=false}
+  if(rickUnlocked){const t=playlist.find(p=>p.id==='rickroll');if(t)t.locked=false}
+  if(xokasUnlocked){const t=playlist.find(p=>p.id==='xokas');if(t)t.locked=false}
   currentTrackId=localStorage.getItem('meme-track')||'meme';
   annoyLevel=Math.max(0,Math.min(100,Number(localStorage.getItem('meme-annoy')??70)));
   eventsOn=localStorage.getItem('meme-events')!=='off';
@@ -513,7 +550,6 @@ function initBgMusic(){
   bgMusic=new Audio();
   bgMusic.loop=true;
   bgMusic.preload='auto';
-  bgMusic.crossOrigin='anonymous';
   bgMusic.volume=audioOn?musicVolume:0;
   bgMusic.addEventListener('error',()=>{
     const t=getTrack(currentTrackId);
@@ -535,43 +571,62 @@ function trackUrl(id){
 }
 function playBgMusicFromGesture(){
   if(!audioOn){if($('jbTrackStatus'))$('jbTrackStatus').textContent='Audio silenciado en ajustes.';return}
+  if(isVideoOpen()){if($('jbTrackStatus'))$('jbTrackStatus').textContent='Vídeo en curso · música en pausa';return}
   initBgMusic();
   try{if(typeof ctx==='function')ctx()}catch(e){}
   let id=currentTrackId||'meme';
-  let t0=getTrack(id);if(!t0||t0.locked)id='meme';
+  let t0=getTrack(id);
+  // Solo forzar MEME si la pista pedida está bloqueada de verdad
+  if(!t0){id='meme';t0=getTrack('meme')}
+  else if(t0.locked){
+    if(id==='abduzcan'){
+      if($('jbTrackStatus'))$('jbTrackStatus').textContent='ABDUZCAN bloqueada · luna + taquilla 6';
+      if(typeof helperSay==='function')helperSay('ABDUZCAN: repara el reloj y abre la taquilla 6.');
+      updateJukeboxUI();return;
+    }
+    if(id==='rickroll'){
+      if($('jbTrackStatus'))$('jbTrackStatus').textContent='RICKROLL bloqueada · mira el vídeo RickRoll una vez';
+      if(typeof helperSay==='function')helperSay('RICKROLL se desbloquea la primera vez que te Rickrolleas.');
+      updateJukeboxUI();return;
+    }
+    if(id==='xokas'){
+      if($('jbTrackStatus'))$('jbTrackStatus').textContent='XOKAS-REMIX bloqueada · código Konami o escribe xokas';
+      if(typeof helperSay==='function')helperSay('XOKAS-REMIX: ↑↑↓↓←→←→BA o escribe «xokas» al Ayudante.');
+      updateJukeboxUI();return;
+    }
+    id='meme';t0=getTrack('meme');
+  }
   currentTrackId=id;
   try{localStorage.setItem('meme-track',id)}catch(e){}
   const url=trackUrl(id);
   if(!url){if($('jbTrackStatus'))$('jbTrackStatus').textContent='Ruta de audio vacía.';return}
-  const fileName=id==='abduzcan'?'ABDUZCAN.mp3':'MEME.mp3';
+  const fileName=({meme:'MEME.mp3',abduzcan:'ABDUZCAN.mp3',rickroll:'RICKROLL.mp3',xokas:'XOKAS-REMIX.mp3'})[id]||(id+'.mp3');
   bgMusic.loop=true;
-  bgMusic.volume=Math.max(0.01, musicVolume); // nunca 0 accidental
-  // Forzar recarga limpia de la pista
+  bgMusic.volume=Math.max(0.05, musicVolume);
+  // Recarga limpia siempre al cambiar de pista (evita oír MEME con etiqueta ABDUZCAN)
   try{
     bgMusic.pause();
     bgMusic.removeAttribute('src');
+    bgMusic.load();
     bgMusic.src=url;
-  }catch(e){bgMusic.src=url}
+  }catch(e){try{bgMusic.src=url}catch(e2){}}
   if($('jbTrackName'))$('jbTrackName').textContent=(getTrack(id)||{}).name||id;
-  if($('jbTrackStatus'))$('jbTrackStatus').textContent='Reproduciendo…';
-  const markPlaying=()=>{musicPlaying=true;if($('jbTrackStatus'))$('jbTrackStatus').textContent='REPRODUCIENDO · bucle activo';updateJukeboxUI()};
+  if($('jbTrackStatus'))$('jbTrackStatus').textContent='Cargando '+fileName+'…';
+  const markPlaying=()=>{musicPlaying=true;if($('jbTrackStatus'))$('jbTrackStatus').textContent='REPRODUCIENDO · '+((getTrack(id)||{}).name||id)+' · bucle';updateJukeboxUI()};
   const markFail=(msg)=>{musicPlaying=false;if($('jbTrackStatus'))$('jbTrackStatus').textContent=msg;updateJukeboxUI();log(msg)};
+  let attempted=false;
   const attempt=()=>{
+    if(attempted)return;attempted=true;
     const p=bgMusic.play();
     if(p&&p.then){
       p.then(markPlaying).catch(function(err){
-        // No hay pista de reserva: MEME siempre intenta reproducir MEME.
-        markFail('No se pudo reproducir audio/'+fileName+' (¿archivo vacío o ruta mal?)');
+        markFail('No se pudo reproducir audio/'+fileName+' (¿falta en el repo?)');
       });
     } else markPlaying();
   };
-  if(bgMusic.readyState>=2)attempt();
-  else{
-    bgMusic.addEventListener('canplay',attempt,{once:true});
-    bgMusic.addEventListener('error',function(){markFail('Error cargando audio/'+fileName+'. Revisa el archivo en GitHub.')},{once:true});
-    // Algunos navegadores no disparan canplay si el archivo es inválido
-    setTimeout(function(){if(!musicPlaying&&bgMusic.paused)attempt()},400);
-  }
+  bgMusic.addEventListener('canplay',attempt,{once:true});
+  bgMusic.addEventListener('error',function(){markFail('Error cargando audio/'+fileName+'. Comprueba que existe en /audio.')},{once:true});
+  setTimeout(function(){if(!musicPlaying)attempt()},500);
   updateJukeboxUI();
 }
 function loadTrack(id,autoplay){
@@ -640,6 +695,26 @@ function unlockAbduzcan(reason){
   helperSay('La gramola ha recibido una señal prohibida: ABDUZCAN. '+ (reason||''));
   updateJukeboxUI();
   if(!abduzcanVideoSeen)showSpecialVideo('abduzcan',true);
+  saveProgress();
+}
+function unlockRickroll(reason){
+  if(rickUnlocked)return;
+  rickUnlocked=true;
+  const t=playlist.find(p=>p.id==='rickroll');if(t)t.locked=false;
+  try{localStorage.setItem('meme-rick-audio','on')}catch(e){}
+  omen('PISTA DESBLOQUEADA: RICKROLL',3500);
+  helperSay('Never gonna give you up… en la gramola. '+(reason||''));
+  updateJukeboxUI();
+  saveProgress();
+}
+function unlockXokas(reason){
+  if(xokasUnlocked)return;
+  xokasUnlocked=true;
+  const t=playlist.find(p=>p.id==='xokas');if(t)t.locked=false;
+  try{localStorage.setItem('meme-xokas','on')}catch(e){}
+  omen('PISTA DESBLOQUEADA: XOKAS-REMIX',3500);
+  helperSay('La gramola sintoniza un remix ilegal. '+(reason||''));
+  updateJukeboxUI();
   saveProgress();
 }
 initBgMusic();
@@ -763,7 +838,7 @@ function saveProgress(){
   localStorage.setItem('meme-save',JSON.stringify({
    v:APP_VERSION,world,invItems,invIcons,chaos,cheese,debt,goose,count,
    achievements:Object.fromEntries(Object.entries(achievements).map(([k,a])=>[k,a.got])),
-   currentZone,abduzcanUnlocked,abduzcanVideoSeen,currentTrackId,memeCloseCount
+   currentZone,abduzcanUnlocked,abduzcanVideoSeen,rickUnlocked,rickVideoSeen,xokasUnlocked,currentTrackId,memeCloseCount
   }));
  }catch(e){}
 }
@@ -783,6 +858,9 @@ function loadProgress(){
   if(d.currentZone)currentZone=d.currentZone;
   if(d.abduzcanUnlocked){abduzcanUnlocked=true;const t=playlist.find(p=>p.id==='abduzcan');if(t)t.locked=false}
   if(d.abduzcanVideoSeen)abduzcanVideoSeen=true;
+  if(d.rickUnlocked){rickUnlocked=true;const t=playlist.find(p=>p.id==='rickroll');if(t)t.locked=false}
+  if(d.rickVideoSeen)rickVideoSeen=true;
+  if(d.xokasUnlocked){xokasUnlocked=true;const t=playlist.find(p=>p.id==='xokas');if(t)t.locked=false}
   if(d.currentTrackId)currentTrackId=d.currentTrackId;
   if(typeof d.memeCloseCount==='number')memeCloseCount=d.memeCloseCount;
   const invEl=$('inventory');if(invEl){invEl.innerHTML='';invItems.forEach(name=>{const s=document.createElement('span');s.className='chip clickable';s.textContent=(invIcons[name]||'📦')+' '+name;s.dataset.item=name;s.onclick=()=>selectItem(name);invEl.append(s)})}
@@ -848,6 +926,7 @@ function addHotspot(id,icon,label,left,top,fn){
 }
 function clearExtraHotspots(){document.querySelectorAll('[data-extra]').forEach(x=>x.remove())}
 function enterZone(id){
+ if(typeof showPage==='function')showPage('sala');
  const roomEl=$('room');
  if(!reduceMotion){roomEl.classList.remove('transitioning');void roomEl.offsetWidth;roomEl.classList.add('transitioning');setTimeout(()=>roomEl.classList.remove('transitioning'),450)}
  currentZone=id;world.room=id==='impossible'?1:0;$('zonePanel').style.display='none';clearExtraHotspots();
@@ -924,16 +1003,22 @@ $('inventoryBtn').addEventListener('click',()=>{
  selectedItem=null;document.querySelectorAll('.chip.selected').forEach(c=>c.classList.remove('selected'));
  inspectSet('🎒','Tus bolsillos',invItems.length?('Pulsa un objeto para seleccionarlo y otro para combinar.\n\n'+invItems.map(x=>'• '+(invIcons[x]||'')+' '+x).join('\n')):'Solo tienes pelusa y una sospecha muy concreta.\n\nConsejo: examina el póster y la planta.');
 });
-$('zoneBtn').addEventListener('click',()=>{$('zonePanel').style.display=$('zonePanel').style.display==='none'?'block':'none';$('achievementsPanel').style.display='none';$('jukeboxPanel').style.display='none';renderZones();sfx('click')});
-$('achievementsBtn').addEventListener('click',()=>{$('achievementsPanel').style.display=$('achievementsPanel').style.display==='none'?'block':'none';$('zonePanel').style.display='none';$('jukeboxPanel').style.display='none';renderAchievements();sfx('click')});
-$('jukeboxBtn').addEventListener('click',()=>{
-  const p=$('jukeboxPanel');
-  const open=p.style.display==='none'||!p.style.display;
-  p.style.display=open?'block':'none';
-  $('zonePanel').style.display='none';$('achievementsPanel').style.display='none';
-  updateJukeboxUI();sfx('click');
-  if(open)helperSay('Gramola online. MEME está libre. ABDUZCAN espera en la luna.');
+
+// —— Navegación por páginas (sin apilar paneles) ——
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('#pageNav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));
+  const page=$('page-'+id);
+  if(page)page.classList.add('active');
+  if(id==='mapa'&&typeof renderZones==='function')renderZones();
+  if(id==='logros'&&typeof renderAchievements==='function')renderAchievements();
+  if(id==='gramola'&&typeof updateJukeboxUI==='function')updateJukeboxUI();
+  try{window.scrollTo({top:0,behavior:'smooth'})}catch(e){window.scrollTo(0,0)}
+}
+document.querySelectorAll('#pageNav button').forEach(btn=>{
+  btn.addEventListener('click',()=>{showPage(btn.dataset.page);sfx('click')});
 });
+
 $('jbPlayPause').addEventListener('click',(e)=>{e.preventDefault();toggleBgMusic();});
 $('jbStop').addEventListener('click',()=>{stopBgMusic();updateJukeboxUI();sfx('click')});
 $('jbUnlockHint').addEventListener('click',()=>{
@@ -983,7 +1068,15 @@ $('unlockAbduzcanCheat').addEventListener('click',()=>{
  try{localStorage.setItem('meme-abduzcan','on')}catch(e){}
  unlockAch('abduzcan'); updateJukeboxUI(); saveProgress();
  if(!abduzcanVideoSeen){showSpecialVideo('abduzcan',true)}
- else{showSpecialVideo('abduzcan',true)}
+ else{currentTrackId='abduzcan';playBgMusicFromGesture();helperSay('ABDUZCAN suena en la gramola.');}
+});
+$('unlockRickCheat').addEventListener('click',()=>{
+ closeSecretMenu();unlockRickroll('Truco local.');
+ currentTrackId='rickroll';showPage('gramola');playBgMusicFromGesture();
+});
+$('unlockXokasCheat').addEventListener('click',()=>{
+ closeSecretMenu();unlockXokas('Truco local.');
+ currentTrackId='xokas';showPage('gramola');playBgMusicFromGesture();
 });
 function closeSettings(){$('settingsModal').classList.remove('open');$('settingsBtn').focus()}
 $('closeSettings').addEventListener('click',closeSettings);$('saveSettings').addEventListener('click',closeSettings);
@@ -999,8 +1092,8 @@ $('resetProgressBtn').addEventListener('click',()=>{
   if(!confirm('¿Borrar TODO el progreso y ajustes de MEMEVerso?'))return;
   try{Object.keys(localStorage).filter(k=>k.startsWith('meme-')).forEach(k=>localStorage.removeItem(k))}catch(e){}
   audioOn=true;audioVolume=0.65;musicVolume=0.4;annoyLevel=70;eventsOn=true;adsOn=true;autoPrankOn=true;reduceMotion=false;currentTheme='acid';
-  abduzcanUnlocked=false;abduzcanVideoSeen=false;currentTrackId='meme';
-  playlist.forEach(p=>{p.locked=p.id==='abduzcan'});
+  abduzcanUnlocked=false;abduzcanVideoSeen=false;rickUnlocked=false;rickVideoSeen=false;xokasUnlocked=false;currentTrackId='meme';
+  playlist.forEach(p=>{p.locked=p.id!=='meme'});
   setMusicVolume(0.4);loadTrack('meme',true);
   invItems.length=0;Object.keys(invIcons).forEach(k=>delete invIcons[k]);
   Object.assign(world,{key:false,note:false,fuse:false,coin:false,openedCabinet:false,ventOpen:false,portal:false,room:0,pass:false,zones:{waiting:true,impossible:false,archive:false,roof:false,basement:false,moon:false},clues:0,phoneAnswered:false,boxOpened:false,mirrorSeen:false,clockFixed:false,radioOn:false,doorKnocked:0,catFed:false,shadowNamed:false});
@@ -1147,7 +1240,8 @@ const ads=[
 ];
 const gremlins=['🪿','🦷','🧃','🗿','🦐','🛸','🧦','👁️','🧌','🥄'];
 let helperMood=0, prankCount=0, lastPrank=0, videoTimer=null, toastTimer=null;
-function helperIsSilent(){return Date.now()<helperSilencedUntil}
+function isVideoOpen(){const o=$('videoJumpscare');return !!(o&&o.classList.contains('show'))}
+function helperIsSilent(){return Date.now()<helperSilencedUntil||isVideoOpen()}
 function helperSay(line){
  if(helperIsSilent())return;
  $('helperSpeech').textContent=line;$('helperFace').textContent=pick(['🤖','🗿','🦆','👁️','🧃']);
@@ -1200,6 +1294,8 @@ function helperChatReply(msg){
  if(/konami|código|codigo/.test(m))return '↑↑↓↓←→←→BA. No digas que te lo conté.';
  if(/chiste|broma|auron|jaja/.test(m))return pick(auronJokes);
  if(/abduzcan|abduc/.test(m))return abduzcanUnlocked?'ABDUZCAN está en la gramola. Elige la pista.':'Ve a la luna: repara el reloj y abre la taquilla 6.';
+ if(/xokas|remix/.test(m)){if(!xokasUnlocked){unlockXokas('Lo has nombrado. Eso basta.');return 'XOKAS-REMIX desbloqueada en la gramola.';}return 'XOKAS-REMIX ya está en la lista. Ve a GRAMOLA.';}
+ if(/rickroll|rick roll|never gonna/.test(m))return rickUnlocked?'RICKROLL está en la gramola.':'Mira el vídeo sorpresa una vez (botón del Ayudante) para desbloquear la canción.';
  if(/gramola|musica|música|canción|cancion/.test(m))return 'Abre 🎵 GRAMOLA. Ahí pausas, cambias de pista y sufrimiento auditivo controlado.';
  if(/meme|popup|anuncio/.test(m))return 'Los memes salen solos. Cierra diez y desbloqueas un logro absurdo.';
  return pick(helperLines.concat(auronJokes));
@@ -1229,6 +1325,7 @@ function randomTxt(){
 $('helperNote').addEventListener('click',randomTxt);
 $('generateTxtBtn').addEventListener('click',randomTxt);
 function prank(){
+ if(isVideoOpen())return;
  prankCount++;helperMood=Math.min(100,helperMood+11);$('helperMeterFill').style.width=helperMood+'%';
  const n=pick([
  ()=>{showToast('AVISO DEL SISTEMA: '+pick(['tu cursor tiene sueño.','la silla ha cambiado los términos y condiciones.','el ganso ha solicitado acceso de administrador.','has ganado un punto de martes.','tu pantalla ha sido declarada patrimonio emocional.']));},
@@ -1301,7 +1398,7 @@ function proceduralMeme(){
  return a+' '+b+' '+c+'.';
 }
 function showAd(){
- if(!adsOn)return;
+ if(!adsOn||isVideoOpen())return;
  const mode=Math.random();
  const labelEl=document.querySelector('#chaosAd .ad-label');
  let title,body,memeBlock='';
@@ -1350,6 +1447,10 @@ function showSpecialVideo(kind,mandatory){
  overlay.classList.add('show');
  overlay.classList.toggle('mandatory',forceVideoMandatory);
  stopBgMusic();
+ // Pausar molestias: cerrar popups/toasts abiertos
+ try{if(typeof hideAd==='function')hideAd();if(typeof hideToast==='function')hideToast()}catch(e){}
+ const g=$('floatingGremlin');if(g)g.style.display='none';
+ const bs=$('bsod');if(bs)bs.classList.remove('show');
  let url=currentVideoKind==='abduzcan'?getAbduzcanVidUrl():getRickUrl();
  let label=currentVideoKind==='abduzcan'?'ABDUZCAN-MEME.mp4':'RickRoll.mp4';
  const trySrc=(u,lab)=>{
@@ -1397,16 +1498,38 @@ $('helperVideo').addEventListener('click',()=>{
 });
 $('videoJumpscare').addEventListener('click',e=>{if(e.target===$('videoJumpscare')&&!forceVideoMandatory)closeVideo()});
 $('rickVideo').addEventListener('ended',()=>{
- if(currentVideoKind==='abduzcan'&&!abduzcanVideoSeen){
+ const wasAbduzcan=currentVideoKind==='abduzcan';
+ const wasRick=currentVideoKind==='rick';
+
+ if(wasAbduzcan&&!abduzcanVideoSeen){
   abduzcanVideoSeen=true;
   try{localStorage.setItem('meme-abduzcan-vid','on')}catch(e){}
   forceVideoMandatory=false;
   $('videoJumpscare').classList.remove('mandatory');
-  helperSay('Has sobrevivido a ABDUZCAN. Ahora la pista está en la gramola… y el vídeo puede volver a saltar.');
+  helperSay('Has sobrevivido a ABDUZCAN. La pista entra en la gramola.');
+ }
+ if(wasRick&&!rickVideoSeen){
+  rickVideoSeen=true;
+  try{localStorage.setItem('meme-rick-vid','on')}catch(e){}
+  unlockRickroll('Primera vez Rickrolleado. La canción es tuya.');
  }
  forceVideoMandatory=false;
- closeVideo();
- helperSay('El vídeo ha terminado. La música regresa del exilio.');
+ // Cerrar overlay sin auto-reanudar aún
+ $('rickVideo').pause();$('rickVideo').removeAttribute('src');$('rickVideo').load();
+ $('videoJumpscare').classList.remove('show','mandatory');
+ // Tras el vídeo secreto, poner la canción ABDUZCAN; si no, la pista actual
+ if(audioOn){
+  if(wasAbduzcan&&abduzcanUnlocked){
+   currentTrackId='abduzcan';
+   const tr=playlist.find(p=>p.id==='abduzcan');if(tr)tr.locked=false;
+   updateJukeboxUI();
+   playBgMusicFromGesture();
+   helperSay('ABDUZCAN suena en la gramola. No digas que no te avisamos.');
+  }else{
+   startBgMusic();
+   helperSay('El vídeo ha terminado. La música regresa del exilio.');
+  }
+ }
 });
 function maybeVideo(){
  if(Math.random()<.24){
@@ -1512,9 +1635,10 @@ document.addEventListener('keydown',e=>{
   konamiIdx++;
   if(konamiIdx===konami.length){
    konamiIdx=0;unlockAch('konami');cheese+=25;update();saveProgress();
+   unlockXokas('Código Konami = licencia de remix.');
    $('secret').classList.add('show');
-   omen('CÓDIGO KONAMI ACEPTADO. +25 g DE QUESO.',4000);
-   helperSay('Has introducido el código prohibido. El universo tiembla un poco.');
+   omen('CÓDIGO KONAMI ACEPTADO. +25 g · XOKAS-REMIX',4000);
+   helperSay('Código prohibido + XOKAS-REMIX en la gramola. El universo tiembla un poco.');
    sfx('secret');glitch();
   }
  }else konamiIdx=0;
@@ -1534,7 +1658,7 @@ renderAchievements();
 setTimeout(()=>helperSay('Pulsa los objetos, combina en el inventario, revisa LOGROS y habla conmigo. Versión '+APP_VERSION+'.'),1200);
 setTimeout(()=>showToast('¡BIENVENIDO AL MEMEVERSO v'+APP_VERSION+'! Combinaciones, logros, chat y temas activados.',5200),4200);
 function helperTick(){
-  if(document.hidden||$('settingsModal').classList.contains('open')||helperIsSilent())return;
+  if(document.hidden||isVideoOpen()||$('settingsModal').classList.contains('open')||helperIsSilent())return;
   const chance=0.22+annoyLevel/100*0.55;
   if(Math.random()<chance){
     helperSay(pick(helperLines));
@@ -1545,7 +1669,7 @@ function helperTick(){
 setInterval(randomScreenEvent, Math.max(7000, 16000-annoyLevel*70));
 setInterval(helperTick, Math.max(9000, 22000-annoyLevel*110));
 setInterval(()=>{
-  if(annoyLevel<55||document.hidden||helperIsSilent())return;
+  if(annoyLevel<55||document.hidden||isVideoOpen()||helperIsSilent())return;
   if(Math.random()<0.18)helperSay(pick(helperLines));
 }, 14000);
 
@@ -1600,7 +1724,7 @@ setInterval(()=>{
     // no replace - add parallel interval
   }
   setInterval(()=>{
-    if(document.hidden||!eventsOn)return;
+    if(document.hidden||!eventsOn||(typeof isVideoOpen==='function'&&isVideoOpen()))return;
     if(Math.random()<0.015+annoyLevel/5000)showBsod();
   },45000);
 

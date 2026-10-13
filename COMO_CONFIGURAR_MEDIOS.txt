@@ -1,14 +1,12 @@
-MEMEVerso v1.4 — Medios
+MEMEVerso v1.5 — Medios
 =======================
 
-IMPORTANTE: los archivos deben tener peso real (no 0 bytes).
+audio/MEME.mp3          → libre
+audio/ABDUZCAN.mp3      → luna + taquilla 6
+audio/RICKROLL.mp3      → 1ª vez que ves el vídeo RickRoll
+audio/XOKAS-REMIX.mp3   → Konami o escribe "xokas" al Ayudante
 
-audio/MEME.mp3          → pista libre de la gramola
-audio/ABDUZCAN.mp3      → se desbloquea en la luna
-video/RickRoll.mp4      → jumpscare (si está vacío, se usa ABDUZCAN-MEME)
-video/ABDUZCAN-MEME.mp4 → vídeo de desbloqueo (sin espacios en el nombre)
+video/RickRoll.mp4
+video/ABDUZCAN-MEME.mp4
 
-Si el archivo se llama "ABDUZCAN - MEME.mp4" (con espacios),
-renómbralo a ABDUZCAN-MEME.mp4
-
-Gramola: abre 🎵 GRAMOLA y pulsa ▶ REPRODUCIR (el navegador exige un clic).
+Menú secreto (clic en la versión del footer): desbloquea las tres pistas.

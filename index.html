@@ -8,9 +8,36 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
-<title>MEMEVerso.exe — no preguntes</title>
+<title>MEMEVerso.exe v1.2.1 — con MEME.mp3</title>
 <style>
 :root{--acid:#d6ff00;--pink:#ff3d9a;--blue:#5cf6ff;--ink:#09090d;--paper:#f4f1e8}
+body.theme-rosa{--acid:#ff6bcb;--pink:#ff3d9a;--blue:#ffb3d9;--ink:#1a0a14;--paper:#ffe8f4}
+body.theme-terminal{--acid:#33ff66;--pink:#00cc44;--blue:#66ffaa;--ink:#0a120a;--paper:#c8ffd8}
+body.theme-oficina{--acid:#ffcc00;--pink:#cc8800;--blue:#88aacc;--ink:#1a1a1e;--paper:#e8e4d8}
+body.reduce-motion *,body.reduce-motion *::before,body.reduce-motion *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+#room.transitioning{animation:roomFade .45s ease}
+@keyframes roomFade{0%{opacity:.3;filter:blur(4px)}100%{opacity:1;filter:none}}
+.chip.clickable{cursor:pointer;transition:border-color .15s,color .15s}
+.chip.clickable:hover,.chip.selected{border-color:var(--acid);color:var(--acid);background:#d6ff0015}
+.chip.combine-hint{border-color:var(--pink);color:var(--pink)}
+#achievementsPanel .ach-item{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px dashed #ffffff18;font:11px/1.45 monospace}
+#achievementsPanel .ach-item.locked{opacity:.4}
+#achievementsPanel .ach-icon{font-size:22px;min-width:28px}
+#helperChat{display:flex;gap:6px;margin-top:8px}
+#helperChat input{flex:1;background:#0c0c12;border:1px solid #ffffff33;color:var(--paper);font:11px monospace;padding:8px;min-width:0}
+#helperChat button{padding:8px 10px;font:900 10px monospace;border:1px solid var(--acid);background:#202018;color:var(--acid);cursor:pointer;white-space:nowrap}
+#helperChat button:hover{background:var(--acid);color:#09090d}
+#miniGameModal{display:none;position:fixed;inset:0;z-index:32;background:#000c;align-items:center;justify-content:center;padding:18px}
+#miniGameModal.open{display:flex}
+.mg-card{width:min(100%,420px);background:#111118;border:1px solid var(--acid);box-shadow:8px 8px 0 var(--pink);padding:20px;font:12px/1.5 monospace}
+.mg-title{font:900 16px monospace;color:var(--acid);margin-bottom:12px}
+.mg-cups{display:flex;gap:12px;justify-content:center;margin:18px 0}
+.mg-cup{width:70px;height:90px;background:#282832;border:2px solid #555;display:grid;place-items:center;font-size:32px;cursor:pointer;transition:transform .15s}
+.mg-cup:hover{transform:translateY(-6px);border-color:var(--acid)}
+.mg-spoon-area{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:14px 0;min-height:50px}
+.mg-spoon{padding:10px 14px;background:#202018;border:1px solid #555;cursor:grab;font-size:20px;user-select:none}
+.mg-spoon.dragging{opacity:.5}
+.cursor-trail{position:fixed;pointer-events:none;z-index:50;width:8px;height:8px;border-radius:50%;background:var(--acid);opacity:.6;transition:opacity .4s}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--ink);color:var(--paper);font-family:Arial,Helvetica,sans-serif;overflow-x:hidden}
 body{background-image:radial-gradient(circle at 20% 20%,#25183c 0,transparent 30%),radial-gradient(circle at 85% 70%,#092c31 0,transparent 32%);transition:filter .3s}
 .noise{position:fixed;inset:0;pointer-events:none;opacity:.07;z-index:8;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E")}
@@ -80,6 +107,10 @@ header>div:last-child{flex-wrap:wrap;justify-content:flex-end}
 .setting-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid #ffffff20;font:12px monospace}
 .setting-row input[type=range]{width:min(52%,220px);accent-color:var(--acid)}
 .setting-row input[type=checkbox]{width:22px;height:22px;accent-color:var(--acid)}
+.setting-section{margin:18px 0 6px;font:900 11px monospace;color:var(--pink);letter-spacing:.18em;text-transform:uppercase}
+.setting-hint{font:10px/1.45 monospace;color:#8d8998;margin:-4px 0 8px}
+.setting-version{margin-top:16px;padding:12px;border:1px dashed #ffffff33;background:#0c0c12;font:11px/1.55 monospace;color:#b8b4c4}
+.setting-version b{color:var(--acid)}
 .setting-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
 .setting-actions button{flex:1}
 .install-note{font:11px/1.6 monospace;color:#aaa;margin-top:15px}
@@ -173,16 +204,54 @@ header>div:last-child{flex-wrap:wrap;justify-content:flex-end}
 <div id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
  <div class="settings-card">
   <div class="settings-title"><span id="settingsTitle">⚙ AJUSTES DEL SISTEMA</span><button class="secondary" id="closeSettings" aria-label="Cerrar ajustes">✕</button></div>
+
+  <div class="setting-section">// AUDIO</div>
   <div class="setting-row"><label for="volumeRange">VOLUMEN DE EFECTOS</label><input id="volumeRange" type="range" min="0" max="100" value="65"></div>
+  <div class="setting-row"><label for="musicRange">VOLUMEN MÚSICA</label><input id="musicRange" type="range" min="0" max="100" value="40"></div>
+  <div class="setting-row"><label for="musicCheck">MÚSICA DE FONDO (MEME.mp3)</label><input id="musicCheck" type="checkbox" checked></div>
   <div class="setting-row"><label for="muteCheck">SILENCIAR TODO</label><input id="muteCheck" type="checkbox"></div>
+  <p class="setting-hint">Coloca <b>MEME.mp3</b> junto a index.html. Arranca tras el primer clic (política del navegador).</p>
+
+  <div class="setting-section">// AYUDANTE (MOLESTIA)</div>
+  <p class="setting-hint">Cuanto más alto, más habla solo, más toasts y más caos no solicitado.</p>
+  <div class="setting-row"><label for="annoyRange">NIVEL DE MOLESTIA</label><input id="annoyRange" type="range" min="0" max="100" value="70"></div>
+  <div class="setting-row"><label for="eventsCheck">EVENTOS ALEATORIOS</label><input id="eventsCheck" type="checkbox" checked></div>
+  <div class="setting-row"><label for="adsCheck">ANUNCIOS DEL CAOS</label><input id="adsCheck" type="checkbox" checked></div>
+  <div class="setting-row"><label for="autoPrankCheck">BROMAS AUTÓNOMAS</label><input id="autoPrankCheck" type="checkbox" checked></div>
+
+  <div class="setting-section">// APARIENCIA</div>
+  <div class="setting-row"><label for="themeSelect">TEMA VISUAL</label>
+   <select id="themeSelect" style="background:#0c0c12;color:var(--paper);border:1px solid #ffffff33;font:11px monospace;padding:6px 8px">
+    <option value="acid">Ácido original</option>
+    <option value="rosa">Rosa oscuro</option>
+    <option value="terminal">Terminal verde</option>
+    <option value="oficina">Modo oficina</option>
+   </select>
+  </div>
+  <div class="setting-row"><label for="motionCheck">REDUCIR MOVIMIENTO</label><input id="motionCheck" type="checkbox"></div>
+
+  <div class="setting-section">// SISTEMA</div>
   <div class="setting-row"><span>PANTALLA COMPLETA</span><button class="secondary" id="settingsFullscreen">ACTIVAR</button></div>
+  <div class="setting-row"><span>EXPORTAR PARTIDA</span><button class="secondary" id="exportSaveBtn">JSON</button></div>
+  <div class="setting-row"><span>IMPORTAR PARTIDA</span><button class="secondary" id="importSaveBtn">CARGAR</button></div>
+  <div class="setting-row"><span>REINICIAR PROGRESO</span><button class="secondary" id="resetProgressBtn" title="Borra datos locales de esta página">BORRAR</button></div>
+  <div class="setting-row"><span>ATAJOS DE TECLADO</span><button class="secondary" id="shortcutsBtn">VER</button></div>
+  <div class="setting-row"><span>MOLESTIAS HOY</span><span id="annoyCountLabel" style="color:var(--acid)">0</span></div>
+
+  <div class="setting-version">
+   <b>MEMEVerso v1.2.1</b> — con música MEME.mp3<br>
+   Build: 1.2.1-music · Combinaciones · Logros · Chat · Temas · Banda sonora<br>
+   El ganso no ha aprobado esta versión. Eso es bueno.
+  </div>
+
   <div class="setting-actions"><button class="primary" id="saveSettings">LISTO</button></div>
  </div>
 </div>
+<input type="file" id="importFileInput" accept=".json,application/json" style="display:none">
 <main>
-  <div class="eyebrow">PROTOCOLO 00 // NO EXISTE UN TUTORIAL</div>
+  <div class="eyebrow">PROTOCOLO 00 // NO EXISTE UN TUTORIAL · v1.2.1</div>
   <h1>¿QUÉ <span>ESTÁ</span><br> PASANDO.</h1>
-  <p class="intro">Bienvenido al <b>MEMEVerso</b>. Explora la habitación, pulsa objetos y combina pistas. Si encuentras una llave, no preguntes qué abre. <br><span style="color:#716c7a">[ CONSEJO OFICIAL: el cursor sabe más que tú ]</span></p>
+  <p class="intro">Bienvenido al <b>MEMEVerso v1.2.1</b>. Explora, combina objetos, desbloquea salas y habla con el Ayudante. Ahora con <b>MEME.mp3</b> de fondo. <br><span style="color:#716c7a">[ CONSEJO: combina objetos · chat del Ayudante · coloca MEME.mp3 junto a index.html ]</span></p>
 
   <section class="panel" id="roomPanel" style="margin-top:28px">
     <div class="panel-head"><span id="roomName">UBICACIÓN: SALA DE ESPERA PARA COSAS QUE NO EXISTEN</span><span id="roomStatus">5 OBJETOS SOSPECHOSOS</span></div>
@@ -195,7 +264,7 @@ header>div:last-child{flex-wrap:wrap;justify-content:flex-end}
       <button class="hotspot" data-object="floor" title="Examinar mancha" style="position:absolute;left:58%;bottom:7%;font-size:22px;background:transparent;color:#ff3d9a;padding:5px">◉</button>
       <div id="sceneCaption" style="position:absolute;left:12px;bottom:8px;color:#8d8998;font:10px monospace;pointer-events:none">PULSA LOS OBJETOS. NO TODOS QUIEREN SER ENCONTRADOS.</div>
     </div>
-    <div class="controls" style="align-items:center"><button class="secondary" id="inventoryBtn">REVISAR BOLSILLOS</button><button class="secondary" id="mapBtn">¿HAY OTRA SALA?</button><button class="secondary" id="zoneBtn">MAPA DE LUGARES</button><span class="tiny" id="sceneHint" style="flex:1;min-width:150px">Pista: el póster está torcido por una razón.</span></div>
+    <div class="controls" style="align-items:center"><button class="secondary" id="inventoryBtn">REVISAR BOLSILLOS</button><button class="secondary" id="mapBtn">¿HAY OTRA SALA?</button><button class="secondary" id="zoneBtn">MAPA DE LUGARES</button><button class="secondary" id="achievementsBtn">LOGROS</button><button class="secondary" id="miniGameBtn">MINI-JUEGO</button><span class="tiny" id="sceneHint" style="flex:1;min-width:150px">Pista: el póster está torcido por una razón.</span></div>
   </section>
   <section class="panel" id="puzzlePanel" style="margin-top:14px">
     <div class="panel-head"><span>OBJETO EN PRIMER PLANO</span><span id="inspectState">NADA SELECCIONADO</span></div>
@@ -207,6 +276,12 @@ header>div:last-child{flex-wrap:wrap;justify-content:flex-end}
     <div class="panel-head"><span>MAPA INCOMPLETO // EL EDIFICIO NO CABE EN SÍ MISMO</span><span id="zoneCount">1/6 LUGARES</span></div>
     <div id="zoneCards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;padding:14px"></div>
     <div class="tiny" style="padding:0 14px 14px">Algunas ubicaciones solo aparecen cuando el lugar decide que ya estás preparado. El mapa no está de acuerdo consigo mismo.</div>
+  </section>
+
+  <section class="panel" id="achievementsPanel" style="margin-top:14px;display:none">
+    <div class="panel-head"><span>REGISTRO DE INCIDENTES OFICIALES</span><span id="achCount">0/12</span></div>
+    <div id="achList" style="padding:8px 14px 14px"></div>
+    <div class="tiny" style="padding:0 14px 14px">Los logros no se pueden devolver. El ganso los archiva para siempre.</div>
   </section>
 
   <section class="panel" id="fileCabinet">
@@ -245,17 +320,25 @@ header>div:last-child{flex-wrap:wrap;justify-content:flex-end}
       </section>
     </aside>
   </div>
-  <div class="footer"><span>MEMEVerso build 0.0.∞ // propiedad de nadie</span><span id="clock">HORA LOCAL: --:--:--</span><span>ALT + M = ¿?</span></div>
+  <div class="footer"><span>MEMEVerso v1.2.1 // MEME.mp3</span><span id="clock">HORA LOCAL: --:--:--</span><span>ALT+M · ↑↑↓↓←→←→BA</span></div>
 </main>
 <div id="helperDock" aria-live="polite">
- <div class="helper-head"><span>◈ AYUDANTE v0.∞ // 1.200+ FRASES</span><button id="helperMin" title="Minimizar ayudante">—</button></div>
+ <div class="helper-head"><span>◈ AYUDANTE v1.2 // 1.200+ FRASES</span><button id="helperMin" title="Minimizar ayudante">—</button></div>
  <div id="helperBody">
   <div class="helper-face" id="helperFace">🤖</div>
-  <div id="helperSpeech">¡Hola! Soy AYUDANTE. Te guiaré por la página y, a cambio, fingiré que todo esto es normal.</div>
+  <div id="helperSpeech">¡Hola! Soy AYUDANTE v1.2. Ahora combino objetos, doy pistas contextuales y leo lo que escribes. No me despidas.</div>
   <div class="helper-meter"><div id="helperMeterFill"></div></div>
   <div class="helper-buttons">
-   <button id="helperHint">DAME UNA PISTA</button><button id="helperPrank">MOLESTAR</button><button id="helperNote">NOTA TXT</button><button id="helperVideo">¿QUÉ ES ESO?</button><button id="helperForbidden">NO PULSAR</button>
+   <button id="helperHint">DAME UNA PISTA</button><button id="helperPrank">MOLESTAR</button><button id="helperNote">NOTA TXT</button><button id="helperVideo">¿QUÉ ES ESO?</button><button id="helperForbidden">NO PULSAR</button><button id="helperSilence">CALLA 30s</button>
   </div>
+  <div id="helperChat"><input id="helperInput" type="text" maxlength="80" placeholder="Escríbele algo al Ayudante…" aria-label="Chat con el ayudante"><button id="helperSend">ENVIAR</button></div>
+ </div>
+</div>
+<div id="miniGameModal" role="dialog" aria-modal="true" aria-labelledby="mgTitle">
+ <div class="mg-card">
+  <div class="mg-title" id="mgTitle">MINI-JUEGO</div>
+  <div id="mgBody"></div>
+  <div style="margin-top:14px;display:flex;gap:8px"><button class="secondary" id="mgClose" style="flex:1">CERRAR</button></div>
  </div>
 </div>
 <div id="helperToast" role="status"><div id="toastText"></div><div style="text-align:right;margin-top:10px"><button id="toastClose">DEJAR DE EXISTIR</button></div></div>
@@ -321,7 +404,68 @@ function run(){chaos+=5;debt+=2;$('entity').textContent='🏃';$('message').text
 
 // Audio procedural: sonidos generados localmente, sin archivos externos.
 let audioOn=true, audioVolume=0.65, audioCtx=null, ambientTimer=null, audioStarted=false;
-try{audioOn=localStorage.getItem('meme-audio')!=='off';audioVolume=Math.max(0,Math.min(1,Number(localStorage.getItem('meme-volume')??0.65)))}catch(e){}
+let musicOn=true, musicVolume=0.4, bgMusic=null, musicReady=false;
+let annoyLevel=70, eventsOn=true, adsOn=true, autoPrankOn=true;
+let reduceMotion=false, currentTheme='acid', annoyCountToday=0, helperSilencedUntil=0;
+const APP_VERSION='1.2.1';
+try{
+  audioOn=localStorage.getItem('meme-audio')!=='off';
+  audioVolume=Math.max(0,Math.min(1,Number(localStorage.getItem('meme-volume')??0.65)));
+  musicOn=localStorage.getItem('meme-music')!=='off';
+  musicVolume=Math.max(0,Math.min(1,Number(localStorage.getItem('meme-music-vol')??0.4)));
+  annoyLevel=Math.max(0,Math.min(100,Number(localStorage.getItem('meme-annoy')??70)));
+  eventsOn=localStorage.getItem('meme-events')!=='off';
+  adsOn=localStorage.getItem('meme-ads')!=='off';
+  autoPrankOn=localStorage.getItem('meme-autoprank')!=='off';
+  reduceMotion=localStorage.getItem('meme-motion')==='on';
+  currentTheme=localStorage.getItem('meme-theme')||'acid';
+  const day=new Date().toDateString();
+  if(localStorage.getItem('meme-annoy-day')===day)annoyCountToday=Number(localStorage.getItem('meme-annoy-count')||0);
+}catch(e){}
+// —— Música de fondo (MEME.mp3) ——
+function initBgMusic(){
+  const url=(window.MEMEVERSO_MUSIC_URL||'./MEME.mp3').trim();
+  if(!url||bgMusic)return;
+  bgMusic=new Audio();
+  bgMusic.loop=true;
+  bgMusic.preload='auto';
+  bgMusic.volume=musicOn&&audioOn?musicVolume:0;
+  bgMusic.src=url;
+  bgMusic.addEventListener('canplaythrough',()=>{musicReady=true},{once:true});
+  bgMusic.addEventListener('error',()=>{musicReady=false;log('MEME.mp3 no encontrado. Colócalo junto a index.html.')});
+}
+function startBgMusic(){
+  if(!bgMusic)initBgMusic();
+  if(!bgMusic||!musicOn||!audioOn)return;
+  bgMusic.volume=musicVolume;
+  const p=bgMusic.play();
+  if(p&&p.catch)p.catch(()=>{/* autoplay bloqueado hasta interacción */});
+}
+function stopBgMusic(){if(bgMusic){bgMusic.pause()}}
+function setMusicVolume(v){
+  musicVolume=Math.max(0,Math.min(1,v));
+  if(bgMusic)bgMusic.volume=(musicOn&&audioOn)?musicVolume:0;
+  try{localStorage.setItem('meme-music-vol',String(musicVolume))}catch(e){}
+}
+function setMusicEnabled(on){
+  musicOn=!!on;
+  try{localStorage.setItem('meme-music',musicOn?'on':'off')}catch(e){}
+  if(musicOn&&audioOn)startBgMusic();else stopBgMusic();
+  if(bgMusic)bgMusic.volume=(musicOn&&audioOn)?musicVolume:0;
+}
+initBgMusic();
+// Arrancar música en la primera interacción del usuario
+function unlockAudioOnce(){
+  if(audioStarted)return;
+  audioStarted=true;
+  ctx(); // reanuda AudioContext de SFX
+  startBgMusic();
+}
+['click','keydown','touchstart'].forEach(ev=>document.addEventListener(ev,unlockAudioOnce,{once:true,passive:true}));
+function applyTheme(t){currentTheme=t;document.body.classList.remove('theme-rosa','theme-terminal','theme-oficina');if(t==='rosa')document.body.classList.add('theme-rosa');else if(t==='terminal')document.body.classList.add('theme-terminal');else if(t==='oficina')document.body.classList.add('theme-oficina');try{localStorage.setItem('meme-theme',t)}catch(e){}}
+function applyMotion(on){reduceMotion=on;document.body.classList.toggle('reduce-motion',on);try{localStorage.setItem('meme-motion',on?'on':'off')}catch(e){}}
+applyTheme(currentTheme);applyMotion(reduceMotion);
+function bumpAnnoy(){annoyCountToday++;try{localStorage.setItem('meme-annoy-day',new Date().toDateString());localStorage.setItem('meme-annoy-count',String(annoyCountToday))}catch(e){}if($('annoyCountLabel'))$('annoyCountLabel').textContent=annoyCountToday}
 function ctx(){if(!audioCtx){const AC=window.AudioContext||window.webkitAudioContext;if(AC)audioCtx=new AC()}if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();return audioCtx}
 function tone(freq=220,dur=.12,type='sine',vol=.035,slide=0){if(!audioOn)return;const c=ctx();if(!c)return;const o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(freq,c.currentTime);if(slide)o.frequency.exponentialRampToValueAtTime(Math.max(20,freq+slide),c.currentTime+dur);g.gain.setValueAtTime(vol*audioVolume,c.currentTime);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+dur);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+dur+.02)}
 function noiseBurst(dur=.16,vol=.035){if(!audioOn)return;const c=ctx();if(!c)return;const n=Math.floor(c.sampleRate*dur),b=c.createBuffer(1,n,c.sampleRate),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*(1-i/n);const s=c.createBufferSource(),g=c.createGain();s.buffer=b;g.gain.value=vol*audioVolume;s.connect(g);g.connect(c.destination);s.start()}
@@ -359,14 +503,119 @@ function randomIntrusion(){if(!audioOn && Math.random()<.5){};const events=[
 
 // Aventura point-and-click ampliada: varias zonas, objetos persistentes, combinaciones y misterios.
 const invItems=[];
+const invIcons={};
 const world={key:false,note:false,fuse:false,coin:false,openedCabinet:false,ventOpen:false,portal:false,room:0,pass:false,
  zones:{waiting:true,impossible:false,archive:false,roof:false,basement:false,moon:false},
  clues:0,phoneAnswered:false,boxOpened:false,mirrorSeen:false,clockFixed:false,radioOn:false,doorKnocked:0,catFed:false,shadowNamed:false};
 let currentZone='waiting';
-function addItem(name,icon){if(!invItems.includes(name)){invItems.push(name);const s=document.createElement('span');s.className='chip new';s.textContent=icon+' '+name;$('inventory').append(s);log('objeto obtenido: '+name);sfx('txt');renderZones()}}
+let selectedItem=null;
+const achievements={
+ first_object:{icon:'🔍',name:'Primera sospecha',desc:'Examinaste tu primer objeto.',got:false},
+ first_item:{icon:'🎒',name:'Bolsillo útil',desc:'Conseguiste tu primer objeto real.',got:false},
+ portal:{icon:'🚪',name:'Habitación imposible',desc:'Abriste la rejilla hacia otra dimensión.',got:false},
+ all_zones:{icon:'🗺️',name:'Cartógrafo del vacío',desc:'Desbloqueaste las 6 ubicaciones.',got:false},
+ combine:{icon:'⚗️',name:'Alquimista de oficina',desc:'Combinaste dos objetos con éxito.',got:false},
+ prank10:{icon:'🤡',name:'Víctima frecuente',desc:'El Ayudante te molestó 10 veces.',got:false},
+ gremlin:{icon:'🪿',name:'Cazador de cucharas',desc:'Atrapaste una entidad flotante.',got:false},
+ silence:{icon:'🤫',name:'Silenciador',desc:'Callaste al Ayudante 30 segundos.',got:false},
+ konami:{icon:'🎮',name:'Código prohibido',desc:'Introdujiste el código Konami.',got:false},
+ minigame:{icon:'🥄',name:'Maestro de cucharas',desc:'Ganaste un mini-juego.',got:false},
+ cheese50:{icon:'🧀',name:'Queso cuántico',desc:'Acumulaste 50 g de queso.',got:false},
+ chat:{icon:'💬',name:'Conversador',desc:'Le escribiste algo al Ayudante.',got:false}
+};
+const recipes=[
+ {need:['Llave blanda','Fusible tibio'],result:['Llave energizada','⚡'],msg:'La llave absorbe el fusible. Ahora brilla y huele a ozono de oficina.'},
+ {need:['Moneda de 0 céntimos','Nota arrugada'],result:['Pagaré emocional','📜'],msg:'La nota se convierte en un pagaré que nadie puede cobrar. El valor es puramente sentimental.'},
+ {need:['Ojo de repuesto','Sombra doblada'],result:['Mirada invertida','👁️‍🗨️'],msg:'El ojo se pone la sombra como capa. Ahora mira hacia dentro.'},
+ {need:['Pieza de reloj','Minuto prestado'],result:['Tiempo de sobra','⏳'],msg:'El reloj y el minuto se entienden. Ganas 60 segundos que no existen.'},
+ {need:['Diente de la habitación','Polvo de techo'],result:['Sonrisa de pared','😁'],msg:'La pared sonríe. Es horrible y perfecto.'},
+ {need:['Contraseña PATATA-6','Ficha de visitante'],result:['Pase VIP al vacío','🎫'],msg:'El pase te permite existir en dos salas a la vez. Casi.'},
+ {need:['Llave del no-lugar','Recuerdo de puerta'],result:['Llave del recuerdo','🗝️'],msg:'La llave recuerda la puerta. La puerta te recuerda a ti. Algo se abre en tu cabeza.'}
+];
+function unlockAch(id){
+ if(!achievements[id]||achievements[id].got)return;
+ achievements[id].got=true;saveProgress();
+ omen('LOGRO: '+achievements[id].name.toUpperCase(),3200);sfx('secret');
+ log('logro desbloqueado: '+achievements[id].name);
+ renderAchievements();
+}
+function renderAchievements(){
+ const list=$('achList');if(!list)return;list.innerHTML='';
+ let n=0;Object.values(achievements).forEach(a=>{if(a.got)n++;
+  const d=document.createElement('div');d.className='ach-item'+(a.got?'':' locked');
+  d.innerHTML='<span class="ach-icon">'+(a.got?a.icon:'🔒')+'</span><div><b>'+a.name+'</b><br>'+a.desc+'</div>';
+  list.append(d);
+ });
+ if($('achCount'))$('achCount').textContent=n+'/'+Object.keys(achievements).length;
+}
+function saveProgress(){
+ try{
+  localStorage.setItem('meme-save',JSON.stringify({
+   v:APP_VERSION,world,invItems,invIcons,chaos,cheese,debt,goose,count,
+   achievements:Object.fromEntries(Object.entries(achievements).map(([k,a])=>[k,a.got])),
+   currentZone
+  }));
+ }catch(e){}
+}
+function loadProgress(){
+ try{
+  const raw=localStorage.getItem('meme-save');if(!raw)return false;
+  const d=JSON.parse(raw);
+  if(d.world)Object.assign(world,d.world);
+  if(Array.isArray(d.invItems)){invItems.length=0;d.invItems.forEach(n=>invItems.push(n))}
+  if(d.invIcons)Object.assign(invIcons,d.invIcons);
+  if(typeof d.chaos==='number')chaos=d.chaos;
+  if(typeof d.cheese==='number')cheese=d.cheese;
+  if(typeof d.debt==='number')debt=d.debt;
+  if(typeof d.goose==='number')goose=d.goose;
+  if(typeof d.count==='number')count=d.count;
+  if(d.achievements)Object.keys(d.achievements).forEach(k=>{if(achievements[k])achievements[k].got=!!d.achievements[k]});
+  if(d.currentZone)currentZone=d.currentZone;
+  // rebuild inventory UI
+  const invEl=$('inventory');if(invEl){invEl.innerHTML='';invItems.forEach(name=>{const s=document.createElement('span');s.className='chip clickable';s.textContent=(invIcons[name]||'📦')+' '+name;s.dataset.item=name;s.onclick=()=>selectItem(name);invEl.append(s)})}
+  update();renderZones();renderAchievements();
+  return true;
+ }catch(e){return false}
+}
+function selectItem(name){
+ if(selectedItem===name){selectedItem=null;document.querySelectorAll('.chip.selected').forEach(c=>c.classList.remove('selected'));return}
+ if(selectedItem){
+  // try combine
+  const pair=[selectedItem,name].sort();
+  const recipe=recipes.find(r=>{const n=[...r.need].sort();return n[0]===pair[0]&&n[1]===pair[1]});
+  selectedItem=null;document.querySelectorAll('.chip.selected').forEach(c=>c.classList.remove('selected'));
+  if(recipe){
+   recipe.need.forEach(n=>{const i=invItems.indexOf(n);if(i>=0)invItems.splice(i,1)});
+   // rebuild chips
+   const invEl=$('inventory');invEl.innerHTML='';invItems.forEach(nm=>{const s=document.createElement('span');s.className='chip clickable';s.textContent=(invIcons[nm]||'📦')+' '+nm;s.dataset.item=nm;s.onclick=()=>selectItem(nm);invEl.append(s)});
+   addItem(recipe.result[0],recipe.result[1]);
+   unlockAch('combine');
+   inspectSet('⚗️','Combinación exitosa',recipe.msg);
+   helperSay('¡Combinación detectada! '+recipe.msg);
+   saveProgress();
+  }else{
+   inspectSet('🎒','Combinación fallida','«'+selectedItem+'» + «'+name+'» no producen nada útil. O sí, pero el universo no está de humor.');
+   helperSay('Esa combinación no está en el manual. El manual tampoco existe.');
+  }
+  return;
+ }
+ selectedItem=name;
+ document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('selected',c.dataset.item===name));
+ inspectSet(invIcons[name]||'📦',name,'Objeto seleccionado. Pulsa otro objeto del inventario para intentar combinarlo.',[
+  ['DESELECCIONAR',()=>{selectedItem=null;document.querySelectorAll('.chip.selected').forEach(c=>c.classList.remove('selected'));inspectSet('🎒','Inventario','Selecciona un objeto para combinar.')}]
+ ]);
+}
+function addItem(name,icon){
+ if(!invItems.includes(name)){
+  invItems.push(name);invIcons[name]=icon||'📦';
+  const s=document.createElement('span');s.className='chip new clickable';s.textContent=(icon||'📦')+' '+name;s.dataset.item=name;s.onclick=()=>selectItem(name);$('inventory').append(s);
+  log('objeto obtenido: '+name);sfx('txt');renderZones();unlockAch('first_item');saveProgress();
+  if(cheese>=50)unlockAch('cheese50');
+ }
+}
 function hasItem(name){return invItems.includes(name)}
 function inspectSet(icon,title,text,actions=[]){$('inspectIcon').textContent=icon;$('inspectTitle').textContent=title;$('inspectText').textContent=text;$('inspectState').textContent='EXAMINANDO';const area=$('inspectActions');area.innerHTML='';actions.forEach(([label,fn])=>{const b=document.createElement('button');b.className='secondary';b.textContent=label;b.onclick=()=>{sfx('click');fn()};area.appendChild(b)})}
-function result(text){$('inspectText').textContent=text;log(text)}
+function result(text){$('inspectText').textContent=text;log(text);saveProgress()}
 const zoneData={
  waiting:{icon:'🪑',name:'Sala de espera',desc:'La habitación inicial. Huele a lluvia interior.',unlock:()=>true},
  impossible:{icon:'🚪',name:'Detrás de la pared',desc:'Un lugar que ocupa menos espacio que su sombra.',unlock:()=>world.portal},
@@ -386,9 +635,20 @@ function addHotspot(id,icon,label,left,top,fn){
 }
 function clearExtraHotspots(){document.querySelectorAll('[data-extra]').forEach(x=>x.remove())}
 function enterZone(id){
+ const roomEl=$('room');
+ if(!reduceMotion){roomEl.classList.remove('transitioning');void roomEl.offsetWidth;roomEl.classList.add('transitioning');setTimeout(()=>roomEl.classList.remove('transitioning'),450)}
  currentZone=id;world.room=id==='impossible'?1:0;$('zonePanel').style.display='none';clearExtraHotspots();
  document.querySelectorAll('.hotspot[data-object]').forEach(b=>b.style.display=id==='waiting'?'block':'none');
  $('mapBtn').textContent='VOLVER A LA SALA';$('mapBtn').onclick=()=>enterZone('waiting');
+ // check all zones achievement
+ if(Object.values(world.zones).every(Boolean)||(world.portal&&world.zones.archive&&world.zones.roof&&world.zones.basement&&world.zones.moon))unlockAch('all_zones');
+ if(id==='impossible')unlockAch('portal');
+ saveProgress();
+ helperSay(pick([
+  'Nueva ubicación: '+zoneData[id].name+'. No toques nada. O sí.',
+  'Has cambiado de sala. Yo también, emocionalmente.',
+  zoneData[id].desc
+ ]));
  if(id==='waiting'){
   setRoomTitle('Sala de espera para cosas que no existen','5 OBJETOS SOSPECHOSOS','linear-gradient(180deg,#161523,#09090d)');
   inspectSet('🪑','La sala de espera','Hay un póster, un archivador, una planta, una rejilla y una mancha. En alguna parte, un teléfono espera que cometas un error.');
@@ -446,24 +706,84 @@ function inspectObject(id){
  }[id];
  if(!obj)return;inspectSet(obj[0],obj[1],obj[2],obj[3]);$('sceneCaption').textContent='EXAMINANDO: '+obj[1].toUpperCase();
 }
-document.querySelectorAll('.hotspot[data-object]').forEach(b=>b.addEventListener('click',()=>{if(currentZone!=='waiting')return;inspectObject(b.dataset.object);b.classList.add('found');$('roomStatus').textContent='OBJETO REGISTRADO';sfx('click')}));
-$('inventoryBtn').addEventListener('click',()=>inspectSet('🎒','Tus bolsillos',invItems.length?invItems.map(x=>'• '+x).join('  |  '):'Solo tienes pelusa y una sospecha muy concreta.'));
-$('zoneBtn').addEventListener('click',()=>{$('zonePanel').style.display=$('zonePanel').style.display==='none'?'block':'none';renderZones();sfx('click')});
+document.querySelectorAll('.hotspot[data-object]').forEach(b=>b.addEventListener('click',()=>{if(currentZone!=='waiting')return;inspectObject(b.dataset.object);b.classList.add('found');$('roomStatus').textContent='OBJETO REGISTRADO';sfx('click');unlockAch('first_object')}));
+$('inventoryBtn').addEventListener('click',()=>{
+ selectedItem=null;document.querySelectorAll('.chip.selected').forEach(c=>c.classList.remove('selected'));
+ inspectSet('🎒','Tus bolsillos',invItems.length?('Pulsa un objeto para seleccionarlo y otro para combinar.\n\n'+invItems.map(x=>'• '+(invIcons[x]||'')+' '+x).join('\n')):'Solo tienes pelusa y una sospecha muy concreta.\n\nConsejo: examina el póster y la planta.');
+});
+$('zoneBtn').addEventListener('click',()=>{$('zonePanel').style.display=$('zonePanel').style.display==='none'?'block':'none';$('achievementsPanel').style.display='none';renderZones();sfx('click')});
+$('achievementsBtn').addEventListener('click',()=>{$('achievementsPanel').style.display=$('achievementsPanel').style.display==='none'?'block':'none';$('zonePanel').style.display='none';renderAchievements();sfx('click')});
 $('mapBtn').addEventListener('click',()=>{if(currentZone!=='waiting'){enterZone('waiting');return}if(world.portal){enterZone('impossible')}else{omen('NO HAY OTRA SALA. TODAVÍA.');$('sceneHint').textContent='Pista: prueba la planta y revisa la rejilla.'}});
 
 renderZones();
 $('doBtn').addEventListener('click',()=>{sfx(Math.random()<.18?'weird':'click');act();if(Math.random()<.22)randomIntrusion()});
 $('talkBtn').addEventListener('click',()=>{sfx('talk');talk();if(Math.random()<.25)randomIntrusion()});
 $('runBtn').addEventListener('click',()=>{sfx('run');run();if(Math.random()<.3)randomIntrusion()});
-function refreshAudioUI(){$('soundBtn').textContent=audioOn?'♫ AUDIO: ON':'♫ AUDIO: OFF';$('muteCheck').checked=!audioOn;$('volumeRange').value=Math.round(audioVolume*100)}
-function setAudio(on){audioOn=on;try{localStorage.setItem('meme-audio',audioOn?'on':'off')}catch(e){}refreshAudioUI();if(audioOn){sfx('secret');omen('AUDIO RESTAURADO. O ESO DICE.')}}
+function refreshAudioUI(){
+  $('soundBtn').textContent=audioOn?'♫ AUDIO: ON':'♫ AUDIO: OFF';
+  $('muteCheck').checked=!audioOn;
+  $('volumeRange').value=Math.round(audioVolume*100);
+  if($('musicRange'))$('musicRange').value=Math.round(musicVolume*100);
+  if($('musicCheck'))$('musicCheck').checked=musicOn;
+  if($('annoyRange'))$('annoyRange').value=annoyLevel;
+  if($('eventsCheck'))$('eventsCheck').checked=eventsOn;
+  if($('adsCheck'))$('adsCheck').checked=adsOn;
+  if($('autoPrankCheck'))$('autoPrankCheck').checked=autoPrankOn;
+  if($('themeSelect'))$('themeSelect').value=currentTheme;
+  if($('motionCheck'))$('motionCheck').checked=reduceMotion;
+  if($('annoyCountLabel'))$('annoyCountLabel').textContent=annoyCountToday;
+}
+function setAudio(on){
+  audioOn=on;
+  try{localStorage.setItem('meme-audio',audioOn?'on':'off')}catch(e){}
+  refreshAudioUI();
+  if(audioOn){sfx('secret');omen('AUDIO RESTAURADO. O ESO DICE.');if(musicOn)startBgMusic()}
+  else{stopBgMusic();if(bgMusic)bgMusic.volume=0}
+}
 $('soundBtn').addEventListener('click',()=>setAudio(!audioOn));
 $('settingsBtn').addEventListener('click',()=>{$('settingsModal').classList.add('open');refreshAudioUI();$('closeSettings').focus();});
 function closeSettings(){$('settingsModal').classList.remove('open');$('settingsBtn').focus()}
 $('closeSettings').addEventListener('click',closeSettings);$('saveSettings').addEventListener('click',closeSettings);
 $('settingsModal').addEventListener('click',e=>{if(e.target===$('settingsModal'))closeSettings()});
 $('volumeRange').addEventListener('input',e=>{audioVolume=Number(e.target.value)/100;try{localStorage.setItem('meme-volume',String(audioVolume))}catch(err){}if(audioOn)sfx('click')});
+$('musicRange').addEventListener('input',e=>{setMusicVolume(Number(e.target.value)/100)});
+$('musicCheck').addEventListener('change',e=>{setMusicEnabled(e.target.checked);if(e.target.checked)helperSay('Música activada. MEME.mp3 debería estar sonando… o no.')});
 $('muteCheck').addEventListener('change',e=>setAudio(!e.target.checked));
+$('annoyRange').addEventListener('input',e=>{annoyLevel=Number(e.target.value);try{localStorage.setItem('meme-annoy',String(annoyLevel))}catch(err){}helperSay(annoyLevel>80?'Nivel de molestia subido. No te arrepentirás... o sí.':annoyLevel<25?'Has reducido mi presencia. Qué aburrido.':'Ajustes de molestia actualizados. Continúo existiendo.')});
+$('eventsCheck').addEventListener('change',e=>{eventsOn=e.target.checked;try{localStorage.setItem('meme-events',eventsOn?'on':'off')}catch(err){}});
+$('adsCheck').addEventListener('change',e=>{adsOn=e.target.checked;try{localStorage.setItem('meme-ads',adsOn?'on':'off')}catch(err){}});
+$('autoPrankCheck').addEventListener('change',e=>{autoPrankOn=e.target.checked;try{localStorage.setItem('meme-autoprank',autoPrankOn?'on':'off')}catch(err){}});
+$('resetProgressBtn').addEventListener('click',()=>{
+  if(!confirm('¿Borrar TODO el progreso y ajustes de MEMEVerso?'))return;
+  try{Object.keys(localStorage).filter(k=>k.startsWith('meme-')).forEach(k=>localStorage.removeItem(k))}catch(e){}
+  audioOn=true;audioVolume=0.65;musicOn=true;musicVolume=0.4;annoyLevel=70;eventsOn=true;adsOn=true;autoPrankOn=true;reduceMotion=false;currentTheme='acid';
+  setMusicVolume(0.4);setMusicEnabled(true);
+  invItems.length=0;Object.keys(invIcons).forEach(k=>delete invIcons[k]);
+  Object.assign(world,{key:false,note:false,fuse:false,coin:false,openedCabinet:false,ventOpen:false,portal:false,room:0,pass:false,zones:{waiting:true,impossible:false,archive:false,roof:false,basement:false,moon:false},clues:0,phoneAnswered:false,boxOpened:false,mirrorSeen:false,clockFixed:false,radioOn:false,doorKnocked:0,catFed:false,shadowNamed:false});
+  Object.keys(achievements).forEach(k=>achievements[k].got=false);
+  chaos=0;cheese=0;debt=-3.5;goose=0;count=0;currentZone='waiting';
+  $('inventory').innerHTML='<span class="chip">bolsillo húmedo</span>';
+  applyTheme('acid');applyMotion(false);refreshAudioUI();renderAchievements();renderZones();enterZone('waiting');
+  helperSay('Progreso reiniciado. Como si nunca hubiéramos existido juntos. Triste.');log('datos locales borrados por petición del usuario (o del ganso)');
+});
+$('themeSelect').addEventListener('change',e=>{applyTheme(e.target.value);helperSay('Tema cambiado a '+e.target.options[e.target.selectedIndex].text+'. El ganso odia los cambios de decoración.')});
+$('motionCheck').addEventListener('change',e=>applyMotion(e.target.checked));
+$('exportSaveBtn').addEventListener('click',()=>{
+ saveProgress();
+ const data=localStorage.getItem('meme-save')||'{}';
+ const blob=new Blob([data],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');
+ a.href=url;a.download='MEMEVerso_partida_v'+APP_VERSION+'.json';a.click();URL.revokeObjectURL(url);
+ helperSay('Partida exportada. Guárdala en un cajón que no exista.');
+});
+$('importSaveBtn').addEventListener('click',()=>$('importFileInput').click());
+$('importFileInput').addEventListener('change',e=>{
+ const f=e.target.files[0];if(!f)return;
+ const r=new FileReader();r.onload=()=>{try{localStorage.setItem('meme-save',r.result);if(loadProgress()){helperSay('Partida importada. Bienvenido de nuevo al vacío.');omen('PARTIDA CARGADA',2500)}else helperSay('El archivo era ilegible. Como la mayoría de memorias.')}catch(err){helperSay('Error al importar. El ganso se ha comido los datos.')}};r.readAsText(f);e.target.value='';
+});
+$('shortcutsBtn').addEventListener('click',()=>{
+ inspectSet('⌨️','Atajos de teclado','ALT + M → secreto\n↑↑↓↓←→←→ B A → código Konami\nESC → cerrar modales\nPulsa objetos del inventario para combinar\nChat del Ayudante: escribe y envía');
+ closeSettings();
+});
 async function toggleFullscreen(){try{if(!document.fullscreenElement){await (document.documentElement.requestFullscreen?.());}else{await document.exitFullscreen?.()}}catch(e){omen('PANTALLA COMPLETA NO DISPONIBLE EN ESTE NAVEGADOR.')}updateFullscreenButton()}
 function updateFullscreenButton(){const label=document.fullscreenElement?'⛶ SALIR':'⛶ PANTALLA';$('fullscreenBtn').textContent=label;$('settingsFullscreen').textContent=document.fullscreenElement?'SALIR':'ACTIVAR'}
 $('fullscreenBtn').addEventListener('click',toggleFullscreen);$('settingsFullscreen').addEventListener('click',toggleFullscreen);document.addEventListener('fullscreenchange',updateFullscreenButton);
@@ -531,12 +851,66 @@ const ads=[
 const gremlins=['🪿','🦷','🧃','🗿','🦐','🛸','🧦','👁️','🧌','🥄'];
 let helperMood=0, prankCount=0, lastPrank=0, videoTimer=null, toastTimer=null;
 const rickURL=(window.MEMEVERSO_RICKROLL_URL||'').trim();
-function helperSay(line){$('helperSpeech').textContent=line;$('helperFace').textContent=pick(['🤖','🗿','🦆','👁️','🧃']);helperMood=Math.min(100,helperMood+7);$('helperMeterFill').style.width=helperMood+'%';}
-function showToast(line,duration=4300){$('toastText').textContent=line;$('helperToast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('helperToast').classList.remove('show'),duration);sfx('weird')}
+function helperIsSilent(){return Date.now()<helperSilencedUntil}
+function helperSay(line){
+ if(helperIsSilent())return;
+ $('helperSpeech').textContent=line;$('helperFace').textContent=pick(['🤖','🗿','🦆','👁️','🧃']);
+ helperMood=Math.min(100,helperMood+7);$('helperMeterFill').style.width=helperMood+'%';
+ bumpAnnoy();
+ if(helperMood>=100){
+  helperMood=0;$('helperMeterFill').style.width='0%';
+  showToast('AYUDANTE HA ALCANZADO EL 100% DE HUMOR. EVENTO ESPECIAL.',4000);
+  setTimeout(()=>{prank();if(adsOn)showAd();glitch();helperSay('Mi humor se ha reiniciado. El tuyo no.')},600);
+ }
+}
+function showToast(line,duration=4300){if(helperIsSilent())return;$('toastText').textContent=line;$('helperToast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('helperToast').classList.remove('show'),duration);sfx('weird');bumpAnnoy()}
 function hideToast(){$('helperToast').classList.remove('show');clearTimeout(toastTimer)}
 $('toastClose').addEventListener('click',hideToast);
 $('helperMin').addEventListener('click',()=>{$('helperDock').classList.toggle('minimized');$('helperMin').textContent=$('helperDock').classList.contains('minimized')?'+':'—'});
-$('helperHint').addEventListener('click',()=>{helperSay(pick(helperLines));log('AYUDANTE ha proporcionado información de utilidad discutible.');sfx('talk')});
+function contextualHint(){
+ const hints={
+  waiting:!world.key?['El póster está torcido. Tira del marco.','La planta guarda algo en la tierra.','Habla con respeto a la planta.']
+   :!world.openedCabinet?['Usa la llave blanda en el archivador.','El cajón inferior susurra cosas.']
+   :!world.ventOpen?['El fusible y la rejilla se llevan bien.','La nota menciona el número 6.']
+   :['La rejilla ya está abierta. Prueba el mapa.','Combina objetos en el inventario pulsándolos.'],
+  impossible:['Abre la caja. Contesta el teléfono. Toca la pared.','Cada acción desbloquea un lugar nuevo.'],
+  archive:['El cajón necesita un ojo prestado.','La palanca roja abre caminos.'],
+  roof:['Pulsa la luna si has contestado el teléfono.','Ajusta la antena para oír el futuro.'],
+  basement:['Golpea la puerta dos veces.','Gira la silla. Usa la moneda en el desagüe.'],
+  moon:['Repara el reloj. Abre la taquilla 6 con la pieza o la contraseña.']
+ };
+ const pool=hints[currentZone]||helperLines;
+ helperSay(pick(pool));
+ log('AYUDANTE ha proporcionado una pista contextual (utilidad discutible).');sfx('talk');
+}
+$('helperHint').addEventListener('click',contextualHint);
+$('helperSilence').addEventListener('click',()=>{
+ helperSilencedUntil=Date.now()+30000;
+ $('helperSpeech').textContent='… (silenciado 30 s. Qué descortés.)';
+ unlockAch('silence');
+ setTimeout(()=>{if(!helperIsSilent())helperSay('He vuelto. El silencio era ensordecedor.')},30100);
+});
+function helperChatReply(msg){
+ const m=msg.toLowerCase().trim();
+ unlockAch('chat');
+ if(/ganso|oca|goose/.test(m))return 'El ganso te saluda con el pico. No firmes nada.';
+ if(/ayuda|help|pista/.test(m)){contextualHint();return null}
+ if(/calla|silencio|shut/.test(m)){$('helperSilence').click();return 'Vale. 30 segundos. Los contaré con rencor.';}
+ if(/martes/.test(m))return 'El martes es un estado mental. Hoy es… discutible.';
+ if(/hola|hey|buenas/.test(m))return 'Hola. Existimos juntos en esta interfaz. Qué raro.';
+ if(/quién|quien eres/.test(m))return 'Soy AYUDANTE v'+APP_VERSION+'. Mi trabajo es molestar con cariño.';
+ if(/queso|cheese/.test(m))return 'Llevas '+cheese+' g de queso cuántico. El mercado no lo reconoce.';
+ if(/amor|te quiero/.test(m))return 'El departamento de afecto está cerrado. Prueba mañana (o nunca).';
+ if(/konami|código|codigo/.test(m))return '↑↑↓↓←→←→BA. No digas que te lo conté.';
+ return pick(helperLines);
+}
+$('helperSend').addEventListener('click',()=>{
+ const inp=$('helperInput');const msg=inp.value.trim();if(!msg)return;inp.value='';
+ const reply=helperChatReply(msg);
+ if(reply)helperSay(reply);
+ log('tú → AYUDANTE: '+msg.slice(0,40));
+});
+$('helperInput').addEventListener('keydown',e=>{if(e.key==='Enter')$('helperSend').click()});
 function makeTextFile(name,body){const blob=new Blob([body],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),15000);log('descarga autorizada por nadie: '+name)}
 const txtTemplates=[
  ['MEMO_INTERNO','MEMO INTERNO // AYUDANTE\\n\\nHola, humano. Has sido seleccionado para un programa de pruebas que no existe.\\nTu recompensa: una silla que sabe tu nombre.\\n\\nNo respondas a este memo. El buzón es una sopa.'],
@@ -565,6 +939,7 @@ function prank(){
  ()=>{const x=pick(['🪿','🦐','🗿','🧃','👁️']);omen(x+' HA SIDO AÑADIDO A TU DECLARACIÓN DE LA RENTA.',2200);sfx('weird')}
  ]);
  n();helperSay(pick(helperLines));log('broma nº '+prankCount+' ejecutada por AYUDANTE. El departamento niega todo.');chaos=Math.min(999,chaos+2);update();
+ if(prankCount>=10)unlockAch('prank10');
 }
 $('helperPrank').addEventListener('click',prank);
 $('helperForbidden').addEventListener('click',()=>{
@@ -585,7 +960,7 @@ function hideAd(){ $('chaosAd').classList.remove('show');if(Math.random()<.25)sh
 $('adClose').addEventListener('click',hideAd);
 $('adAccept').addEventListener('click',()=>{hideAd();helperSay('¡Excelente compra! No se ha comprado nada, pero el anuncio se siente validado.');makeTextFile('CONTRATO_DE_COMPRA_IMAGINARIA.txt','CONTRATO DE COMPRA IMAGINARIA\\n\\nProducto: '+$('adTitle').textContent+'\\nPrecio: 0 euros reales y 12 unidades de vergüenza.\\nEstado: no vinculante, porque no hay producto.');});
 $('adReport').addEventListener('click',()=>{hideAd();omen('DENUNCIA RECIBIDA. EL GANSO INVESTIGARÁ AL GANSO.',3000);log('denuncia archivada en un estanque');});
-$('floatingGremlin').addEventListener('click',()=>{const g=$('floatingGremlin');g.style.display='none';cheese+=3;update();helperSay('¡Lo atrapaste! Era el inspector de cucharas. Ha dejado 3 gramos de queso cuántico.');makeTextFile('CERTIFICADO_DE_CAPTURA.txt','CERTIFICADO OFICIAL\\n\\nSe certifica que has atrapado una entidad flotante.\\nRecompensa: 3 gramos de queso cuántico.\\nEl ganso no reconoce este certificado.');sfx('secret')});
+$('floatingGremlin').addEventListener('click',()=>{const g=$('floatingGremlin');g.style.display='none';cheese+=3;update();helperSay('¡Lo atrapaste! Era el inspector de cucharas. Ha dejado 3 gramos de queso cuántico.');makeTextFile('CERTIFICADO_DE_CAPTURA.txt','CERTIFICADO OFICIAL\n\nSe certifica que has atrapado una entidad flotante.\nRecompensa: 3 gramos de queso cuántico.\nEl ganso no reconoce este certificado.');sfx('secret');unlockAch('gremlin');if(cheese>=50)unlockAch('cheese50');saveProgress()});
 $('floatingGremlin').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('floatingGremlin').click()}});
 function showVideo(){
  const overlay=$('videoJumpscare'),video=$('rickVideo');
@@ -607,13 +982,16 @@ $('videoJumpscare').addEventListener('click',e=>{if(e.target===$('videoJumpscare
 function maybeVideo(){if(Math.random()<.24)showVideo();else helperSay('Hoy no hay vídeo. El presupuesto audiovisual se ha gastado en una silla.')}
 $('helperVideo').title='Abrir la ventana sorpresa de vídeo';
 function randomScreenEvent(){
- if(document.hidden||$('settingsModal').classList.contains('open')||$('videoJumpscare').classList.contains('show'))return;
+ if(!eventsOn||document.hidden||$('settingsModal').classList.contains('open')||$('videoJumpscare').classList.contains('show'))return;
+ // Factor de molestia: 0 → casi nada, 100 → caos frecuente
+ const factor=0.35+annoyLevel/100*0.9;
  const r=Math.random();
- if(r<.22){const g=$('floatingGremlin');if(g.style.display!=='block'){g.textContent=pick(gremlins);g.style.left=(3+Math.random()*82)+'%';g.style.top=(12+Math.random()*67)+'%';g.style.display='block';setTimeout(()=>{if(g.style.display==='block')g.style.display='none'},5200)}}
- else if(r<.38){showToast(pick(['AYUDANTE: ¿sigues ahí? Qué incómodo.','Sistema: hemos perdido el norte. ¿Has visto uno?','El ganso ha aceptado tus cookies imaginarias.','Tu sesión tiene una cantidad preocupante de martes.','Pulsa un objeto. No, ese no. El otro.']),3300)}
- else if(r<.49){showAd()}
- else if(r<.54){glitch();sfx('weird')}
- else if(r<.575){showVideo()}
+ if(r<.18*factor){const g=$('floatingGremlin');if(g.style.display!=='block'){g.textContent=pick(gremlins);g.style.left=(3+Math.random()*82)+'%';g.style.top=(12+Math.random()*67)+'%';g.style.display='block';setTimeout(()=>{if(g.style.display==='block')g.style.display='none'},5200)}}
+ else if(r<.35*factor){showToast(pick(['AYUDANTE: ¿sigues ahí? Qué incómodo.','Sistema: hemos perdido el norte. ¿Has visto uno?','El ganso ha aceptado tus cookies imaginarias.','Tu sesión tiene una cantidad preocupante de martes.','Pulsa un objeto. No, ese no. El otro.','AYUDANTE v'+APP_VERSION+': sigo aquí. Siempre.','He actualizado mis términos de molestia.']),3300)}
+ else if(r<.48*factor){if(adsOn)showAd()}
+ else if(r<.55*factor){glitch();sfx('weird')}
+ else if(r<.60*factor){showVideo()}
+ else if(r<.72*factor&&autoPrankOn){prank()}
 }
 $('helperVideo').addEventListener('click',maybeVideo,{once:false});
 $('downloadAllBtn').addEventListener('click',()=>{
@@ -646,11 +1024,96 @@ bundledFiles.forEach(([filename,icon,desc])=>{
  fileGrid.appendChild(b);
 });
 $('fileCount').textContent=bundledFiles.length+' FICHEROS';
-setTimeout(()=>helperSay('Pulsa los objetos, revisa el archivo de TXT y no confíes en los anuncios. Yo no haría ninguna de esas cosas.'),1200);
-setTimeout(()=>showToast('¡BIENVENIDO AL MEMEVERSO! AYUDANTE está activo. Puedes minimizarlo. No puedes despedirlo.',5000),4500);
-setInterval(randomScreenEvent,18000);
-setInterval(()=>{if(Math.random()<.28&&!document.hidden){helperSay(pick(helperLines));if(Math.random()<.18)log('AYUDANTE ha actualizado sus condiciones de existencia.')}} ,31000);
+// —— Mini-juegos ——
+function openMiniGame(type){
+ const body=$('mgBody'),title=$('mgTitle');
+ $('miniGameModal').classList.add('open');
+ if(type==='cups'){
+  title.textContent='¿DÓNDE ESTÁ LA CUCHARA?';
+  const correct=Math.floor(Math.random()*3);
+  body.innerHTML='<p class="tiny">El ganso esconde una cuchara bajo un vaso. Elige bien.</p><div class="mg-cups" id="mgCups"></div><p id="mgResult" class="tiny"></p>';
+  const cups=$('mgCups');
+  for(let i=0;i<3;i++){
+   const c=document.createElement('div');c.className='mg-cup';c.textContent='🥤';c.onclick=()=>{
+    if(i===correct){c.textContent='🥄';$('mgResult').textContent='¡Correcto! +5 g de queso cuántico.';cheese+=5;update();unlockAch('minigame');sfx('secret');helperSay('Has encontrado la cuchara. El inspector estará orgulloso.');saveProgress()}
+    else{c.textContent='❌';$('mgResult').textContent='Vacío. El ganso se ríe en silencio.';sfx('weird')}
+    cups.querySelectorAll('.mg-cup').forEach(x=>x.onclick=null);
+   };cups.append(c);
+  }
+ }else if(type==='spoons'){
+  title.textContent='ORDENA LAS CUCHARAS';
+  const order=['🥄','🍽️','🥄','🍴'];const shuffled=[...order].sort(()=>Math.random()-.5);
+  body.innerHTML='<p class="tiny">Pon las cucharas en este orden: 🥄 🍽️ 🥄 🍴</p><div class="mg-spoon-area" id="mgSpoons"></div><p id="mgResult" class="tiny"></p><button class="secondary" id="mgCheck">COMPROBAR</button>';
+  const area=$('mgSpoons');let seq=[];
+  shuffled.forEach(s=>{const el=document.createElement('span');el.className='mg-spoon';el.textContent=s;el.onclick=()=>{seq.push(s);el.style.opacity='.35';el.onclick=null;if(seq.length===4)$('mgCheck').click()};area.append(el)});
+  $('mgCheck').onclick=()=>{
+   if(seq.join('')===order.join('')){$('mgResult').textContent='¡Orden perfecto! +8 g de queso.';cheese+=8;update();unlockAch('minigame');sfx('secret');saveProgress();helperSay('El comité de cucharas te felicita.')}
+   else{$('mgResult').textContent='Orden incorrecto. Las cucharas protestan.';sfx('weird')}
+  };
+ }else{
+  title.textContent='ADIVINA EL MARTES';
+  body.innerHTML='<p class="tiny">¿Qué día es hoy según el MEMEVerso?</p><div style="display:flex;flex-wrap:wrap;gap:8px;margin:12px 0" id="mgDays"></div><p id="mgResult" class="tiny"></p>';
+  const days=['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo','Ninguno','Todos'];
+  const answer='Martes';
+  days.forEach(d=>{const b=document.createElement('button');b.className='secondary';b.textContent=d;b.onclick=()=>{
+   if(d===answer){$('mgResult').textContent='Correcto. Siempre es martes aquí. +4 g de queso.';cheese+=4;update();unlockAch('minigame');sfx('secret');saveProgress()}
+   else{$('mgResult').textContent='Incorrecto. El calendario se ofende.';sfx('weird')}
+   $('mgDays').querySelectorAll('button').forEach(x=>x.disabled=true);
+  };$('mgDays').append(b)});
+ }
+}
+$('miniGameBtn').addEventListener('click',()=>openMiniGame(pick(['cups','spoons','tuesday'])));
+$('mgClose').addEventListener('click',()=>$('miniGameModal').classList.remove('open'));
+$('miniGameModal').addEventListener('click',e=>{if(e.target===$('miniGameModal'))$('miniGameModal').classList.remove('open')});
 
+// —— Konami code ——
+const konami=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+let konamiIdx=0;
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape'){
+  closeSettings();closeVideo();hideAd();hideToast();$('miniGameModal').classList.remove('open');return;
+ }
+ const k=e.key.length===1?e.key.toLowerCase():e.key;
+ if(k===konami[konamiIdx]||(konami[konamiIdx].startsWith('Arrow')&&e.key===konami[konamiIdx])){
+  konamiIdx++;
+  if(konamiIdx===konami.length){
+   konamiIdx=0;unlockAch('konami');cheese+=25;update();saveProgress();
+   $('secret').classList.add('show');
+   omen('CÓDIGO KONAMI ACEPTADO. +25 g DE QUESO.',4000);
+   helperSay('Has introducido el código prohibido. El universo tiembla un poco.');
+   sfx('secret');glitch();
+  }
+ }else konamiIdx=0;
+});
+
+// Cursor trail when chaos high
+document.addEventListener('mousemove',e=>{
+ if(chaos<20||reduceMotion||Math.random()>.3)return;
+ const t=document.createElement('div');t.className='cursor-trail';t.style.left=e.clientX+'px';t.style.top=e.clientY+'px';document.body.appendChild(t);
+ setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),400)},50);
+});
+
+// Load saved progress
+loadProgress();
+renderAchievements();
+
+setTimeout(()=>helperSay('Pulsa los objetos, combina en el inventario, revisa LOGROS y habla conmigo. Versión '+APP_VERSION+'.'),1200);
+setTimeout(()=>showToast('¡BIENVENIDO AL MEMEVERSO v'+APP_VERSION+'! Combinaciones, logros, chat y temas activados.',5200),4200);
+function helperTick(){
+  if(document.hidden||$('settingsModal').classList.contains('open')||helperIsSilent())return;
+  const chance=0.22+annoyLevel/100*0.55;
+  if(Math.random()<chance){
+    helperSay(pick(helperLines));
+    if(Math.random()<0.22)log('AYUDANTE v'+APP_VERSION+' ha actualizado sus condiciones de existencia.');
+    if(autoPrankOn&&Math.random()<0.12+annoyLevel/100*0.18)prank();
+  }
+}
+setInterval(randomScreenEvent, Math.max(7000, 16000-annoyLevel*70));
+setInterval(helperTick, Math.max(9000, 22000-annoyLevel*110));
+setInterval(()=>{
+  if(annoyLevel<55||document.hidden||helperIsSilent())return;
+  if(Math.random()<0.18)helperSay(pick(helperLines));
+}, 14000);
 
 })();
 </script>

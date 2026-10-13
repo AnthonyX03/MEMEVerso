@@ -1,0 +1,22 @@
+MEMEVerso v1.3.0 — Medios en GitHub
+====================================
+
+Estructura:
+
+  /audio/MEME.mp3              → pista libre (gramola)
+  /audio/ABDUZCAN.mp3          → se desbloquea en juego
+  /videos/RickRoll.mp4         → jumpscare clásico
+  /videos/ABDUZCAN-MEME.mp4    → vídeo obligatorio la 1ª vez
+
+Desbloqueo ABDUZCAN:
+  1. Llega a la Luna de mantenimiento
+  2. Repara el reloj
+  3. Abre la taquilla 6 (pieza de reloj o contraseña PATATA-6)
+  → Se desbloquea la pista + vídeo obligatorio (no se puede saltar)
+  → Después el vídeo puede saltar como el RickRoll
+
+Gramola: botón 🎵 GRAMOLA en la sala de espera.
+Ajustes: pestañas AUDIO | AYUDANTE | APARIENCIA | SISTEMA
+  (volumen música arriba, efectos abajo; sin checkbox de música)
+
+media-config.js define las rutas.

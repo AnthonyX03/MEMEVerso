@@ -1,8 +1,9 @@
-const CACHE_NAME='memeverso-offline-v1.2.1';
+const CACHE_NAME='memeverso-offline-v1.3.0';
 const CORE=[
   './','./index.html','./manifest.webmanifest','./media-config.js',
   './icons/icon-192.png','./icons/icon-512.png','./icons/icon-maskable-512.png',
-  './RickRoll.mp4','./MEME.mp3',
+  './audio/MEME.mp3','./audio/ABDUZCAN.mp3',
+  './videos/RickRoll.mp4','./videos/ABDUZCAN-MEME.mp4',
   './archivos/10_1200_FRASES_DE_AYUDANTE.txt',
   './archivos/00_LEEME_SI_TE_ATREVES.txt','./archivos/01_ACTA_DEL_GANSO.txt',
   './archivos/02_TRANSCRIPCION_DE_LA_PARED.txt','./archivos/03_FACTURA_DEL_VACIO.txt',

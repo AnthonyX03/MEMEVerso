@@ -1,0 +1,19 @@
+MEMEVerso — Música de fondo
+===========================
+
+1. Coloca el archivo MEME.mp3 en la misma carpeta que index.html
+   (al mismo nivel que RickRoll.mp4).
+
+2. Abre la página en el navegador y haz clic en cualquier sitio.
+   Los navegadores bloquean el autoplay hasta que haya interacción.
+
+3. En ⚙ AJUSTES puedes:
+   - Subir/bajar VOLUMEN MÚSICA
+   - Activar/desactivar MÚSICA DE FONDO (MEME.mp3)
+   - SILENCIAR TODO (efectos + música)
+
+4. Si quieres otra ruta o nombre, edita media-config.js:
+
+   window.MEMEVERSO_MUSIC_URL = "./MEME.mp3";
+
+La música se reproduce en bucle mientras el audio esté activo.
